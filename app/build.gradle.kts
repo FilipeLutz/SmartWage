@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "com.finalproject.smartwage"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.finalproject.smartwage"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
