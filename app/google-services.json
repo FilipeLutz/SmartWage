@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "607463594287",
+    "project_id": "smartwage-5fbc7",
+    "storage_bucket": "smartwage-5fbc7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:607463594287:android:69a8806fb0b546eb4de9da",
+        "android_client_info": {
+          "package_name": "com.finalproject.smartwage"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBuiJ_Rsad30Ihj_lC5fsEIext1evTnnVY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
