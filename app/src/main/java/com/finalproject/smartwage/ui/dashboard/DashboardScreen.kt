@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.finalproject.smartwage.viewModel.AuthViewModel
 
 @Composable
 fun DashboardScreen(navController: NavController, authViewModel: AuthViewModel = viewModel()) {
@@ -20,7 +21,7 @@ fun DashboardScreen(navController: NavController, authViewModel: AuthViewModel =
         } ?: Text("Loading...")
 
         Button(onClick = {
-            authViewModel.signOut()
+            authViewModel.logout()
             navController.navigate("login") { popUpTo("dashboard") { inclusive = true } }
         }) {
             Text("Logout")

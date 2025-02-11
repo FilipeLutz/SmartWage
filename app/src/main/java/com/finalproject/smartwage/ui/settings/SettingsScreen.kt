@@ -5,13 +5,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.finalproject.smartwage.viewModel.SettingsViewModel
 
 @Composable
-fun SettingsScreen(navController: NavController, userViewModel: UserViewModel = viewModel()) {
-    Button(onClick = {
-        userViewModel.clearUsers() // Clear stored user data
-        navController.navigate("login") // Redirect to login
-    }) {
+fun SettingsScreen(navController: NavController) {
+    val viewModel: SettingsViewModel = viewModel()
+    Button(onClick = { viewModel.logout() }) {
         Text("Logout")
     }
 }

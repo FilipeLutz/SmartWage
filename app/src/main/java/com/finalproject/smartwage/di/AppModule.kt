@@ -1,52 +1,64 @@
 package com.finalproject.smartwage.di
 
+import android.content.Context
+import androidx.room.Room
+import com.finalproject.smartwage.data.local.SmartWageDatabase
+import com.finalproject.smartwage.data.local.dao.ExpenseDao
+import com.finalproject.smartwage.data.local.dao.IncomeDao
+import com.finalproject.smartwage.data.local.dao.TaxDao
+import com.finalproject.smartwage.data.local.dao.UserDao
 import com.finalproject.smartwage.data.remote.AuthService
 import com.finalproject.smartwage.data.remote.FirestoreService
 import com.finalproject.smartwage.data.repository.AuthRepository
-import com.finalproject.smartwage.data.repository.UserRepository
-import com.finalproject.smartwage.data.repository.IncomeRepository
 import com.finalproject.smartwage.data.repository.ExpenseRepository
+import com.finalproject.smartwage.data.repository.IncomeRepository
 import com.finalproject.smartwage.data.repository.TaxRepository
+import com.finalproject.smartwage.data.repository.UserRepository
+import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
-@InstallIn(SingletonComponent::class) // Makes it available app-wide
+@InstallIn(SingletonComponent::class)
 object AppModule {
 
+    /** Provide FirebaseAuth */
     @Provides
     @Singleton
-    fun provideAuthService(): AuthService = AuthService()
+    fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
 
+    /** Provide AuthService */
+    @Provides
+    @Singleton
+    fun provideAuthService(firebaseAuth: FirebaseAuth): AuthService =
+        AuthService(firebaseAuth)
+
+    /** Provide FirestoreService */
     @Provides
     @Singleton
     fun provideFirestoreService(): FirestoreService = FirestoreService()
 
+    /** Provide Room Database */
     @Provides
     @Singleton
-    fun provideAuthRepository(authService: AuthService): AuthRepository =
-        AuthRepository(authService)
+    fun provideDatabase(@ApplicationContext context: Context): SmartWageDatabase =
+        Room.databaseBuilder(
+            context,
+            SmartWageDatabase::class.java,
+            "smartwage_db"
+        ).fallbackToDestructiveMigration()
+            .build()
 
-    @Provides
-    @Singleton
-    fun provideUserRepository(firestoreService: FirestoreService): UserRepository =
-        UserRepository(firestoreService)
+    /** Provide DAO Interfaces */
+    @Provides fun provideUserDao(db: SmartWageDatabase): UserDao = db.userDao()
 
+    /** Provide Repositories */
     @Provides
     @Singleton
-    fun provideIncomeRepository(firestoreService: FirestoreService): IncomeRepository =
-        IncomeRepository(firestoreService)
-
-    @Provides
-    @Singleton
-    fun provideExpenseRepository(firestoreService: FirestoreService): ExpenseRepository =
-        ExpenseRepository(firestoreService)
-
-    @Provides
-    @Singleton
-    fun provideTaxRepository(firestoreService: FirestoreService): TaxRepository =
-        TaxRepository(firestoreService)
+    fun provideUserRepository(userDao: UserDao, firestoreService: FirestoreService): UserRepository =
+        UserRepository(userDao, firestoreService)
 }

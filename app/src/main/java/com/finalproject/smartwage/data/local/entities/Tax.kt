@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 data class Tax(
     @PrimaryKey val id: String,
     val userId: String,
-    val income: Double,
-    val taxPaid: Double,
-    val taxYear: Int
+    val totalIncome: Double,
+    val taxOwed: Double,
+    val lastCalculated: Long
 )
