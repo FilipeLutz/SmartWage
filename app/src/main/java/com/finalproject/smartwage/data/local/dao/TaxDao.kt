@@ -2,6 +2,7 @@ package com.finalproject.smartwage.data.local.dao
 
 import androidx.room.*
 import com.finalproject.smartwage.data.local.entities.Tax
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TaxDao {
@@ -9,8 +10,8 @@ interface TaxDao {
     suspend fun insertTax(tax: Tax)
 
     @Query("SELECT * FROM tax WHERE userId = :userId")
-    suspend fun getUserTax(userId: String): List<Tax>
+    fun getUserTax(userId: String): Flow<List<Tax>>
 
-    @Query("DELETE FROM tax WHERE id = :taxId")
-    suspend fun deleteTax(taxId: String)
+    @Query("DELETE FROM tax WHERE userId = :userId")
+    suspend fun deleteTax(userId: String)
 }

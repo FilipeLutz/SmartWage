@@ -2,7 +2,7 @@ package com.finalproject.smartwage.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.finalproject.smartwage.data.model.Expense
+import com.finalproject.smartwage.data.local.entities.Expense
 import com.finalproject.smartwage.data.repository.ExpenseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,20 +21,13 @@ class ExpenseViewModel @Inject constructor(
 
     fun loadExpenses(userId: String) {
         viewModelScope.launch {
-            val expenses = expenseRepo.getUserExpenses(userId).map { entity ->
-                Expense(
-                    id = entity.id,
-                    userId = entity.userId,
-                    category = entity.category,
-                    amount = entity.amount,
-                    date = entity.date
-                )
+            expenseRepo.getUserExpenses(userId).collect { expenses ->
+                _userExpenses.value = expenses
             }
-            _userExpenses.value = expenses
         }
     }
 
-    fun addExpense(expense: com.finalproject.smartwage.data.local.entities.Expense) {
+    fun addExpense(expense: Expense) {
         viewModelScope.launch {
             expenseRepo.saveExpense(expense)
             loadExpenses(expense.userId)

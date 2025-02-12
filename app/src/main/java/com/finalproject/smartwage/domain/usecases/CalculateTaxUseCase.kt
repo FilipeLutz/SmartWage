@@ -1,6 +1,6 @@
 package com.finalproject.smartwage.domain.usecases
 
-import com.finalproject.smartwage.data.model.Income
+import com.finalproject.smartwage.data.local.entities.Income
 
 class CalculateTaxUseCase {
 

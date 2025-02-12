@@ -3,16 +3,9 @@ package com.finalproject.smartwage.di
 import android.content.Context
 import androidx.room.Room
 import com.finalproject.smartwage.data.local.SmartWageDatabase
-import com.finalproject.smartwage.data.local.dao.ExpenseDao
-import com.finalproject.smartwage.data.local.dao.IncomeDao
-import com.finalproject.smartwage.data.local.dao.TaxDao
 import com.finalproject.smartwage.data.local.dao.UserDao
 import com.finalproject.smartwage.data.remote.AuthService
 import com.finalproject.smartwage.data.remote.FirestoreService
-import com.finalproject.smartwage.data.repository.AuthRepository
-import com.finalproject.smartwage.data.repository.ExpenseRepository
-import com.finalproject.smartwage.data.repository.IncomeRepository
-import com.finalproject.smartwage.data.repository.TaxRepository
 import com.finalproject.smartwage.data.repository.UserRepository
 import com.google.firebase.auth.FirebaseAuth
 import dagger.Module

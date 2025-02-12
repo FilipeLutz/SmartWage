@@ -14,6 +14,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.finalproject.smartwage.navigation.Destinations
 import com.finalproject.smartwage.viewModel.AuthViewModel
 
 @Composable
@@ -22,6 +23,8 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel = vie
     var password by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    val userId = "currentUserId"
 
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp),
@@ -53,11 +56,7 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel = vie
 
         Button(
             onClick = {
-                isLoading = true
-                authViewModel.login(email, password) { error ->
-                    errorMessage = error.toString()
-                    isLoading = false
-                }
+                navController.navigate(Destinations.Dashboard(userId).createRoute(userId))
             },
             modifier = Modifier.fillMaxWidth()
         ) {

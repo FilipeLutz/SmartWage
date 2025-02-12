@@ -2,7 +2,7 @@ package com.finalproject.smartwage.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.finalproject.smartwage.data.model.Income
+import com.finalproject.smartwage.data.local.entities.Income
 import com.finalproject.smartwage.data.repository.IncomeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,12 +21,13 @@ class IncomeViewModel @Inject constructor(
 
     fun loadIncomes(userId: String) {
         viewModelScope.launch {
-            val incomes = incomeRepo.getUserIncomes(userId)
-            _userIncomes.value = incomes
+            incomeRepo.getUserIncomes(userId).collect { incomes ->
+                _userIncomes.value = incomes
+            }
         }
     }
 
-    fun addIncome(income: com.finalproject.smartwage.data.local.entities.Income) {
+    fun addIncome(income: Income) {
         viewModelScope.launch {
             incomeRepo.saveIncome(income)
             loadIncomes(income.userId)

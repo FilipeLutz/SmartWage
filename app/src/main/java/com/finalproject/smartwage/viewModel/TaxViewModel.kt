@@ -19,7 +19,9 @@ class TaxViewModel @Inject constructor(
 
     fun calculateTax(userId: String) {
         viewModelScope.launch {
-            _taxOwed.value = taxRepo.getUserTax(userId = userId)?.taxOwed ?: 0.0
+            taxRepo.getUserTax(userId).collect { taxes ->
+                _taxOwed.value = taxes.firstOrNull()?.taxOwed ?: 0.0
+            }
         }
     }
 }

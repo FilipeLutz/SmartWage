@@ -4,6 +4,8 @@ import com.finalproject.smartwage.data.local.dao.UserDao
 import com.finalproject.smartwage.data.local.entities.User
 import com.finalproject.smartwage.data.remote.FirestoreService
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -15,22 +17,30 @@ class UserRepository @Inject constructor(
     // Save User (Syncs to Firestore and Room)
     suspend fun saveUser(user: User) {
         withContext(Dispatchers.IO) {
-            firestoreService.saveUser(user)  // Save to Firestore
-            userDao.insertUser(user)  // Save to Local Room DB
+            try {
+                firestoreService.saveUser(user)  // Save to Firestore
+                userDao.insertUser(user)  // Save to Local Room DB
+            } catch (e: Exception) {
+                // Handle error (e.g., log or show a message)
+                println("Error saving user: ${e.message}")
+            }
         }
     }
 
     // Get User from Local DB or Fetch from Firestore
-    suspend fun getUser(userId: String): User? {
-        return withContext(Dispatchers.IO) {
-            (userDao.getUserById(userId) ?: firestoreService.getUser(userId)) as User?
-        }
+    fun getUser(userId: String): Flow<User?> {
+        return userDao.getUserById(userId)
     }
 
     // Logout (Clear local user data)
     suspend fun logout() {
         withContext(Dispatchers.IO) {
-            userDao.deleteUser(userDao.getUserById(userId = String())?.id ?: "")
+            try {
+                userDao.deleteUser(userDao.getUserById(userId = String()).first().toString())
+            } catch (e: Exception) {
+                // Handle error (e.g., log or show a message)
+                println("Error logging out: ${e.message}")
+            }
         }
     }
 }

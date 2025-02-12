@@ -5,35 +5,55 @@ import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
+import timber.log.Timber
 
 @Singleton
 class AuthService @Inject constructor(
     private val firebaseAuth: FirebaseAuth
 ) {
 
-    suspend fun signUp(email: String, password: String): FirebaseUser? {
+    sealed class AuthResult {
+        data class Success(val user: FirebaseUser) : AuthResult()
+        data class Failure(val errorMessage: String) : AuthResult()
+    }
+
+    suspend fun signUp(email: String, password: String): AuthResult {
         return try {
             val result = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
-            result.user
+            val user = result.user!!
+            user.sendEmailVerification().await()  // Send verification email
+            Timber.d("User signed up successfully: ${user.uid}")
+            AuthResult.Success(user)
         } catch (e: Exception) {
-            null
+            Timber.e(e, "Sign-up failed: ${e.message}")
+            AuthResult.Failure(e.message ?: "Sign-up failed. Please try again.")
         }
     }
 
-    suspend fun login(email: String, password: String): FirebaseUser? {
+    suspend fun login(email: String, password: String): AuthResult {
         return try {
             val result = firebaseAuth.signInWithEmailAndPassword(email, password).await()
-            result.user
+            val user = result.user!!
+            if (!user.isEmailVerified) {
+                Timber.w("User email not verified: ${user.uid}")
+                return AuthResult.Failure("Please verify your email before logging in.")
+            }
+            Timber.d("User logged in successfully: ${user.uid}")
+            AuthResult.Success(user)
         } catch (e: Exception) {
-            null
+            Timber.e(e, "Login failed: ${e.message}")
+            AuthResult.Failure(e.message ?: "Login failed. Please check your credentials.")
         }
     }
 
     fun getCurrentUser(): FirebaseUser? {
-        return firebaseAuth.currentUser
+        return firebaseAuth.currentUser?.also {
+            Timber.d("Current user: ${it.uid}")
+        }
     }
 
     fun logout() {
         firebaseAuth.signOut()
+        Timber.d("User logged out")
     }
 }

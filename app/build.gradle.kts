@@ -57,6 +57,10 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.kotlin.stdlib)
+
+    // test
+    testImplementation(libs.junit)
 
     // Firebase Authentication & Firestore
     implementation(platform(libs.firebase.bom))
@@ -71,6 +75,7 @@ dependencies {
     // Hilt Dependency Injection
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
 
     // Retrofit for API calls
     implementation(libs.retrofit)
@@ -85,4 +90,7 @@ dependencies {
     // Kotlin Coroutines for Async DB Operations
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
+
+    // Timber for Logging
+    implementation (libs.timber)
 }

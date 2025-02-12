@@ -8,6 +8,7 @@ import com.finalproject.smartwage.data.repository.TaxRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,20 +19,57 @@ class DashboardViewModel @Inject constructor(
     private val taxRepo: TaxRepository
 ) : ViewModel() {
 
+    // State for total income
     private val _totalIncome = MutableStateFlow(0.0)
     val totalIncome: StateFlow<Double> = _totalIncome
 
+    // State for total expenses
     private val _totalExpenses = MutableStateFlow(0.0)
     val totalExpenses: StateFlow<Double> = _totalExpenses
 
+    // State for tax owed
     private val _taxOwed = MutableStateFlow(0.0)
     val taxOwed: StateFlow<Double> = _taxOwed
 
+    // State for loading
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
+
+    // State for errors
+    private val _errorMessage = MutableStateFlow<String?>(null)
+    val errorMessage: StateFlow<String?> = _errorMessage
+
+    // Load user data
     fun loadUserData(userId: String) {
         viewModelScope.launch {
-            _totalIncome.value = incomeRepo.getUserIncomes(userId = userId).sumOf { it.amount }
-            _totalExpenses.value = expenseRepo.getUserExpenses(userId = userId).sumOf { it.amount }
-            _taxOwed.value = taxRepo.getUserTax(userId = userId)?.taxOwed ?: 0.0
+            _isLoading.value = true
+            _errorMessage.value = null
+
+            try {
+                // Fetch incomes
+                val incomes = incomeRepo.getUserIncomes(userId).first()
+                var totalIncomeValue = 0.0
+                for (income in incomes) {
+                    totalIncomeValue += income.amount
+                }
+                _totalIncome.value = totalIncomeValue
+
+                // Fetch expenses
+                val expenses = expenseRepo.getUserExpenses(userId).first()
+                var totalExpensesValue = 0.0
+                for (expense in expenses) {
+                    totalExpensesValue += expense.amount
+                }
+                _totalExpenses.value = totalExpensesValue
+
+                // Fetch tax
+                val tax = taxRepo.getUserTax(userId).first()
+                _taxOwed.value = tax.firstOrNull()?.taxOwed ?: 0.0
+            } catch (e: Exception) {
+                _errorMessage.value = "Failed to load data: ${e.message}"
+            } finally {
+                _isLoading.value = false
+            }
         }
     }
 }

@@ -2,13 +2,15 @@ package com.finalproject.smartwage.data.local.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.firebase.firestore.PropertyName
+import java.util.UUID
 
 @Entity(tableName = "users")
 data class User(
-    @PrimaryKey val id: String,
-    val name: String,
-    val email: String,
-    val phoneNumber: String,
-    val taxCredit: Double = 4000.0,
-    val profilePicture: String? = null
+    @PrimaryKey @get:PropertyName("id") @set:PropertyName("id") var id: String = "",
+    @get:PropertyName("name") @set:PropertyName("name") var name: String = "",
+    @get:PropertyName("email") @set:PropertyName("email") var email: String = "",
+    @get:PropertyName("phoneNumber") @set:PropertyName("phoneNumber") var phoneNumber: String = "",
+    @get:PropertyName("taxCredit") @set:PropertyName("taxCredit") var taxCredit: Double = 4000.0,
+    @get:PropertyName("profilePicture") @set:PropertyName("profilePicture") var profilePicture: String? = null
 )

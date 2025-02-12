@@ -27,7 +27,9 @@ class AuthViewModel @Inject constructor(
     // Fetch current user inside a coroutine
     private fun getCurrentUser() {
         viewModelScope.launch {
-            _user.value = authRepository.getCurrentUser()
+            authRepository.getCurrentUser().collect { user ->
+                _user.value = user
+            }
         }
     }
 

@@ -1,14 +1,24 @@
 package com.finalproject.smartwage.utils
 
-import com.finalproject.smartwage.data.model.Income
+import com.finalproject.smartwage.data.local.entities.Income
 
 object TaxCalculator {
 
+    private const val TAX_THRESHOLD = 44000.0
+    private const val TAX_RATE_LOW = 0.20
+    private const val TAX_RATE_HIGH = 0.40
+    private const val TAX_CREDIT = 4000.0
+
     fun calculateTax(incomes: List<Income>): Double {
-        val totalIncome = incomes.sumOf { it.amount }
-        val taxableAboveThreshold = if (totalIncome > Constants.TAX_THRESHOLD) totalIncome - Constants.TAX_THRESHOLD else 0.0
-        val taxLow = Constants.TAX_THRESHOLD * Constants.TAX_RATE_LOW
-        val taxHigh = taxableAboveThreshold * Constants.TAX_RATE_HIGH
-        return (taxLow + taxHigh) - Constants.TAX_CREDIT
+        return try {
+            val totalIncome = incomes.sumOf { it.amount }
+            val taxableAboveThreshold = if (totalIncome > TAX_THRESHOLD) totalIncome - TAX_THRESHOLD else 0.0
+            val taxLow = TAX_THRESHOLD * TAX_RATE_LOW
+            val taxHigh = taxableAboveThreshold * TAX_RATE_HIGH
+            (taxLow + taxHigh) - TAX_CREDIT
+        } catch (e: Exception) {
+            println("Error calculating tax: ${e.message}")
+            0.0
+        }
     }
 }
