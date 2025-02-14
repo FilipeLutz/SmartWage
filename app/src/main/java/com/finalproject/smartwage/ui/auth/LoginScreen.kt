@@ -1,11 +1,10 @@
 package com.finalproject.smartwage.ui.auth
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Lock
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -14,6 +13,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,12 +23,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.finalproject.smartwage.navigation.AppNavigation
 import com.finalproject.smartwage.navigation.Destinations
 import com.finalproject.smartwage.ui.theme.SmartWageTheme
 import com.finalproject.smartwage.utils.isValidEmail
 import com.finalproject.smartwage.utils.isValidPassword
 import com.finalproject.smartwage.viewModel.AuthViewModel
+import com.finalproject.smartwage.R
 
 @Composable
 fun LoginScreen(
@@ -62,20 +64,26 @@ fun LoginScreen(
 
         OutlinedTextField(
             value = password,
-            onValueChange = {
-                password = it
-                errorMessage = null // Clear error when user starts typing
-            },
+            onValueChange = { password = it },
             label = { Text("Password") },
             visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
-                IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
-                    Icon(
-                        imageVector = if (isPasswordVisible) Icons.Default.Lock else Icons.Default.Lock,
-                        contentDescription = if (isPasswordVisible) "Hide password" else "Show password"
-                    )
+                IconButton(
+                    onClick = { isPasswordVisible = !isPasswordVisible })
+                {
+                    val icon: Painter = if (isPasswordVisible) {
+                        painterResource(id = R.drawable.view)  // Visible icon
+                    } else {
+                        painterResource(id = R.drawable.hidden) // Hidden icon
+                    }
+                    Image(
+                        painter = icon,
+                        contentDescription = "Toggle password visibility",
+                        Modifier
+                            .padding(4.dp))
                 }
             },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -109,7 +117,11 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        TextButton(onClick = { navController.navigate("signup") }) {
+        TextButton(
+            onClick = {
+                navController.navigate(Destinations.SignUp.route)
+            }
+        ) {
             Text("Don't have an account? Sign Up")
         }
 
