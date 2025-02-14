@@ -4,5 +4,5 @@ import com.finalproject.smartwage.data.repository.IncomeRepository
 
 class GetUserIncomeUseCase(private val incomeRepository: IncomeRepository) {
 
-    suspend fun execute(userId: String) = incomeRepository.getUserIncomes(userId)
+    fun execute(userId: String) = incomeRepository.getUserIncomes(userId)
 }

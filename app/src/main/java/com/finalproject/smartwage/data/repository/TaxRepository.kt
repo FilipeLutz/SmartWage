@@ -6,8 +6,9 @@ import com.finalproject.smartwage.data.remote.FirestoreService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class TaxRepository(
+class TaxRepository @Inject constructor (
     private val taxDao: TaxDao,
     private val firestoreService: FirestoreService
 ) {

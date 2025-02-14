@@ -3,9 +3,16 @@ package com.finalproject.smartwage.di
 import android.content.Context
 import androidx.room.Room
 import com.finalproject.smartwage.data.local.SmartWageDatabase
+import com.finalproject.smartwage.data.local.dao.ExpenseDao
+import com.finalproject.smartwage.data.local.dao.IncomeDao
+import com.finalproject.smartwage.data.local.dao.TaxDao
 import com.finalproject.smartwage.data.local.dao.UserDao
 import com.finalproject.smartwage.data.remote.AuthService
 import com.finalproject.smartwage.data.remote.FirestoreService
+import com.finalproject.smartwage.data.repository.AuthRepository
+import com.finalproject.smartwage.data.repository.ExpenseRepository
+import com.finalproject.smartwage.data.repository.IncomeRepository
+import com.finalproject.smartwage.data.repository.TaxRepository
 import com.finalproject.smartwage.data.repository.UserRepository
 import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
@@ -19,21 +26,21 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    /** Provide FirebaseAuth */
+    /** Provide Firebase Authentication */
     @Provides
     @Singleton
     fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
+
+    /** Provide Firestore Service */
+    @Provides
+    @Singleton
+    fun provideFirestoreService(): FirestoreService = FirestoreService()
 
     /** Provide AuthService */
     @Provides
     @Singleton
     fun provideAuthService(firebaseAuth: FirebaseAuth): AuthService =
         AuthService(firebaseAuth)
-
-    /** Provide FirestoreService */
-    @Provides
-    @Singleton
-    fun provideFirestoreService(): FirestoreService = FirestoreService()
 
     /** Provide Room Database */
     @Provides
@@ -47,11 +54,45 @@ object AppModule {
             .build()
 
     /** Provide DAO Interfaces */
-    @Provides fun provideUserDao(db: SmartWageDatabase): UserDao = db.userDao()
+    @Provides
+    @Singleton
+    fun provideUserDao(db: SmartWageDatabase): UserDao = db.userDao()
+
+    @Provides
+    @Singleton
+    fun provideIncomeDao(db: SmartWageDatabase): IncomeDao = db.incomeDao()
+
+    @Provides
+    @Singleton
+    fun provideExpenseDao(db: SmartWageDatabase): ExpenseDao = db.expenseDao()
+
+    @Provides
+    @Singleton
+    fun provideTaxDao(db: SmartWageDatabase): TaxDao = db.taxDao()
 
     /** Provide Repositories */
     @Provides
     @Singleton
+    fun provideAuthRepository(authService: AuthService, firestoreService: FirestoreService, userDao: UserDao): AuthRepository =
+        AuthRepository(authService, firestoreService, userDao)
+
+    @Provides
+    @Singleton
     fun provideUserRepository(userDao: UserDao, firestoreService: FirestoreService): UserRepository =
         UserRepository(userDao, firestoreService)
+
+    @Provides
+    @Singleton
+    fun provideIncomeRepository(incomeDao: IncomeDao, firestoreService: FirestoreService): IncomeRepository =
+        IncomeRepository(incomeDao, firestoreService)
+
+    @Provides
+    @Singleton
+    fun provideExpenseRepository(expenseDao: ExpenseDao, firestoreService: FirestoreService): ExpenseRepository =
+        ExpenseRepository(expenseDao, firestoreService)
+
+    @Provides
+    @Singleton
+    fun provideTaxRepository(taxDao: TaxDao, firestoreService: FirestoreService): TaxRepository =
+        TaxRepository(taxDao, firestoreService)
 }

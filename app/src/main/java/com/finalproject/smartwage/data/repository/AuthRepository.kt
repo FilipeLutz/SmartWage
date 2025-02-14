@@ -4,9 +4,11 @@ import com.finalproject.smartwage.data.local.dao.UserDao
 import com.finalproject.smartwage.data.local.entities.User
 import com.finalproject.smartwage.data.remote.AuthService
 import com.finalproject.smartwage.data.remote.FirestoreService
-import kotlinx.coroutines.Dispatchers
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 
 class AuthRepository @Inject constructor(
@@ -14,70 +16,69 @@ class AuthRepository @Inject constructor(
     private val firestoreService: FirestoreService,
     private val userDao: UserDao
 ) {
+    sealed class AuthResult {
+        data class Success(val user: FirebaseUser) : AuthResult()
+        data class Failure(val errorMessage: String) : AuthResult()
+    }
 
-    // Sign Up with Firebase + Save User Locally
-    suspend fun signUp(name: String, email: String, phoneNumber: String): Boolean {
-        return withContext(Dispatchers.IO) {
-            try {
-                val firebaseUser = authService.signUp(email, name)
-                if (true) {
-                    val user = User(
-                        id = firebaseUser.toString(),
-                        name = name,
-                        email = email,
-                        phoneNumber = phoneNumber,
-                        taxCredit = 4000.00,
-                        profilePicture = null
-                    )
-                    firestoreService.saveUser(user)  // Save to Firestore
-                    userDao.insertUser(user)  // Save locally
-                    true
-                } else {
-                    false
-                }
-            } catch (e: Exception) {
-                // Handle error (e.g., log or show a message)
-                println("Error signing up: ${e.message}")
-                false
+    // Fetch the current user
+    fun getCurrentUser(): Flow<User?> = callbackFlow {
+        val listener = FirebaseAuth.AuthStateListener { auth ->
+            trySend(auth.currentUser?.toUser())
+        }
+        FirebaseAuth.getInstance().addAuthStateListener(listener)
+        awaitClose { FirebaseAuth.getInstance().removeAuthStateListener(listener) }
+    }
+
+    // Login with email and password
+    suspend fun login(email: String, password: String): AuthResult {
+        return try {
+            val result = authService.login(email, password)
+            if (result is AuthService.AuthResult.Success) {
+                val user = result.user.toUser()
+                userDao.insertUser(user)
+                firestoreService.saveUser(user)
+                AuthResult.Success(result.user)
+            } else {
+                AuthResult.Failure((result as AuthService.AuthResult.Failure).errorMessage)
             }
+        } catch (e: Exception) {
+            AuthResult.Failure(e.message ?: "Login failed. Please try again.")
         }
     }
 
-    // Log In with Firebase + Fetch User Profile
-    suspend fun login(email: String, password: String): Boolean {
-        return withContext(Dispatchers.IO) {
-            try {
-                val firebaseUser = authService.login(email, password)
-                if (true) {
-                    val userId = firebaseUser.toString()
-                    val user = firestoreService.getUser(userId)
-                    true
-                } else {
-                    false
-                }
-            } catch (e: Exception) {
-                // Handle error (e.g., log or show a message)
-                println("Error logging in: ${e.message}")
-                false
+    // Sign up with name, email, password, and phoneNumber
+    suspend fun signUp(name: String, email: String, password: String, phoneNumber: String): AuthResult {
+        return try {
+            val result = authService.signUp(name, email, password)
+            if (result is AuthService.AuthResult.Success) {
+                val user = result.user.toUser(name, phoneNumber)
+                userDao.insertUser(user)
+                firestoreService.saveUser(user)
+                AuthResult.Success(result.user)
+            } else {
+                AuthResult.Failure((result as AuthService.AuthResult.Failure).errorMessage)
             }
+        } catch (e: Exception) {
+            AuthResult.Failure(e.message ?: "Sign-up failed. Please try again.")
         }
     }
 
-    // Get Currently Logged-In User (Offline First)
-    fun getCurrentUser(): Flow<User?> {
-        return userDao.getUserById(authService.getCurrentUser()?.uid ?: "")
-    }
-
-    // Logout from Firebase + Clear Local Data
+    // Logout the user
     suspend fun logout() {
-        withContext(Dispatchers.IO) {
-            try {
-                authService.logout()
-                userDao.deleteUser(getCurrentUser().toString())
-            } catch (e: Exception) {
-                // Handle error (e.g., log or show a message)
-                println("Error logging out: ${e.message}")
-            }
-        }
+        authService.logout()
+        userDao.deleteUser(toString())
+    }
+
+    // Convert FirebaseUser to your app's User model
+    private fun FirebaseUser.toUser(name: String = "", phoneNumber: String = ""): User {
+        return User(
+            id = uid,
+            name = name.ifEmpty { displayName ?: "" },
+            email = email ?: "",
+            phoneNumber = phoneNumber,
+            taxCredit = 4000.0,
+            profilePicture = null
+        )
     }
 }

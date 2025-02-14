@@ -16,9 +16,17 @@ class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    // Live Data or StateFlow to observe user data
+    // StateFlow to observe user data
     private val _user = MutableStateFlow<User?>(null)
     val user: StateFlow<User?> = _user.asStateFlow()
+
+    // StateFlow for loading state
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
+    // StateFlow for error messages
+    private val _errorMessage = MutableStateFlow<String?>(null)
+    val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
     init {
         getCurrentUser()
@@ -33,32 +41,53 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    // Login with email and password
     fun login(email: String, password: String, onResult: (Boolean) -> Unit) {
         viewModelScope.launch {
-            val success = authRepository.login(email, password)
-            if (success) getCurrentUser() // Update user state on successful login
-            onResult(success)
+            _isLoading.value = true
+            _errorMessage.value = null
+
+            val result = authRepository.login(email, password)
+            if (result is AuthRepository.AuthResult.Success) {
+                onResult(true)
+            } else {
+                _errorMessage.value = (result as AuthRepository.AuthResult.Failure).errorMessage
+                onResult(false)
+            }
+
+            _isLoading.value = false
         }
     }
 
+    // Sign up with name, email, password, and phoneNumber
     fun signUp(
         name: String,
         email: String,
         password: String,
-        confirmPassword: String,
+        phoneNumber: String,
         onResult: (Boolean) -> Unit
     ) {
         viewModelScope.launch {
-            val success = authRepository.signUp(name, email, password)
-            if (success) getCurrentUser() // Update user state on successful signup
-            onResult(success)
+            _isLoading.value = true
+            _errorMessage.value = null
+
+            val result = authRepository.signUp(name, email, password, phoneNumber)
+            if (result is AuthRepository.AuthResult.Success) {
+                onResult(true)
+            } else {
+                _errorMessage.value = (result as AuthRepository.AuthResult.Failure).errorMessage
+                onResult(false)
+            }
+
+            _isLoading.value = false
         }
     }
 
+    // Logout the user
     fun logout() {
         viewModelScope.launch {
             authRepository.logout()
-            _user.value = null // Reset user on logout
+            _user.value = null
         }
     }
 }

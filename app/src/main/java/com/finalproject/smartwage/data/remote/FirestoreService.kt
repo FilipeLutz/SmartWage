@@ -1,14 +1,17 @@
 package com.finalproject.smartwage.data.remote
 
-import android.util.Log
+import android.annotation.SuppressLint
 import com.finalproject.smartwage.data.local.entities.Expense
 import com.finalproject.smartwage.data.local.entities.Income
 import com.finalproject.smartwage.data.local.entities.Tax
 import com.finalproject.smartwage.data.local.entities.User
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.tasks.await
+import timber.log.Timber
 import javax.inject.Inject
 
+@SuppressLint("TimberArgCount")
 class FirestoreService @Inject constructor() {
     private val db = FirebaseFirestore.getInstance()
 
@@ -16,9 +19,19 @@ class FirestoreService @Inject constructor() {
     suspend fun saveUser(user: User) {
         try {
             db.collection("users").document(user.id).set(user).await()
-            Log.d("FirestoreService", "User saved successfully: ${user.id}")
+            Timber.d("FirestoreService: User saved successfully: ${user.id}")
         } catch (e: Exception) {
-            Log.e("FirestoreService", "Error saving user", e)
+            Timber.e(e, "FirestoreService: Error saving user")
+        }
+    }
+
+    // Update User Profile
+    suspend fun updateUser(user: User) {
+        try {
+            db.collection("users").document(user.id).set(user, SetOptions.merge()).await()
+            Timber.d("FirestoreService: User updated successfully: ${user.id}")
+        } catch (e: Exception) {
+            Timber.e(e, "FirestoreService: Error updating user")
         }
     }
 
@@ -27,21 +40,11 @@ class FirestoreService @Inject constructor() {
         return try {
             val snapshot = db.collection("users").document(userId).get().await()
             val user = snapshot.toObject(User::class.java)
-            Log.d("FirestoreService", "Fetched user: ${user?.id}")
+            Timber.d("FirestoreService", "Fetched user: ${user?.id}")
             user
         } catch (e: Exception) {
-            Log.e("FirestoreService", "Error fetching user", e)
+            Timber.e(e, "FirestoreService", "Error fetching user")
             null
-        }
-    }
-
-    // Update User Profile
-    suspend fun updateUser(user: User) {
-        try {
-            db.collection("users").document(user.id).set(user).await()
-            Log.d("FirestoreService", "User updated successfully: ${user.id}")
-        } catch (e: Exception) {
-            Log.e("FirestoreService", "Error updating user", e)
         }
     }
 
@@ -49,9 +52,9 @@ class FirestoreService @Inject constructor() {
     suspend fun deleteUser(userId: String) {
         try {
             db.collection("users").document(userId).delete().await()
-            Log.d("FirestoreService", "User deleted: $userId")
+            Timber.d("FirestoreService", "User deleted: $userId")
         } catch (e: Exception) {
-            Log.e("FirestoreService", "Error deleting user", e)
+            Timber.e(e, "FirestoreService", "Error deleting user")
         }
     }
 
@@ -64,9 +67,9 @@ class FirestoreService @Inject constructor() {
     suspend fun saveIncome(income: Income) {
         try {
             db.collection("incomes").document(income.id).set(income).await()
-            Log.d("FirestoreService", "Income saved successfully: ${income.id}")
+            Timber.d("FirestoreService", "Income saved successfully: ${income.id}")
         } catch (e: Exception) {
-            Log.e("FirestoreService", "Error saving income", e)
+            Timber.e(e, "FirestoreService", "Error saving income")
         }
     }
 
@@ -79,10 +82,10 @@ class FirestoreService @Inject constructor() {
                 .await()
 
             val incomes = snapshot.toObjects(Income::class.java)
-            Log.d("FirestoreService", "Fetched ${incomes.size} incomes for user $userId")
+            Timber.d("FirestoreService", "Fetched ${incomes.size} incomes for user $userId")
             incomes
         } catch (e: Exception) {
-            Log.e("FirestoreService", "Error fetching incomes", e)
+            Timber.e(e, "FirestoreService", "Error fetching incomes")
             emptyList()  // Return empty list if error
         }
     }
@@ -91,9 +94,9 @@ class FirestoreService @Inject constructor() {
     suspend fun deleteIncome(incomeId: String) {
         try {
             db.collection("incomes").document(incomeId).delete().await()
-            Log.d("FirestoreService", "Income deleted: $incomeId")
+            Timber.d("FirestoreService", "Income deleted: $incomeId")
         } catch (e: Exception) {
-            Log.e("FirestoreService", "Error deleting income", e)
+            Timber.e(e, "FirestoreService", "Error deleting income")
         }
     }
 
@@ -141,9 +144,9 @@ class FirestoreService @Inject constructor() {
     suspend fun saveTax(tax: Tax) {
         try {
             db.collection("taxes").document(tax.id).set(tax).await()
-            Log.d("FirestoreService", "Tax saved successfully: ${tax.id}")
+            Timber.d("FirestoreService", "Tax saved successfully: ${tax.id}")
         } catch (e: Exception) {
-            Log.e("FirestoreService", "Error saving tax", e)
+            Timber.e(e, "FirestoreService", "Error saving tax")
         }
     }
 
@@ -156,10 +159,10 @@ class FirestoreService @Inject constructor() {
                 .await()
 
             val taxes = snapshot.toObjects(Tax::class.java)
-            Log.d("FirestoreService", "Fetched ${taxes.size} taxes for user $userId")
+            Timber.d("FirestoreService", "Fetched ${taxes.size} taxes for user $userId")
             taxes
         } catch (e: Exception) {
-            Log.e("FirestoreService", "Error fetching taxes", e)
+            Timber.e(e, "FirestoreService", "Error fetching taxes")
             emptyList()  // Return empty list if error
         }
     }

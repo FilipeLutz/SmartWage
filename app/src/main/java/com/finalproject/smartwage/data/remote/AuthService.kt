@@ -2,6 +2,7 @@ package com.finalproject.smartwage.data.remote
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.UserProfileChangeRequest
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -17,10 +18,15 @@ class AuthService @Inject constructor(
         data class Failure(val errorMessage: String) : AuthResult()
     }
 
-    suspend fun signUp(email: String, password: String): AuthResult {
+    suspend fun signUp(name: String, email: String, password: String): AuthResult {
         return try {
             val result = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
             val user = result.user!!
+            // Update user profile with name
+            val profileUpdates = UserProfileChangeRequest.Builder()
+                .setDisplayName(name)
+                .build()
+            user.updateProfile(profileUpdates).await()
             user.sendEmailVerification().await()  // Send verification email
             Timber.d("User signed up successfully: ${user.uid}")
             AuthResult.Success(user)

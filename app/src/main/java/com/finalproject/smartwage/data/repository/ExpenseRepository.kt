@@ -6,8 +6,9 @@ import com.finalproject.smartwage.data.remote.FirestoreService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class ExpenseRepository(
+class ExpenseRepository @Inject constructor(
     private val expenseDao: ExpenseDao,
     private val firestoreService: FirestoreService
 ) {
