@@ -1,7 +1,13 @@
+@file:Suppress("DEPRECATION")
+
 package com.finalproject.smartwage.ui.auth
 
+import android.os.Build
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -14,27 +20,32 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import com.finalproject.smartwage.R
 import com.finalproject.smartwage.navigation.Destinations
-import com.finalproject.smartwage.ui.theme.SmartWageTheme
 import com.finalproject.smartwage.utils.isValidEmail
 import com.finalproject.smartwage.utils.isValidPassword
 import com.finalproject.smartwage.viewModel.AuthViewModel
-import com.finalproject.smartwage.R
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun LoginScreen(
     navController: NavController,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
+
+    val context = LocalContext.current
+    val resetEmailSent by viewModel.resetEmailSent.collectAsState()
+
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
@@ -42,59 +53,129 @@ fun LoginScreen(
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxSize(),
     ) {
-        Text("Login to SmartWage", style = MaterialTheme.typography.bodyLarge)
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = email,
-            onValueChange = {
-                email = it
-                errorMessage = null // Clear error when user starts typing
-            },
-            label = { Text("Email") },
-            modifier = Modifier.fillMaxWidth()
+        Image(
+            painter = painterResource(id = R.drawable.homelogo),
+            contentDescription = "Home Logo",
+            Modifier
+                .size(250.dp),
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password") },
-            visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            trailingIcon = {
-                IconButton(
-                    onClick = { isPasswordVisible = !isPasswordVisible })
-                {
-                    val icon: Painter = if (isPasswordVisible) {
-                        painterResource(id = R.drawable.view)  // Visible icon
-                    } else {
-                        painterResource(id = R.drawable.hidden) // Hidden icon
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
+        ) {
+            OutlinedTextField(
+                value = email,
+                onValueChange = {
+                    email = it
+                    errorMessage = null
+                },
+                label = { Text ( "Email", fontSize = 18.sp)},
+                textStyle = TextStyle(
+                    fontSize = 24.sp),
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+
+            errorMessage?.let {
+                Text(it, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 8.dp))
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = password,
+                onValueChange = {
+                    password = it
+                    errorMessage = null
+                },
+                label = {
+                    Text(
+                        "Password",
+                        fontSize = 18.sp,
+                    )
+                },
+                textStyle = TextStyle(
+                    fontSize = 24.sp),
+                visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                trailingIcon = {
+                    IconButton(
+                        onClick = { isPasswordVisible = !isPasswordVisible })
+                    {
+                        val icon: Painter = if (isPasswordVisible) {
+                            painterResource(id = R.drawable.view)  // Visible icon
+                        } else {
+                            painterResource(id = R.drawable.hidden) // Hidden icon
+                        }
+                        Image(
+                            painter = icon,
+                            contentDescription = "Toggle password visibility",
+                            Modifier
+                                .padding(end = 12.dp)
+                        )
                     }
-                    Image(
-                        painter = icon,
-                        contentDescription = "Toggle password visibility",
-                        Modifier
-                            .padding(4.dp))
-                }
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            modifier = Modifier.fillMaxWidth()
-        )
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Row(
+                horizontalArrangement = Arrangement.End,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                TextButton(
+                    onClick = {
+                        if (email.isNotBlank()) {
+                            viewModel.sendPasswordResetEmail(email)
+                            Toast.makeText(context, "Password reset email sent!", Toast.LENGTH_LONG).show()
+                        } else {
+                            Toast.makeText(context, "Please enter your email", Toast.LENGTH_LONG).show()
+                        }
+                    }
+                ) {
+                    Text("Forgot password?", fontSize = 18.sp)
+                }
+            }
+
+            // Show confirmation message when reset email is sent
+            if (resetEmailSent) {
+                LaunchedEffect(Unit) {
+                    Toast.makeText(
+                        context, "Password reset email sent!",
+                        Toast.LENGTH_LONG).show()
+                }
+            }
+
+            // Show error message if email sending fails
+            errorMessage?.let { message ->
+                LaunchedEffect(message) {
+                    Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(30.dp))
 
         Button(
             onClick = {
                 if (!isValidEmail(email)) {
                     errorMessage = "Please enter a valid email"
                 } else if (!isValidPassword(password)) {
-                    errorMessage = "Password must be at least 6 characters"
+                    errorMessage = "Password must be at least 8 characters"
                 } else {
                     isLoading = true
                     errorMessage = null
@@ -110,39 +191,44 @@ fun LoginScreen(
                     }
                 }
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .width(300.dp)
+                .height(50.dp)
         ) {
-            Text("Login")
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        TextButton(
-            onClick = {
-                navController.navigate(Destinations.SignUp.route)
-            }
-        ) {
-            Text("Don't have an account? Sign Up")
-        }
-
-        TextButton(onClick = { navController.navigate("forgot_password") }) {
-            Text("Forgot password?")
-        }
-
-        errorMessage?.let {
-            Text(it, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 8.dp))
+            Text(
+                "LOGIN",
+                fontSize = 22.sp,
+            )
         }
 
         if (isLoading) {
             CircularProgressIndicator(modifier = Modifier.padding(top = 8.dp))
         }
-    }
-}
 
-@Preview(showBackground = true)
-@Composable
-fun LoginScreenPreview() {
-    SmartWageTheme {
-        LoginScreen(rememberNavController())
+        Spacer(modifier = Modifier.height(30.dp))
+
+        Row (
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+        ){
+
+            Text(
+                "Don't have an account?",
+                fontSize = 20.sp,
+            )
+
+            TextButton(
+                onClick = {
+                    navController.navigate(Destinations.SignUp.route)
+                }
+            ) {
+                Text(
+                    "Sign Up",
+                    fontSize = 22.sp,
+                )
+            }
+        }
     }
 }

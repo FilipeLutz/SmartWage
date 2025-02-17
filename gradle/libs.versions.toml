@@ -2,6 +2,7 @@
 agp = "8.7.3"
 bcryptVersion = "0.10.2"
 converterGson = "2.11.0"
+facebookLogin = "18.0.2"
 firebaseBom = "33.9.0"
 googleServices = "4.4.2"
 hiltAndroidGradlePlugin = "2.51.1"
@@ -11,11 +12,15 @@ hiltNavigationCompose = "1.2.0"
 kotlin = "2.0.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
-kotlinStdlib = "2.1.0"
+kotlinStdlib = "2.1.10"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.10.0"
 composeBom = "2025.02.00"
+msal = "5.10.0"
 navigationCompose = "2.8.7"
+playServicesAuth = "21.3.0"
+playServicesAuthVersion = "20.7.0"
+quantitizer = "1.6.8"
 roomRuntime = "2.6.1"
 timber = "5.0.1"
 workRuntimeKtx = "2.10.0"
@@ -31,6 +36,7 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 bcrypt-v0102 = { module = "at.favre.lib:bcrypt", version.ref = "bcryptVersion" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
+facebook-login = { module = "com.facebook.android:facebook-login", version.ref = "facebookLogin" }
 firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-firestore-ktx = { module = "com.google.firebase:firebase-firestore-ktx" }
@@ -50,6 +56,10 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlinStdlib" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version = "1.10.1" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version = "1.10.1" }
+msal = { module = "com.microsoft.identity.client:msal", version.ref = "msal" }
+play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
+play-services-auth-v2070 = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuthVersion" }
+quantitizer = { module = "com.github.kojofosu:Quantitizer", version.ref = "quantitizer" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "converterGson" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 

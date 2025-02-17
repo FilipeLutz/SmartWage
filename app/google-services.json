@@ -12,7 +12,12 @@
           "package_name": "com.finalproject.smartwage"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "607463594287-rubpq9vmkmgn05sc7a9oareuigdj1u2v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBuiJ_Rsad30Ihj_lC5fsEIext1evTnnVY"
@@ -20,7 +25,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "607463594287-rubpq9vmkmgn05sc7a9oareuigdj1u2v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

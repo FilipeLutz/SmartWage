@@ -9,16 +9,27 @@ import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class AuthRepository @Inject constructor(
     private val authService: AuthService,
     private val firestoreService: FirestoreService,
-    private val userDao: UserDao
+    private val userDao: UserDao,
+    private val auth: FirebaseAuth
 ) {
     sealed class AuthResult {
         data class Success(val user: FirebaseUser) : AuthResult()
         data class Failure(val errorMessage: String) : AuthResult()
+    }
+
+    suspend fun sendPasswordResetEmail(email: String): Boolean {
+        return try {
+            auth.sendPasswordResetEmail(email).await()
+            true
+        } catch (_: Exception) {
+            false
+        }
     }
 
     // Fetch the current user

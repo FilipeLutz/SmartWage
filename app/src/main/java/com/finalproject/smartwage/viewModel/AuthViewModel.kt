@@ -24,12 +24,21 @@ class AuthViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    // StateFlow for error messages
+    private val _resetEmailSent = MutableStateFlow<Boolean>(false)
+    val resetEmailSent: StateFlow<Boolean> = _resetEmailSent.asStateFlow()
+
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
-    init {
-        getCurrentUser()
+    fun sendPasswordResetEmail(email: String) {
+        viewModelScope.launch {
+            val result = authRepository.sendPasswordResetEmail(email)
+            if (result) {
+                _resetEmailSent.value = true
+            } else {
+                _errorMessage.value = "Failed to send reset email. Please try again."
+            }
+        }
     }
 
     // Fetch current user inside a coroutine

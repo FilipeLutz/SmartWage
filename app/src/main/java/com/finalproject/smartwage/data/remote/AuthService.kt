@@ -18,6 +18,10 @@ class AuthService @Inject constructor(
         data class Failure(val errorMessage: String) : AuthResult()
     }
 
+    suspend fun sendPasswordResetEmail(email: String) {
+        firebaseAuth.sendPasswordResetEmail(email).await()
+    }
+
     suspend fun signUp(name: String, email: String, password: String): AuthResult {
         return try {
             val result = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
