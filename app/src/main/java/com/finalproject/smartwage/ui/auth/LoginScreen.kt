@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -32,6 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.finalproject.smartwage.R
 import com.finalproject.smartwage.navigation.Destinations
+import com.finalproject.smartwage.ui.theme.DarkBlue
 import com.finalproject.smartwage.utils.isValidEmail
 import com.finalproject.smartwage.utils.isValidPassword
 import com.finalproject.smartwage.viewModel.AuthViewModel
@@ -147,7 +149,11 @@ fun LoginScreen(
                         }
                     }
                 ) {
-                    Text("Forgot password?", fontSize = 18.sp)
+                    Text(
+                        "Forgot password?",
+                        fontSize = 18.sp,
+                        color = DarkBlue
+                    )
                 }
             }
 
@@ -191,6 +197,7 @@ fun LoginScreen(
                     }
                 }
             },
+            colors = ButtonDefaults.buttonColors( containerColor = DarkBlue),
             modifier = Modifier
                 .width(300.dp)
                 .height(50.dp)
@@ -225,8 +232,9 @@ fun LoginScreen(
                 }
             ) {
                 Text(
-                    "Sign Up",
+                    "SIGN UP",
                     fontSize = 22.sp,
+                    color = DarkBlue
                 )
             }
         }

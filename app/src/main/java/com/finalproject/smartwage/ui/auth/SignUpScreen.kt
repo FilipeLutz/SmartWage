@@ -3,6 +3,7 @@ package com.finalproject.smartwage.ui.auth
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -14,13 +15,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.finalproject.smartwage.R
+import com.finalproject.smartwage.navigation.Destinations
 import com.finalproject.smartwage.viewModel.AuthViewModel
+import com.finalproject.smartwage.ui.theme.DarkBlue
 
 @Composable
 fun SignUpScreen(navController: NavController, viewModel: AuthViewModel = hiltViewModel()) {
@@ -32,13 +38,28 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel = hiltVi
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var isPasswordVisible by remember { mutableStateOf(false) }
+    var isConfirmPasswordVisible by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text("Create an Account", style = MaterialTheme.typography.bodyLarge)
+
+        Image(
+            painter = painterResource(id = R.drawable.homelogo),
+            contentDescription = "Home Logo",
+            Modifier
+                .size(250.dp),
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            "Create an Account",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.SemiBold
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -46,6 +67,8 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel = hiltVi
             value = name,
             onValueChange = { name = it },
             label = { Text("Name") },
+            textStyle = TextStyle(
+                fontSize = 24.sp),
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -55,13 +78,19 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel = hiltVi
             value = email,
             onValueChange = { email = it },
             label = { Text("Email") },
+            textStyle = TextStyle(
+                fontSize = 24.sp),
             modifier = Modifier.fillMaxWidth()
         )
+
+        Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
             value = phoneNumber,
             onValueChange = { phoneNumber = it },
             label = { Text("Phone Number") },
+            textStyle = TextStyle(
+                fontSize = 24.sp),
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -89,6 +118,8 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel = hiltVi
                     )
                 }
             },
+            textStyle = TextStyle(
+                fontSize = 24.sp),
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -98,12 +129,12 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel = hiltVi
             value = confirmPassword,
             onValueChange = { confirmPassword = it },
             label = { Text("Confirm Password") },
-            visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            visualTransformation = if (isConfirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
                 IconButton(
-                    onClick = { isPasswordVisible = !isPasswordVisible })
+                    onClick = { isConfirmPasswordVisible = !isConfirmPasswordVisible })
                 {
-                    val icon: Painter = if (isPasswordVisible) {
+                    val icon: Painter = if (isConfirmPasswordVisible) {
                         painterResource(id = R.drawable.view)  // Visible icon
                     } else {
                         painterResource(id = R.drawable.hidden) // Hidden icon
@@ -116,10 +147,12 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel = hiltVi
                     )
                 }
             },
+            textStyle = TextStyle(
+                fontSize = 24.sp),
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
         Button(
             onClick = {
@@ -134,15 +167,42 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel = hiltVi
                     }
                 }
             },
-            modifier = Modifier.fillMaxWidth()
+            colors = ButtonDefaults.buttonColors( containerColor = DarkBlue),
+            modifier = Modifier
+                .width(300.dp)
+                .height(50.dp)
         ) {
-            Text("Sign Up")
+            Text(
+                "SIGN UP",
+                fontSize = 22.sp
+            )
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
-        TextButton(onClick = { navController.navigate("login") }) {
-            Text("Already have an account? Login")
+        Row (
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+        ){
+
+            Text(
+                "Already have an account?",
+                fontSize = 20.sp,
+            )
+
+            TextButton(
+                onClick = {
+                    navController.navigate(Destinations.Login.route)
+                }
+            ) {
+                Text(
+                    "LOGIN",
+                    fontSize = 22.sp,
+                    color = DarkBlue
+                )
+            }
         }
 
         errorMessage?.let {
