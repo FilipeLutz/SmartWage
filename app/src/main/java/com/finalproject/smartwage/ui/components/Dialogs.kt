@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.finalproject.smartwage.ui.theme.DarkBlue
 
 @Composable
 fun LoadingDialog(isLoading: Boolean) {
@@ -30,13 +31,17 @@ fun LoadingDialog(isLoading: Boolean) {
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     // Semi-transparent black background
-                    .background(Color.Black.copy(alpha = 0.6f))
+                    .background(Color.Transparent)
             ) {
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    CircularProgressIndicator()
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .size(50.dp),
+                        color = DarkBlue
+                    )
                 }
 
             }
