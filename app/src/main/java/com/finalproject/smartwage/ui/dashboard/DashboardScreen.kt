@@ -80,11 +80,3 @@ fun DashboardScreen(
         }
     }
 }
-
-enum class BottomNavItem(val route: String, val iconRes: Int, val label: String) {
-    Dashboard("dashboard", R.drawable.home, "Dashboard"),
-    Job("job", R.drawable.job, "Job"),
-    Income("income", R.drawable.income, "Income"),
-    Expense("expense", R.drawable.expense, "Expense"),
-    Settings("settings", R.drawable.setting, "Settings")
-}

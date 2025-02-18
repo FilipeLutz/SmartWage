@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -33,6 +32,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.finalproject.smartwage.R
 import com.finalproject.smartwage.navigation.Destinations
+import com.finalproject.smartwage.ui.components.LoadingDialog
 import com.finalproject.smartwage.ui.theme.DarkBlue
 import com.finalproject.smartwage.utils.isValidEmail
 import com.finalproject.smartwage.utils.isValidPassword
@@ -247,10 +247,7 @@ fun LoginScreen(
 
         // Show loading indicator while logging in
         if (isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .padding(top = 8.dp)
-            )
+            LoadingDialog(isLoading = true)
         }
 
         Spacer(modifier = Modifier.height(30.dp))
