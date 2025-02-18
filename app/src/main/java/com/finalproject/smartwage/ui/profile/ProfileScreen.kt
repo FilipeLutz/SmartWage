@@ -7,6 +7,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -26,11 +27,13 @@ fun ProfileScreen(navController: NavController) {
                 .background(MaterialTheme.colorScheme.background)
         ) {
             Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp))
             {
-                Text("User profile details and settings.", style = MaterialTheme.typography.bodyLarge)
+                Text("User profile", style = MaterialTheme.typography.bodyLarge)
             }
         }
     }

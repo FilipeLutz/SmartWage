@@ -211,7 +211,6 @@ fun LoginScreen(
 
         // Login button
         Button(
-            // On click, check if email and password are valid
             onClick = {
                 if (!isValidEmail(email)) {
                     errorMessage = "Please enter a valid email"
@@ -220,29 +219,24 @@ fun LoginScreen(
                 } else {
                     isLoading = true
                     errorMessage = null
-                    // Call login function from view model
+
                     viewModel.login(email, password) { success ->
                         isLoading = false
                         if (success) {
                             val userId = viewModel.user.value?.id ?: ""
-                            navController.navigate(Destinations.Dashboard(userId).createRoute(userId))
+                            navController.navigate(Destinations.Dashboard(userId).createRoute(userId)) {
+                                popUpTo(Destinations.Login.route) { inclusive = true }
+                            }
                         } else {
                             errorMessage = "Login failed. Please try again."
                         }
                     }
                 }
             },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = DarkBlue
-            ),
-            modifier = Modifier
-                .width(300.dp)
-                .height(50.dp)
+            colors = ButtonDefaults.buttonColors(containerColor = DarkBlue),
+            modifier = Modifier.width(300.dp).height(50.dp)
         ) {
-            Text(
-                "LOGIN",
-                fontSize = 22.sp,
-            )
+            Text("LOGIN", fontSize = 22.sp)
         }
 
         // Show loading indicator while logging in

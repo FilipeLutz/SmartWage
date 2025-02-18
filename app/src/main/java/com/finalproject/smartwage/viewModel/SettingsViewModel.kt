@@ -10,13 +10,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val authRepo: AuthRepository,
-    private val userRepository: UserRepository
+
 ) : ViewModel() {
 
-    fun logout() {
-        viewModelScope.launch {
-            authRepo.logout()
-        }
-    }
 }
