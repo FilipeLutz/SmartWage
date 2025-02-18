@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.finalproject.smartwage.navigation.Destinations
@@ -115,11 +116,16 @@ fun DashboardBottomBar(navController: NavController) {
                     Image(
                         painter = painterResource(id = item.iconRes),
                         contentDescription = item.label,
-                        modifier = Modifier.size(32.dp)
+                        modifier = Modifier
+                            .size(45.dp)
+                            .padding(horizontal = 5.dp)
+                            .padding(top = 5.dp)
                     )
                 },
                 label = {
-                    Text(text = item.label)
+                    Text(
+                        text = item.label,
+                        fontSize = 14.sp)
                 }
             )
         }
@@ -129,6 +135,6 @@ fun DashboardBottomBar(navController: NavController) {
 enum class BottomNavItem(val route: String, val iconRes: Int, val label: String) {
     Dashboard(route = "dashboard/{userId}", R.drawable.home, "Dashboard"),
     Income(Destinations.Income.route, R.drawable.income, "Income"),
-    Expense(Destinations.Expense.route, R.drawable.expense, "Expense"),
+    Expense(Destinations.Expense.route, R.drawable.expense, "Expenses"),
     Settings(Destinations.Settings.route, R.drawable.setting, "Settings")
 }

@@ -16,6 +16,7 @@ import com.finalproject.smartwage.ui.components.DashboardCard
 import com.finalproject.smartwage.ui.components.DashboardTopBar
 import com.finalproject.smartwage.viewModel.DashboardViewModel
 import com.finalproject.smartwage.R
+import com.finalproject.smartwage.ui.components.TaxOwedCard
 
 @Composable
 fun DashboardScreen(
@@ -72,9 +73,9 @@ fun DashboardScreen(
                         color = MaterialTheme.colorScheme.primary
                     )
 
-                    DashboardCard(label = "Total Income", value = totalIncome, iconRes = R.drawable.income, navController = navController, destination = "income/$userId")
-                    DashboardCard(label = "Total Expenses", value = totalExpenses, iconRes = R.drawable.expense, navController = navController, destination = "expense/$userId")
-                    DashboardCard(label = "Tax Owed", value = taxOwed, iconRes = R.drawable.taxes, navController = navController, destination = "taxes/$userId")
+                    DashboardCard(label = "Total Income", value = totalIncome, iconRes = R.drawable.income, navController = navController, destination = "income")
+                    DashboardCard(label = "Total Expenses", value = totalExpenses, iconRes = R.drawable.expense, navController = navController, destination = "expense")
+                    TaxOwedCard(label = "Tax Owed", value = taxOwed, iconRes = R.drawable.taxes)
                 }
             }
         }
