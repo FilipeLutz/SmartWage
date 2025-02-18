@@ -3,7 +3,6 @@
 package com.finalproject.smartwage.ui.auth
 
 import android.os.Build
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -12,17 +11,15 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -33,9 +30,12 @@ import androidx.navigation.NavController
 import com.finalproject.smartwage.R
 import com.finalproject.smartwage.navigation.Destinations
 import com.finalproject.smartwage.ui.components.LoadingDialog
+import com.finalproject.smartwage.ui.components.MessageDialog
+import com.finalproject.smartwage.ui.components.MessageType
 import com.finalproject.smartwage.ui.theme.DarkBlue
+import com.finalproject.smartwage.utils.getPasswordErrorMessage
 import com.finalproject.smartwage.utils.isValidEmail
-import com.finalproject.smartwage.utils.isValidPassword
+import com.finalproject.smartwage.utils.validatePassword
 import com.finalproject.smartwage.viewModel.AuthViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -44,232 +44,166 @@ fun LoginScreen(
     navController: NavController,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
-
-    val context = LocalContext.current
-    val resetEmailSent by viewModel.resetEmailSent.collectAsState()
-
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(false) }
-    var errorMessage by remember { mutableStateOf<String?>(null) }
+    var message by remember { mutableStateOf<String?>(null) }
+    var messageType by remember { mutableStateOf(MessageType.TEXT) }
 
-    // Column for the login screen
+    // Function to show messages with correct type
+    fun showMessage(newMessage: String, type: MessageType) {
+        if (message != newMessage) {
+            message = newMessage
+            messageType = type
+        }
+    }
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        modifier = Modifier
-            .fillMaxSize(),
+        modifier = Modifier.fillMaxSize()
     ) {
-
         // Logo
         Image(
-            painter = painterResource(
-                id = R.drawable.homelogo
-            ),
+            painter = painterResource(id = R.drawable.homelogo),
             contentDescription = "Home Logo",
-            Modifier
-                .size(250.dp),
+            modifier = Modifier.size(250.dp)
         )
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        // Column for the email and password fields
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 25.dp)
-        ) {
-            // Email field
-            OutlinedTextField(
-                value = email,
-                onValueChange = {
-                    email = it
-                    errorMessage = null
-                },
-                label = {
-                    Text (
-                        "Email",
-                        fontSize = 18.sp
-                    )
-                },
-                textStyle = TextStyle(
-                    fontSize = 24.sp),
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
-
-            // Show error message if email is invalid
-            errorMessage?.let {
-                Text(
-                    it,
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier
-                        .padding(top = 8.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Password field
-            OutlinedTextField(
-                value = password,
-                onValueChange = {
-                    password = it
-                    errorMessage = null
-                },
-                label = {
-                    Text(
-                        "Password",
-                        fontSize = 18.sp,
-                    )
-                },
-                textStyle = TextStyle(
-                    fontSize = 24.sp),
-                // Hide or show password
-                visualTransformation =
-                if (isPasswordVisible) VisualTransformation.None
-                else PasswordVisualTransformation(),
-                trailingIcon = {
-                    IconButton(
-                        onClick = {
-                            isPasswordVisible = !isPasswordVisible }
-                    ) {
-                        val icon: Painter = if (isPasswordVisible) {
-                            painterResource(id = R.drawable.view)  // Visible icon
-                        } else {
-                            painterResource(id = R.drawable.hidden) // Hidden icon
-                        }
-                        // Icon for password visibility
-                        Image(
-                            painter = icon,
-                            contentDescription = "Toggle password visibility",
-                            Modifier
-                                .padding(end = 12.dp)
-                        )
-                    }
-                },
-                // Keyboard type for password
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
-
-            // Show confirmation message when reset email is sent
-            if (resetEmailSent) {
-                LaunchedEffect(Unit) {
-                    Toast.makeText(
-                        context, "Password reset email sent!",
-                            Toast.LENGTH_LONG).show()
-                }
-            }
-
-            // Show error message if email sending fails
-            errorMessage?.let { message ->
-                LaunchedEffect(message) {
-                    Toast.makeText(context, message,
-                        Toast.LENGTH_LONG).show()
-                }
-            }
-        }
+        // Email Field
+        OutlinedTextField(
+            value = email,
+            onValueChange = { email = it },
+            label = { Text("Email", fontSize = 20.sp) },
+            textStyle = TextStyle(fontSize = 24.sp),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 25.dp)
+        )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Row for forgot password
+        // Password Field
+        OutlinedTextField(
+            value = password,
+            onValueChange = { password = it },
+            label = { Text("Password", fontSize = 20.sp) },
+            textStyle = TextStyle(fontSize = 24.sp),
+            visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            trailingIcon = {
+                IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
+                    val icon = if (isPasswordVisible) painterResource(id = R.drawable.view)
+                    else painterResource(id = R.drawable.hidden)
+
+                    Image(
+                        painter = icon,
+                        contentDescription = "Toggle password visibility",
+                        modifier = Modifier.padding(end = 12.dp)
+                    )
+                }
+            },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 25.dp)
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Forgot Password
         Row(
             horizontalArrangement = Arrangement.End,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(end = 20.dp)
+            modifier = Modifier.fillMaxWidth().padding(end = 20.dp)
         ) {
-            // Forgot password button
             TextButton(
                 onClick = {
-                    if (email.isNotBlank()) {
+                    if (!isValidEmail(email)) {
+                        showMessage("Please enter a valid email", MessageType.ERROR)
+                    }
+                    else {
                         viewModel.sendPasswordResetEmail(email)
-                        Toast.makeText(context, "Password reset email sent!",
-                            Toast.LENGTH_LONG).show()
-                    } else {
-                        Toast.makeText(context, "Please enter your email",
-                            Toast.LENGTH_LONG).show()
+                        showMessage("Password reset email sent!", MessageType.TEXT)
                     }
                 }
             ) {
-                Text(
-                    "Forgot password?",
-                    fontSize = 18.sp,
-                    color = DarkBlue
-                )
+                Text("Forgot password?", fontSize = 18.sp, color = DarkBlue, fontWeight = FontWeight.Bold)
             }
         }
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        // Login button
         Button(
             onClick = {
+                // Validate email format
                 if (!isValidEmail(email)) {
-                    errorMessage = "Please enter a valid email"
-                } else if (!isValidPassword(password)) {
-                    errorMessage = "Password must be at least 8 characters"
-                } else {
-                    isLoading = true
-                    errorMessage = null
+                    showMessage("Please enter a valid email", MessageType.ERROR)
+                    return@Button
+                }
 
-                    viewModel.login(email, password) { success ->
-                        isLoading = false
-                        if (success) {
-                            val userId = viewModel.user.value?.id ?: ""
-                            navController.navigate(Destinations.Dashboard(userId).createRoute(userId)) {
-                                popUpTo(Destinations.Login.route) { inclusive = true }
-                            }
-                        } else {
-                            errorMessage = "Login failed. Please try again."
+                /*
+                // Check if email is registered
+                viewModel.isEmailRegistered(email) { isRegistered ->
+                    if (!isRegistered) {
+                        showMessage("Email is not registered", MessageType.ERROR)
+                        return@isEmailRegistered
+                    }
+                */
+
+                // Validate password
+                val passwordErrors = validatePassword(password)
+                if (passwordErrors.isNotEmpty()) {
+                    val errorMessage = getPasswordErrorMessage(passwordErrors)
+                    showMessage(errorMessage, MessageType.ERROR)
+                    return@Button
+                }
+
+                // If email and password are valid, proceed with login
+                isLoading = true
+                message = null
+
+                viewModel.login(email, password) { success ->
+                    isLoading = false
+                    if (success) {
+                        val userId = viewModel.user.value?.id ?: ""
+                        navController.navigate(Destinations.Dashboard(userId).createRoute(userId)) {
+                            popUpTo(Destinations.Login.route) { inclusive = true }
                         }
+                    } else {
+                        showMessage("Email and password do not match", MessageType.ERROR)
                     }
                 }
             },
             colors = ButtonDefaults.buttonColors(containerColor = DarkBlue),
             modifier = Modifier.width(300.dp).height(50.dp)
         ) {
-            Text("LOGIN", fontSize = 22.sp)
+            Text("LOGIN", fontSize = 22.sp, fontWeight = FontWeight.Bold)
         }
 
-        // Show loading indicator while logging in
+        // Show Loading Dialog
         if (isLoading) {
             LoadingDialog(isLoading = true)
         }
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        // Row for sign up
-        Row (
+        // Sign up row
+        Row(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-        ){
-            // Text for sign up
-            Text(
-                "Don't have an account?",
-                fontSize = 20.sp,
-            )
-            // Sign up button
-            TextButton(
-                onClick = {
-                    navController.navigate(Destinations.SignUp.route)
-                }
-            ) {
-                Text(
-                    "SIGN UP",
-                    fontSize = 22.sp,
-                    color = DarkBlue
-                )
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Don't have an account?", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
+            TextButton(onClick = { navController.navigate(Destinations.SignUp.route) }) {
+                Text("SIGN UP", fontSize = 22.sp, color = DarkBlue, fontWeight = FontWeight.Bold)
             }
         }
+    }
+
+    // Show Message Dialog (Only if a message exists)
+    message?.let {
+        MessageDialog(
+            message = it,
+            messageType = messageType,
+            onDismiss = { message = null }
+        )
     }
 }

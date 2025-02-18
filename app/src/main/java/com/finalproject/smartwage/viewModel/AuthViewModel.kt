@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@Suppress("DEPRECATION")
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository
@@ -91,6 +92,16 @@ class AuthViewModel @Inject constructor(
             _isLoading.value = false
         }
     }
+
+    /*
+    // Check if email is registered
+    fun isEmailRegistered(email: String, onResult: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            val isRegistered = authRepository.isEmailRegistered(email)
+            onResult(isRegistered)
+        }
+    }
+    */
 
     // Logout the user
     fun logout() {

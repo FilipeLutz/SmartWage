@@ -72,9 +72,9 @@ fun DashboardScreen(
                         color = MaterialTheme.colorScheme.primary
                     )
 
-                    DashboardCard(label = "Total Income", value = totalIncome, iconRes = R.drawable.income)
-                    DashboardCard(label = "Total Expenses", value = totalExpenses, iconRes = R.drawable.expense)
-                    DashboardCard(label = "Tax Owed", value = taxOwed, iconRes = R.drawable.taxes)
+                    DashboardCard(label = "Total Income", value = totalIncome, iconRes = R.drawable.income, navController = navController, destination = "income/$userId")
+                    DashboardCard(label = "Total Expenses", value = totalExpenses, iconRes = R.drawable.expense, navController = navController, destination = "expense/$userId")
+                    DashboardCard(label = "Tax Owed", value = taxOwed, iconRes = R.drawable.taxes, navController = navController, destination = "taxes/$userId")
                 }
             }
         }

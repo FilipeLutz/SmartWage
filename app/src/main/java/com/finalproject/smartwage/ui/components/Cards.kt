@@ -2,6 +2,7 @@ package com.finalproject.smartwage.ui.components
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,13 +23,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 @SuppressLint("DefaultLocale")
 @Composable
-fun DashboardCard(label: String, value: Double, iconRes: Int) {
+fun DashboardCard(
+    label: String,
+    value: Double,
+    iconRes: Int,
+    navController: NavController,
+    destination: String,
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable(onClick = {navController.navigate(destination)})
             .padding(horizontal = 16.dp),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),

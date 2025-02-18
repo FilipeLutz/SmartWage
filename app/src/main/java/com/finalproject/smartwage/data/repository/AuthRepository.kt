@@ -10,8 +10,10 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
+import timber.log.Timber
 import javax.inject.Inject
 
+@Suppress("DEPRECATION")
 class AuthRepository @Inject constructor(
     private val authService: AuthService,
     private val firestoreService: FirestoreService,
@@ -74,6 +76,25 @@ class AuthRepository @Inject constructor(
             AuthResult.Failure(e.message ?: "Sign-up failed. Please try again.")
         }
     }
+
+    /*
+    // Check if email is registered
+    suspend fun isEmailRegistered(email: String): Boolean {
+        return try {
+            val result = auth.fetchSignInMethodsForEmail(email.lowercase()).await()
+            Timber.tag("AuthRepository").d("Sign-in methods for $email: ${result.signInMethods}")
+            if (result.signInMethods.isNullOrEmpty()) {
+                Timber.tag("AuthRepository").d("No sign-in methods found for $email")
+            } else {
+                Timber.tag("AuthRepository").d("Email is registered with methods: ${result.signInMethods}")
+            }
+            result.signInMethods?.isNotEmpty() == true
+        } catch (e: Exception) {
+            Timber.tag("AuthRepository").e(e, "Error checking email registration: ${e.message}")
+            false
+        }
+    }
+    */
 
     // Logout the user
     suspend fun logout() {
