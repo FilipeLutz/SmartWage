@@ -54,6 +54,7 @@ fun LoginScreen(
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
+    // Column for the login screen
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -61,8 +62,11 @@ fun LoginScreen(
             .fillMaxSize(),
     ) {
 
+        // Logo
         Image(
-            painter = painterResource(id = R.drawable.homelogo),
+            painter = painterResource(
+                id = R.drawable.homelogo
+            ),
             contentDescription = "Home Logo",
             Modifier
                 .size(250.dp),
@@ -70,32 +74,46 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(30.dp))
 
+        // Column for the email and password fields
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp)
+                .padding(horizontal = 25.dp)
         ) {
+            // Email field
             OutlinedTextField(
                 value = email,
                 onValueChange = {
                     email = it
                     errorMessage = null
                 },
-                label = { Text ( "Email", fontSize = 18.sp)},
+                label = {
+                    Text (
+                        "Email",
+                        fontSize = 18.sp
+                    )
+                },
                 textStyle = TextStyle(
                     fontSize = 24.sp),
                 modifier = Modifier
                     .fillMaxWidth()
             )
 
+            // Show error message if email is invalid
             errorMessage?.let {
-                Text(it, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 8.dp))
+                Text(
+                    it,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                )
             }
 
             Spacer(modifier = Modifier.height(8.dp))
 
+            // Password field
             OutlinedTextField(
                 value = password,
                 onValueChange = {
@@ -110,16 +128,21 @@ fun LoginScreen(
                 },
                 textStyle = TextStyle(
                     fontSize = 24.sp),
-                visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                // Hide or show password
+                visualTransformation =
+                if (isPasswordVisible) VisualTransformation.None
+                else PasswordVisualTransformation(),
                 trailingIcon = {
                     IconButton(
-                        onClick = { isPasswordVisible = !isPasswordVisible })
-                    {
+                        onClick = {
+                            isPasswordVisible = !isPasswordVisible }
+                    ) {
                         val icon: Painter = if (isPasswordVisible) {
                             painterResource(id = R.drawable.view)  // Visible icon
                         } else {
                             painterResource(id = R.drawable.hidden) // Hidden icon
                         }
+                        // Icon for password visibility
                         Image(
                             painter = icon,
                             contentDescription = "Toggle password visibility",
@@ -128,6 +151,7 @@ fun LoginScreen(
                         )
                     }
                 },
+                // Keyboard type for password
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password
                 ),
@@ -135,48 +159,59 @@ fun LoginScreen(
                     .fillMaxWidth()
             )
 
-            Row(
-                horizontalArrangement = Arrangement.End,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                TextButton(
-                    onClick = {
-                        if (email.isNotBlank()) {
-                            viewModel.sendPasswordResetEmail(email)
-                            Toast.makeText(context, "Password reset email sent!", Toast.LENGTH_LONG).show()
-                        } else {
-                            Toast.makeText(context, "Please enter your email", Toast.LENGTH_LONG).show()
-                        }
-                    }
-                ) {
-                    Text(
-                        "Forgot password?",
-                        fontSize = 18.sp,
-                        color = DarkBlue
-                    )
-                }
-            }
-
             // Show confirmation message when reset email is sent
             if (resetEmailSent) {
                 LaunchedEffect(Unit) {
                     Toast.makeText(
                         context, "Password reset email sent!",
-                        Toast.LENGTH_LONG).show()
+                            Toast.LENGTH_LONG).show()
                 }
             }
 
             // Show error message if email sending fails
             errorMessage?.let { message ->
                 LaunchedEffect(message) {
-                    Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, message,
+                        Toast.LENGTH_LONG).show()
                 }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Row for forgot password
+        Row(
+            horizontalArrangement = Arrangement.End,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(end = 20.dp)
+        ) {
+            // Forgot password button
+            TextButton(
+                onClick = {
+                    if (email.isNotBlank()) {
+                        viewModel.sendPasswordResetEmail(email)
+                        Toast.makeText(context, "Password reset email sent!",
+                            Toast.LENGTH_LONG).show()
+                    } else {
+                        Toast.makeText(context, "Please enter your email",
+                            Toast.LENGTH_LONG).show()
+                    }
+                }
+            ) {
+                Text(
+                    "Forgot password?",
+                    fontSize = 18.sp,
+                    color = DarkBlue
+                )
             }
         }
 
         Spacer(modifier = Modifier.height(30.dp))
 
+        // Login button
         Button(
+            // On click, check if email and password are valid
             onClick = {
                 if (!isValidEmail(email)) {
                     errorMessage = "Please enter a valid email"
@@ -185,7 +220,7 @@ fun LoginScreen(
                 } else {
                     isLoading = true
                     errorMessage = null
-
+                    // Call login function from view model
                     viewModel.login(email, password) { success ->
                         isLoading = false
                         if (success) {
@@ -197,7 +232,9 @@ fun LoginScreen(
                     }
                 }
             },
-            colors = ButtonDefaults.buttonColors( containerColor = DarkBlue),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = DarkBlue
+            ),
             modifier = Modifier
                 .width(300.dp)
                 .height(50.dp)
@@ -208,24 +245,29 @@ fun LoginScreen(
             )
         }
 
+        // Show loading indicator while logging in
         if (isLoading) {
-            CircularProgressIndicator(modifier = Modifier.padding(top = 8.dp))
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .padding(top = 8.dp)
+            )
         }
 
         Spacer(modifier = Modifier.height(30.dp))
 
+        // Row for sign up
         Row (
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
         ){
-
+            // Text for sign up
             Text(
                 "Don't have an account?",
                 fontSize = 20.sp,
             )
-
+            // Sign up button
             TextButton(
                 onClick = {
                     navController.navigate(Destinations.SignUp.route)

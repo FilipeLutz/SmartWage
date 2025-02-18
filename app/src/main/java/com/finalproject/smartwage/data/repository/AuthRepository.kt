@@ -79,6 +79,7 @@ class AuthRepository @Inject constructor(
     suspend fun logout() {
         authService.logout()
         userDao.deleteUser(toString())
+        auth.signOut()
     }
 
     // Convert FirebaseUser to your app's User model

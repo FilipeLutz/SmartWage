@@ -29,7 +29,9 @@ import com.finalproject.smartwage.viewModel.AuthViewModel
 import com.finalproject.smartwage.ui.theme.DarkBlue
 
 @Composable
-fun SignUpScreen(navController: NavController, viewModel: AuthViewModel = hiltViewModel()) {
+fun SignUpScreen(
+    navController: NavController, viewModel: AuthViewModel = hiltViewModel()
+) {
     var name by remember { mutableStateOf("") }
     var phoneNumber by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -40,12 +42,15 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel = hiltVi
     var isPasswordVisible by remember { mutableStateOf(false) }
     var isConfirmPasswordVisible by remember { mutableStateOf(false) }
 
+    // Column for the sign up screen
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 25.dp),
     ) {
-
+        // SmartWage Logo
         Image(
             painter = painterResource(id = R.drawable.homelogo),
             contentDescription = "Home Logo",
@@ -54,22 +59,30 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel = hiltVi
         )
 
         Spacer(modifier = Modifier.height(16.dp))
-
+        // Create an Account Text
         Text(
             "Create an Account",
-            fontSize = 20.sp,
+            fontSize = 22.sp,
             fontWeight = FontWeight.SemiBold
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // OutlinedTextField for Name
         OutlinedTextField(
             value = name,
             onValueChange = { name = it },
-            label = { Text("Name") },
+            label = {
+                Text(
+                    "Name",
+                    fontSize = 18.sp
+                )
+            },
             textStyle = TextStyle(
-                fontSize = 24.sp),
-            modifier = Modifier.fillMaxWidth()
+                fontSize = 24.sp
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -77,10 +90,17 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel = hiltVi
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Email") },
+            label = {
+                Text(
+                    "Email",
+                    fontSize = 18.sp
+                )
+            },
             textStyle = TextStyle(
-                fontSize = 24.sp),
-            modifier = Modifier.fillMaxWidth()
+                fontSize = 24.sp
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -88,10 +108,17 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel = hiltVi
         OutlinedTextField(
             value = phoneNumber,
             onValueChange = { phoneNumber = it },
-            label = { Text("Phone Number") },
+            label = {
+                Text(
+                    "Phone Number",
+                    fontSize = 18.sp
+                )
+            },
             textStyle = TextStyle(
-                fontSize = 24.sp),
-            modifier = Modifier.fillMaxWidth()
+                fontSize = 24.sp
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -99,12 +126,20 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel = hiltVi
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Password") },
-            visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            label = {
+                Text(
+                    "Password",
+                    fontSize = 18.sp
+                )
+            },
+            visualTransformation =
+            if (isPasswordVisible) VisualTransformation.None
+            else PasswordVisualTransformation(),
             trailingIcon = {
                 IconButton(
-                    onClick = { isPasswordVisible = !isPasswordVisible })
-                {
+                    onClick = {
+                    isPasswordVisible = !isPasswordVisible }
+                ) {
                     val icon: Painter = if (isPasswordVisible) {
                         painterResource(id = R.drawable.view)  // Visible icon
                     } else {
@@ -119,8 +154,10 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel = hiltVi
                 }
             },
             textStyle = TextStyle(
-                fontSize = 24.sp),
-            modifier = Modifier.fillMaxWidth()
+                fontSize = 24.sp
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -128,12 +165,20 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel = hiltVi
         OutlinedTextField(
             value = confirmPassword,
             onValueChange = { confirmPassword = it },
-            label = { Text("Confirm Password") },
-            visualTransformation = if (isConfirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            label = {
+                Text(
+                    "Confirm Password",
+                    fontSize = 18.sp
+                )
+            },
+            visualTransformation =
+            if (isConfirmPasswordVisible) VisualTransformation.None
+            else PasswordVisualTransformation(),
             trailingIcon = {
                 IconButton(
-                    onClick = { isConfirmPasswordVisible = !isConfirmPasswordVisible })
-                {
+                    onClick = {
+                        isConfirmPasswordVisible = !isConfirmPasswordVisible }
+                ) {
                     val icon: Painter = if (isConfirmPasswordVisible) {
                         painterResource(id = R.drawable.view)  // Visible icon
                     } else {
@@ -148,8 +193,10 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel = hiltVi
                 }
             },
             textStyle = TextStyle(
-                fontSize = 24.sp),
-            modifier = Modifier.fillMaxWidth()
+                fontSize = 24.sp
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(30.dp))
@@ -163,11 +210,13 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel = hiltVi
 
                 viewModel.signUp(name, email, password, phoneNumber) { success ->
                     if (success) {
-                        navController.navigate("dashboard")
+                        navController.navigate("login")
                     }
                 }
             },
-            colors = ButtonDefaults.buttonColors( containerColor = DarkBlue),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = DarkBlue
+            ),
             modifier = Modifier
                 .width(300.dp)
                 .height(50.dp)
@@ -194,8 +243,7 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel = hiltVi
 
             TextButton(
                 onClick = {
-                    navController.navigate(Destinations.Login.route)
-                }
+                    navController.navigate(Destinations.Login.route) }
             ) {
                 Text(
                     "LOGIN",
@@ -206,11 +254,19 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel = hiltVi
         }
 
         errorMessage?.let {
-            Text(it, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 8.dp))
+            Text(
+                it,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier
+                    .padding(top = 8.dp)
+            )
         }
 
         if (isLoading) {
-            CircularProgressIndicator(modifier = Modifier.padding(top = 8.dp))
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .padding(top = 8.dp)
+            )
         }
     }
 }

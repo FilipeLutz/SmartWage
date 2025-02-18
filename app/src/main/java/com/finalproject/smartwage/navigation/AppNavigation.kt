@@ -1,5 +1,7 @@
 package com.finalproject.smartwage.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -16,6 +18,7 @@ import com.finalproject.smartwage.ui.profile.ProfileScreen
 import com.finalproject.smartwage.ui.settings.HelpScreen
 import com.finalproject.smartwage.ui.settings.SettingsScreen
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNavigation(navController: NavHostController) {
     NavHost(
@@ -34,7 +37,7 @@ fun AppNavigation(navController: NavHostController) {
             arguments = listOf(navArgument("userId") { type = NavType.StringType })
         ) { backStackEntry ->
             val userId = backStackEntry.arguments?.getString("userId") ?: ""
-            DashboardScreen(userId = userId)
+            DashboardScreen(userId = userId, navController = navController)
         }
 
         // Other Screens
