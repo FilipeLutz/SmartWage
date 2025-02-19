@@ -2,25 +2,26 @@ package com.finalproject.smartwage.ui.dashboard
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.finalproject.smartwage.R
 import com.finalproject.smartwage.ui.components.DashboardBottomBar
 import com.finalproject.smartwage.ui.components.DashboardCard
 import com.finalproject.smartwage.ui.components.DashboardTopBar
-import com.finalproject.smartwage.viewModel.DashboardViewModel
-import com.finalproject.smartwage.R
 import com.finalproject.smartwage.ui.components.TaxResultDialog
 import com.finalproject.smartwage.utils.TaxCalculator
+import com.finalproject.smartwage.viewModel.DashboardViewModel
 
 @Composable
 fun DashboardScreen(
@@ -74,130 +75,141 @@ fun DashboardScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(top = 20.dp) // Added top & bottom padding
+                        .padding(top = 20.dp)
+                        .padding(horizontal = 10.dp)
                 ) {
 
-                    Spacer(modifier = Modifier.height(3.dp))
+                    Spacer(modifier = Modifier.height(1.dp))
 
                     Text(
                         text = "Dashboard",
-                        fontSize = 32.sp,
+                        fontSize = 36.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
                     )
 
-                    LazyColumn(
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
+                    Spacer(modifier = Modifier.height(1.dp))
+
+                    // Tax Calculator Section
+                    Row(
+                        horizontalArrangement = Arrangement.Start,
                         modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 10.dp)
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
                     ) {
+                        Text(
+                            "Quick Tax Calculator",
+                            fontSize = 30.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
 
-                        item {
-                            Spacer(modifier = Modifier.height(5.dp))
-                        }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                    ) {
+                        OutlinedTextField(
+                            value = incomeInput,
+                            onValueChange = { incomeInput = it },
+                            label = { Text("Enter your income", fontSize = 18.sp) },
+                            textStyle = TextStyle(fontSize = 24.sp),
+                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                            modifier = Modifier
+                                .width(200.dp)
+                        )
 
-                        item {
-                            DashboardCard(
-                                label = "Income",
-                                value = totalIncome,
-                                iconRes = R.drawable.income,
-                                navController = navController,
-                                destination = "income"
-                            )
-                        }
-                        item {
-                            DashboardCard(
-                                label = "Expenses",
-                                value = totalExpenses,
-                                iconRes = R.drawable.expense,
-                                navController = navController,
-                                destination = "expense"
-                            )
-                        }
-                        item {
-                            DashboardCard(
-                                label = "Tax Paid",
-                                value = taxPaid,
-                                iconRes = R.drawable.taxes,
-                                navController = navController,
-                                destination = "taxcredit"
-                            )
-                        }
-
-                        // Show "Tax Owed" when it's > 0, otherwise show "Tax Back" when it's > 0
-                        if (taxOwed > 0.0) {
-                            item {
-                                DashboardCard(
-                                    label = "Tax Owed",
-                                    value = taxOwed,
-                                    iconRes = R.drawable.taxes,
-                                    navController = navController,
-                                    destination = "taxcredit"
-                                )
-                            }
-                        } else if (taxBack > 0.0) {
-                            item {
-                                DashboardCard(
-                                    label = "Tax Back",
-                                    value = taxBack,
-                                    iconRes = R.drawable.taxes,
-                                    navController = navController,
-                                    destination = "taxcredit"
-                                )
-                            }
-                        }
-
-                        // Tax Calculator Section
-                        item {
-                            Spacer(modifier = Modifier.height(10.dp))
-                            Text(
-                                "Quick Tax Calculator",
-                                fontSize = 26.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-
-                            Spacer(modifier = Modifier.height(8.dp))
-
-                            OutlinedTextField(
-                                value = incomeInput,
-                                onValueChange = { incomeInput = it },
-                                label = { Text("Enter your income (€)") },
-                                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                                modifier = Modifier.fillMaxWidth()
-                            )
-
-                            Spacer(modifier = Modifier.height(8.dp))
-
-                            Button(
-                                onClick = {
-                                    val income = incomeInput.toDoubleOrNull() ?: 0.0
+                        Button(
+                            onClick = {
+                                val income = incomeInput.toDoubleOrNull()
+                                if (income != null) {
                                     calculatedTax = TaxCalculator.calculateTax(income)
                                     showTaxDialog = true
-                                },
-                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text(
-                                    "Calculate Tax",
-                                    fontSize = 20.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-                        }
-
-                        item {
-                            Spacer(modifier = Modifier.height(7.dp))
+                                } else {
+                                    calculatedTax = null
+                                    showTaxDialog = false
+                                }
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                            modifier = Modifier
+                                .width(180.dp)
+                                .height(60.dp)
+                                .padding(8.dp)
+                        ) {
+                            Text(
+                                "Calculate",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold
+                            )
                         }
                     }
+
+                    Row(
+                        horizontalArrangement = Arrangement.Start,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                    ) {
+                        Text(
+                            "Overview",
+                            fontSize = 30.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    DashboardCard(
+                        label = "Income",
+                        value = totalIncome,
+                        iconRes = R.drawable.income,
+                        navController = navController,
+                        destination = "income"
+                    )
+
+                    DashboardCard(
+                        label = "Expenses",
+                        value = totalExpenses,
+                        iconRes = R.drawable.expense,
+                        navController = navController,
+                        destination = "expense"
+                    )
+
+                    DashboardCard(
+                        label = "Tax Paid",
+                        value = taxPaid,
+                        iconRes = R.drawable.taxes,
+                        navController = navController,
+                        destination = "taxcredit"
+                    )
+
+                    // Show "Tax Owed" when it's > 0, otherwise show "Tax Back" when it's > 0
+                    if (taxOwed > 0.0) {
+                        DashboardCard(
+                            label = "Tax Owed",
+                            value = taxOwed,
+                            iconRes = R.drawable.taxes,
+                            navController = navController,
+                            destination = "taxcredit"
+                        )
+                    } else if (taxBack > 0.0) {
+                        DashboardCard(
+                            label = "Tax Back",
+                            value = taxBack,
+                            iconRes = R.drawable.taxes,
+                            navController = navController,
+                            destination = "taxcredit"
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(7.dp))
                 }
             }
         }
     }
 
     // Call the TaxResultDialog composable if showTaxDialog is true
-    if (showTaxDialog) {
+    if (calculatedTax != null && showTaxDialog) {
         TaxResultDialog(calculatedTax = calculatedTax) {
             showTaxDialog = false
         }
