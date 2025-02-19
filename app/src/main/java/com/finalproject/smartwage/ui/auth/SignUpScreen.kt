@@ -1,22 +1,23 @@
 package com.finalproject.smartwage.ui.auth
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
@@ -25,9 +26,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.finalproject.smartwage.R
 import com.finalproject.smartwage.navigation.Destinations
-import com.finalproject.smartwage.viewModel.AuthViewModel
+import com.finalproject.smartwage.ui.components.ErrorMessageDialog
+import com.finalproject.smartwage.ui.components.LoadingDialog
+import com.finalproject.smartwage.ui.components.MessageType
+import com.finalproject.smartwage.ui.components.PasswordErrorDialog
 import com.finalproject.smartwage.ui.theme.DarkBlue
+import com.finalproject.smartwage.utils.PasswordValidationError
+import com.finalproject.smartwage.utils.isValidEmail
+import com.finalproject.smartwage.utils.validatePassword
+import com.finalproject.smartwage.viewModel.AuthViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SignUpScreen(
     navController: NavController, viewModel: AuthViewModel = hiltViewModel()
@@ -38,11 +47,21 @@ fun SignUpScreen(
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
-    var errorMessage by remember { mutableStateOf<String?>(null) }
+    var message by remember { mutableStateOf<String?>(null) }
+    var messageType by remember { mutableStateOf(MessageType.TEXT) }
     var isPasswordVisible by remember { mutableStateOf(false) }
     var isConfirmPasswordVisible by remember { mutableStateOf(false) }
+    var passwordErrors by remember { mutableStateOf<List<PasswordValidationError>>(emptyList()) }
+    val emailExists by viewModel.emailExists.collectAsState()
 
-    // Column for the sign up screen
+    // Function to show messages
+    fun showMessage(newMessage: String, type: MessageType) {
+        if (message != newMessage) {
+            message = newMessage
+            messageType = type
+        }
+    }
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -50,223 +69,173 @@ fun SignUpScreen(
             .fillMaxSize()
             .padding(horizontal = 25.dp),
     ) {
-        // SmartWage Logo
+        // Logo
         Image(
             painter = painterResource(id = R.drawable.homelogo),
             contentDescription = "Home Logo",
-            Modifier
-                .size(250.dp),
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-        // Create an Account Text
-        Text(
-            "Create an Account",
-            fontSize = 26.sp,
-            fontWeight = FontWeight.SemiBold
+            Modifier.size(250.dp)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // OutlinedTextField for Name
+        Text("Create an Account", fontSize = 26.sp, fontWeight = FontWeight.SemiBold)
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Name Field
         OutlinedTextField(
             value = name,
             onValueChange = { name = it },
-            label = {
-                Text(
-                    "Name",
-                    fontSize = 18.sp
-                )
-            },
-            textStyle = TextStyle(
-                fontSize = 24.sp
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
+            label = { Text("Name *", fontSize = 18.sp) },
+            textStyle = TextStyle(fontSize = 24.sp),
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
+        // Email Field
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = {
-                Text(
-                    "Email",
-                    fontSize = 18.sp
-                )
-            },
-            textStyle = TextStyle(
-                fontSize = 24.sp
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
+            label = { Text("Email *", fontSize = 18.sp) },
+            textStyle = TextStyle(fontSize = 24.sp),
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
+        // Phone Number Field (Optional)
         OutlinedTextField(
             value = phoneNumber,
             onValueChange = { phoneNumber = it },
-            label = {
-                Text(
-                    "Phone Number",
-                    fontSize = 18.sp
-                )
-            },
-            textStyle = TextStyle(
-                fontSize = 24.sp
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
+            label = { Text("Phone Number (Optional)", fontSize = 18.sp) },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+            textStyle = TextStyle(fontSize = 24.sp),
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
+        // Password Field
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = {
-                Text(
-                    "Password",
-                    fontSize = 18.sp
-                )
-            },
-            visualTransformation =
-            if (isPasswordVisible) VisualTransformation.None
-            else PasswordVisualTransformation(),
+            label = { Text("Password *", fontSize = 18.sp) },
+            textStyle = TextStyle(fontSize = 24.sp),
+            visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
-                IconButton(
-                    onClick = {
-                    isPasswordVisible = !isPasswordVisible }
-                ) {
-                    val icon: Painter = if (isPasswordVisible) {
-                        painterResource(id = R.drawable.view)  // Visible icon
-                    } else {
-                        painterResource(id = R.drawable.hidden) // Hidden icon
-                    }
-                    Image(
-                        painter = icon,
-                        contentDescription = "Toggle password visibility",
-                        Modifier
-                            .padding(end = 12.dp)
-                    )
+                IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
+                    val icon = if (isPasswordVisible) painterResource(id = R.drawable.view)
+                    else painterResource(id = R.drawable.hidden)
+                    Image(painter = icon, contentDescription = "Toggle password visibility", Modifier.padding(end = 12.dp))
                 }
             },
-            textStyle = TextStyle(
-                fontSize = 24.sp
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
+        // Confirm Password Field
         OutlinedTextField(
             value = confirmPassword,
             onValueChange = { confirmPassword = it },
-            label = {
-                Text(
-                    "Confirm Password",
-                    fontSize = 18.sp
-                )
-            },
-            visualTransformation =
-            if (isConfirmPasswordVisible) VisualTransformation.None
-            else PasswordVisualTransformation(),
+            label = { Text("Confirm Password *", fontSize = 18.sp) },
+            textStyle = TextStyle(fontSize = 24.sp),
+            visualTransformation = if (isConfirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
-                IconButton(
-                    onClick = {
-                        isConfirmPasswordVisible = !isConfirmPasswordVisible }
-                ) {
-                    val icon: Painter = if (isConfirmPasswordVisible) {
-                        painterResource(id = R.drawable.view)  // Visible icon
-                    } else {
-                        painterResource(id = R.drawable.hidden) // Hidden icon
-                    }
-                    Image(
-                        painter = icon,
-                        contentDescription = "Toggle password visibility",
-                        Modifier
-                            .padding(end = 12.dp)
-                    )
+                IconButton(onClick = { isConfirmPasswordVisible = !isConfirmPasswordVisible }) {
+                    val icon = if (isConfirmPasswordVisible) painterResource(id = R.drawable.view)
+                    else painterResource(id = R.drawable.hidden)
+                    Image(painter = icon, contentDescription = "Toggle password visibility", Modifier.padding(end = 12.dp))
                 }
             },
-            textStyle = TextStyle(
-                fontSize = 24.sp
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(35.dp))
 
+        // Sign-Up Button
         Button(
             onClick = {
-                if (password != confirmPassword) {
-                    errorMessage = "Passwords do not match"
+                if (email.isBlank() || name.isBlank() || password.isBlank() || confirmPassword.isBlank()) {
+                    showMessage("All fields with * are required!", MessageType.ERROR)
                     return@Button
                 }
 
+                // Validate email format
+                if (!isValidEmail(email)) {
+                    showMessage("Please enter a valid email", MessageType.ERROR)
+                    return@Button
+                }
+
+                if (password != confirmPassword) {
+                    showMessage("Passwords do not match", MessageType.ERROR)
+                    return@Button
+                }
+
+                passwordErrors = validatePassword(password)
+                if (passwordErrors.isNotEmpty()) {
+                    return@Button
+                }
+
+                viewModel.isEmailRegistered(email)
+                if (emailExists == true) {
+                    showMessage("Email is already in use", MessageType.ERROR)
+                    return@Button
+                }
+
+                isLoading = true
+                message = null
+
                 viewModel.signUp(name, email, password, phoneNumber) { success ->
+                    isLoading = false
                     if (success) {
-                        navController.navigate("login")
+                        navController.navigate(Destinations.Login.route)
+                    } else {
+                        showMessage("Sign-up failed, please try again.", MessageType.ERROR)
                     }
                 }
             },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = DarkBlue
-            ),
-            modifier = Modifier
-                .width(300.dp)
-                .height(50.dp)
+            colors = ButtonDefaults.buttonColors(containerColor = DarkBlue),
+            modifier = Modifier.width(300.dp).height(50.dp)
         ) {
-            Text(
-                "SIGN UP",
-                fontSize = 22.sp
-            )
+            Text("SIGN UP", fontSize = 22.sp, fontWeight = FontWeight.Bold)
         }
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        Row (
+        // Login Navigation
+        Row(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-        ){
-
-            Text(
-                "Already have an account?",
-                fontSize = 20.sp,
-            )
-
-            TextButton(
-                onClick = {
-                    navController.navigate(Destinations.Login.route) }
-            ) {
-                Text(
-                    "LOGIN",
-                    fontSize = 22.sp,
-                    color = DarkBlue
-                )
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Already have an account?", fontSize = 20.sp)
+            TextButton(onClick = { navController.navigate(Destinations.Login.route) }) {
+                Text("LOGIN", fontSize = 22.sp, color = DarkBlue)
             }
         }
 
-        errorMessage?.let {
-            Text(
-                it,
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier
-                    .padding(top = 8.dp)
-            )
-        }
-
+        // Show Loading Indicator
         if (isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .padding(top = 8.dp)
-            )
+            LoadingDialog(isLoading = true)
         }
+    }
+
+    // Show General Error Message Dialog
+    if (message != null && passwordErrors.isEmpty()) {
+        ErrorMessageDialog(
+            message = message,
+            messageType = messageType,
+            onDismiss = { message = null }
+        )
+    }
+
+    // Show Password Error Dialog
+    if (passwordErrors.isNotEmpty()) {
+        PasswordErrorDialog(
+            errors = passwordErrors,
+            onDismiss = { passwordErrors = emptyList() }
+        )
     }
 }

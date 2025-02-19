@@ -29,12 +29,12 @@ class AuthRepository @Inject constructor(
         return try {
             auth.sendPasswordResetEmail(email).await()
             true
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to send reset email")
             false
         }
     }
 
-    // Fetch the current user
     fun getCurrentUser(): Flow<User?> = callbackFlow {
         val listener = FirebaseAuth.AuthStateListener { auth ->
             trySend(auth.currentUser?.toUser())
@@ -43,7 +43,6 @@ class AuthRepository @Inject constructor(
         awaitClose { FirebaseAuth.getInstance().removeAuthStateListener(listener) }
     }
 
-    // Login with email and password
     suspend fun login(email: String, password: String): AuthResult {
         return try {
             val result = authService.login(email, password)
@@ -56,13 +55,18 @@ class AuthRepository @Inject constructor(
                 AuthResult.Failure((result as AuthService.AuthResult.Failure).errorMessage)
             }
         } catch (e: Exception) {
-            AuthResult.Failure(e.message ?: "Login failed. Please try again.")
+            Timber.e(e, "Login error")
+            AuthResult.Failure("Login failed. Please try again.")
         }
     }
 
-    // Sign up with name, email, password, and phoneNumber
     suspend fun signUp(name: String, email: String, password: String, phoneNumber: String): AuthResult {
         return try {
+            val isRegistered = isEmailRegistered(email)
+            if (isRegistered) {
+                return AuthResult.Failure("This email is already registered.")
+            }
+
             val result = authService.signUp(name, email, password)
             if (result is AuthService.AuthResult.Success) {
                 val user = result.user.toUser(name, phoneNumber)
@@ -73,37 +77,28 @@ class AuthRepository @Inject constructor(
                 AuthResult.Failure((result as AuthService.AuthResult.Failure).errorMessage)
             }
         } catch (e: Exception) {
-            AuthResult.Failure(e.message ?: "Sign-up failed. Please try again.")
+            Timber.e(e, "Sign-up error")
+            AuthResult.Failure("Sign-up failed. Please try again.")
         }
     }
 
-    /*
-    // Check if email is registered
     suspend fun isEmailRegistered(email: String): Boolean {
         return try {
             val result = auth.fetchSignInMethodsForEmail(email.lowercase()).await()
             Timber.tag("AuthRepository").d("Sign-in methods for $email: ${result.signInMethods}")
-            if (result.signInMethods.isNullOrEmpty()) {
-                Timber.tag("AuthRepository").d("No sign-in methods found for $email")
-            } else {
-                Timber.tag("AuthRepository").d("Email is registered with methods: ${result.signInMethods}")
-            }
             result.signInMethods?.isNotEmpty() == true
         } catch (e: Exception) {
-            Timber.tag("AuthRepository").e(e, "Error checking email registration: ${e.message}")
+            Timber.e(e, "Error checking email registration")
             false
         }
     }
-    */
 
-    // Logout the user
     suspend fun logout() {
         authService.logout()
         userDao.deleteUser(toString())
         auth.signOut()
     }
 
-    // Convert FirebaseUser to your app's User model
     private fun FirebaseUser.toUser(name: String = "", phoneNumber: String = ""): User {
         return User(
             id = uid,

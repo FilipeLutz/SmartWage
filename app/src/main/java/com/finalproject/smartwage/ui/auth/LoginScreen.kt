@@ -30,7 +30,6 @@ import androidx.navigation.NavController
 import com.finalproject.smartwage.R
 import com.finalproject.smartwage.navigation.Destinations
 import com.finalproject.smartwage.ui.components.ErrorMessageDialog
-import com.finalproject.smartwage.ui.components.LoadingDialog
 import com.finalproject.smartwage.ui.components.MessageType
 import com.finalproject.smartwage.ui.components.PasswordErrorDialog
 import com.finalproject.smartwage.ui.theme.DarkBlue
@@ -162,7 +161,7 @@ fun LoginScreen(
                 }
 
                 // If email and password are valid, proceed with login
-                isLoading = true
+                //isLoading = true
                 message = null
 
                 viewModel.login(email, password) { success ->
@@ -183,10 +182,10 @@ fun LoginScreen(
             Text("LOGIN", fontSize = 22.sp, fontWeight = FontWeight.Bold)
         }
 
-        // Show Loading Dialog
-        if (isLoading) {
-            LoadingDialog(isLoading = true)
-        }
+//        Show Loading Dialog
+//        if (isLoading) {
+//            LoadingDialog(isLoading = true)
+//        }
 
         Spacer(modifier = Modifier.height(30.dp))
 

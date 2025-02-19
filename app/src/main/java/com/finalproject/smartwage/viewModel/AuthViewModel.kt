@@ -17,11 +17,9 @@ class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    // StateFlow to observe user data
     private val _user = MutableStateFlow<User?>(null)
     val user: StateFlow<User?> = _user.asStateFlow()
 
-    // StateFlow for loading state
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
@@ -30,6 +28,9 @@ class AuthViewModel @Inject constructor(
 
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
+
+    private val _emailExists = MutableStateFlow<Boolean?>(null)
+    val emailExists: StateFlow<Boolean?> = _emailExists.asStateFlow()
 
     fun sendPasswordResetEmail(email: String) {
         viewModelScope.launch {
@@ -42,7 +43,6 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    // Fetch current user inside a coroutine
     private fun getCurrentUser() {
         viewModelScope.launch {
             authRepository.getCurrentUser().collect { user ->
@@ -51,7 +51,6 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    // Login with email and password
     fun login(email: String, password: String, onResult: (Boolean) -> Unit) {
         viewModelScope.launch {
             _isLoading.value = true
@@ -69,7 +68,6 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    // Sign up with name, email, password, and phoneNumber
     fun signUp(
         name: String,
         email: String,
@@ -80,6 +78,15 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             _isLoading.value = true
             _errorMessage.value = null
+
+            val isRegistered = authRepository.isEmailRegistered(email)
+            _emailExists.value = isRegistered
+
+            if (isRegistered) {
+                _errorMessage.value = "This email is already registered."
+                _isLoading.value = false
+                return@launch
+            }
 
             val result = authRepository.signUp(name, email, password, phoneNumber)
             if (result is AuthRepository.AuthResult.Success) {
@@ -93,17 +100,15 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    /*
-    // Check if email is registered
-    fun isEmailRegistered(email: String, onResult: (Boolean) -> Unit) {
+    fun isEmailRegistered(email: String) {
         viewModelScope.launch {
+            _isLoading.value = true
             val isRegistered = authRepository.isEmailRegistered(email)
-            onResult(isRegistered)
+            _emailExists.value = isRegistered
+            _isLoading.value = false
         }
     }
-    */
 
-    // Logout the user
     fun logout() {
         viewModelScope.launch {
             authRepository.logout()
