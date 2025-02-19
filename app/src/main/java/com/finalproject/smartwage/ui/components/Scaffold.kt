@@ -3,10 +3,14 @@ package com.finalproject.smartwage.ui.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -21,9 +25,11 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -53,7 +59,10 @@ fun DashboardTopBar(
             )
         },
         actions = {
-            Box {
+            Box (
+                modifier = Modifier
+                    .offset(x = (-8).dp)
+            ){
                 IconButton(
                     onClick = { menuExpanded.value = true }
                 ) {
@@ -61,8 +70,7 @@ fun DashboardTopBar(
                         imageVector = Icons.Default.AccountCircle,
                         contentDescription = "User Profile",
                         modifier = Modifier
-                            .size(50.dp)
-                            .padding(end = 5.dp),
+                            .size(40.dp),
                         tint = Color.White,
                     )
                 }
@@ -73,24 +81,39 @@ fun DashboardTopBar(
                     modifier = Modifier
                         .background(MaterialTheme.colorScheme.surfaceVariant)
                 ) {
-                    // Account Button
+                    // Profile Button
                     DropdownMenuItem(
-                        text = { Text("Account") },
+                        text = { Text("Profile", fontSize = 22.sp) },
                         onClick = {
                             menuExpanded.value = false
                             navController.navigate(Destinations.Profile.route)
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Person,
+                                contentDescription = "Profile Icon"
+                            )
                         }
                     )
 
+                    Spacer(modifier = Modifier.size(10.dp))
+
                     // Logout Button
                     DropdownMenuItem(
-                        text = { Text("Logout", color = Color.Red) },
+                        text = { Text("Logout", color = Color.Red, fontSize = 22.sp) },
                         onClick = {
                             menuExpanded.value = false
                             viewModel.logout()
                             navController.navigate(Destinations.Login.route) {
                                 popUpTo(Destinations.Login.route) { inclusive = true }
                             }
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.ExitToApp,
+                                contentDescription = "Logout Icon",
+                                tint = Color.Red
+                            )
                         }
                     )
                 }

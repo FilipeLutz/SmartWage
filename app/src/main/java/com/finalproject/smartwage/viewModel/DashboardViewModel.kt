@@ -27,9 +27,17 @@ class DashboardViewModel @Inject constructor(
     private val _totalExpenses = MutableStateFlow(0.0)
     val totalExpenses: StateFlow<Double> = _totalExpenses
 
+    // State for tax paid
+    private val _taxPaid = MutableStateFlow(0.0)
+    val taxPaid: StateFlow<Double> = _taxPaid
+
     // State for tax owed
     private val _taxOwed = MutableStateFlow(0.0)
     val taxOwed: StateFlow<Double> = _taxOwed
+
+    // State for tax back
+    private val _taxBack = MutableStateFlow(0.0)
+    val taxBack: StateFlow<Double> = _taxBack
 
     // State for loading
     private val _isLoading = MutableStateFlow(false)
