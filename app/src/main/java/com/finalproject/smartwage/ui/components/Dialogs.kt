@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.finalproject.smartwage.ui.theme.DarkBlue
+import com.finalproject.smartwage.utils.PasswordValidationError
 import kotlinx.coroutines.delay
 
 @Composable
@@ -63,7 +64,7 @@ fun LoadingDialog(isLoading: Boolean) {
 }
 
 @Composable
-fun MessageDialog(
+fun ErrorMessageDialog(
     message: String?,
     messageType: MessageType,
     onDismiss: () -> Unit
@@ -117,6 +118,18 @@ fun MessageDialog(
     }
 }
 
+@Composable
+fun PasswordErrorDialog(
+    errors: List<PasswordValidationError>,
+    onDismiss: () -> Unit
+) {
+    if (errors.isNotEmpty()) {
+        Dialog(onDismissRequest = onDismiss) {
+            PasswordErrorCard(errors = errors, onDismiss = onDismiss)
+        }
+    }
+}
+
 enum class MessageType {
     TEXT,
     SUCCESS,
@@ -140,7 +153,7 @@ fun TaxResultDialog(
                 .width(400.dp)
         ) {
             Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
@@ -183,6 +196,13 @@ fun TaxResultDialog(
                         text = "There is also a tax credit of €4,000 that will be deducted from the total tax to pay.",
                         fontSize = 19.sp,
                         color = DarkBlue,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "There is no tax relief calculated in this tax rate. For a complete tax calculation, please add your incomes and expenses.",
+                        fontSize = 19.sp,
+                        color = Color.Blue,
                         fontWeight = FontWeight.SemiBold
                     )
                 }

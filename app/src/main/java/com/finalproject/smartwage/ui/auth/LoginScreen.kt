@@ -29,11 +29,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.finalproject.smartwage.R
 import com.finalproject.smartwage.navigation.Destinations
+import com.finalproject.smartwage.ui.components.ErrorMessageDialog
 import com.finalproject.smartwage.ui.components.LoadingDialog
-import com.finalproject.smartwage.ui.components.MessageDialog
 import com.finalproject.smartwage.ui.components.MessageType
+import com.finalproject.smartwage.ui.components.PasswordErrorDialog
 import com.finalproject.smartwage.ui.theme.DarkBlue
-import com.finalproject.smartwage.utils.getPasswordErrorMessage
+import com.finalproject.smartwage.utils.PasswordValidationError
 import com.finalproject.smartwage.utils.isValidEmail
 import com.finalproject.smartwage.utils.validatePassword
 import com.finalproject.smartwage.viewModel.AuthViewModel
@@ -50,6 +51,7 @@ fun LoginScreen(
     var isLoading by remember { mutableStateOf(false) }
     var message by remember { mutableStateOf<String?>(null) }
     var messageType by remember { mutableStateOf(MessageType.TEXT) }
+    var passwordErrors by remember { mutableStateOf<List<PasswordValidationError>>(emptyList()) }
 
     // Function to show messages with correct type
     fun showMessage(newMessage: String, type: MessageType) {
@@ -118,19 +120,24 @@ fun LoginScreen(
                 onClick = {
                     if (!isValidEmail(email)) {
                         showMessage("Please enter a valid email", MessageType.ERROR)
-                    }
-                    else {
+                    } else {
                         viewModel.sendPasswordResetEmail(email)
                         showMessage("Password reset email sent!", MessageType.TEXT)
                     }
                 }
             ) {
-                Text("Forgot password?", fontSize = 18.sp, color = DarkBlue, fontWeight = FontWeight.Bold)
+                Text(
+                    "Forgot password?",
+                    fontSize = 18.sp,
+                    color = DarkBlue,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
 
         Spacer(modifier = Modifier.height(30.dp))
 
+        // Login Button
         Button(
             onClick = {
                 // Validate email format
@@ -140,7 +147,7 @@ fun LoginScreen(
                 }
 
                 /*
-                // Check if email is registered
+                // Ceck if email is registered
                 viewModel.isEmailRegistered(email) { isRegistered ->
                     if (!isRegistered) {
                         showMessage("Email is not registered", MessageType.ERROR)
@@ -149,11 +156,9 @@ fun LoginScreen(
                 */
 
                 // Validate password
-                val passwordErrors = validatePassword(password)
+                passwordErrors = validatePassword(password)
                 if (passwordErrors.isNotEmpty()) {
-                    val errorMessage = getPasswordErrorMessage(passwordErrors)
-                    showMessage(errorMessage, MessageType.ERROR)
-                    return@Button
+                    return@Button // Stops execution if password has errors
                 }
 
                 // If email and password are valid, proceed with login
@@ -168,7 +173,7 @@ fun LoginScreen(
                             popUpTo(Destinations.Login.route) { inclusive = true }
                         }
                     } else {
-                        showMessage("Email and password do not match", MessageType.ERROR)
+                        showMessage("Email or Password wrong", MessageType.ERROR)
                     }
                 }
             },
@@ -198,12 +203,20 @@ fun LoginScreen(
         }
     }
 
-    // Show Message Dialog (Only if a message exists)
-    message?.let {
-        MessageDialog(
-            message = it,
+    // Show General Error Message Dialog
+    if (message != null && passwordErrors.isEmpty()) {
+        ErrorMessageDialog(
+            message = message,
             messageType = messageType,
             onDismiss = { message = null }
+        )
+    }
+
+    // Show Password Error Dialog
+    if (passwordErrors.isNotEmpty()) {
+        PasswordErrorDialog(
+            errors = passwordErrors,
+            onDismiss = { passwordErrors = emptyList() }
         )
     }
 }

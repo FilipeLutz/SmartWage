@@ -17,7 +17,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.finalproject.smartwage.R
 import com.finalproject.smartwage.ui.components.DashboardBottomBar
-import com.finalproject.smartwage.ui.components.DashboardCard
+import com.finalproject.smartwage.ui.components.DashboardCards
 import com.finalproject.smartwage.ui.components.DashboardTopBar
 import com.finalproject.smartwage.ui.components.TaxResultDialog
 import com.finalproject.smartwage.utils.TaxCalculator
@@ -159,7 +159,7 @@ fun DashboardScreen(
                         )
                     }
 
-                    DashboardCard(
+                    DashboardCards(
                         label = "Income",
                         value = totalIncome,
                         iconRes = R.drawable.income,
@@ -167,7 +167,7 @@ fun DashboardScreen(
                         destination = "income"
                     )
 
-                    DashboardCard(
+                    DashboardCards(
                         label = "Expenses",
                         value = totalExpenses,
                         iconRes = R.drawable.expense,
@@ -175,7 +175,7 @@ fun DashboardScreen(
                         destination = "expense"
                     )
 
-                    DashboardCard(
+                    DashboardCards(
                         label = "Tax Paid",
                         value = taxPaid,
                         iconRes = R.drawable.taxes,
@@ -185,7 +185,7 @@ fun DashboardScreen(
 
                     // Show "Tax Owed" when it's > 0, otherwise show "Tax Back" when it's > 0
                     if (taxOwed > 0.0) {
-                        DashboardCard(
+                        DashboardCards(
                             label = "Tax Owed",
                             value = taxOwed,
                             iconRes = R.drawable.taxes,
@@ -193,7 +193,7 @@ fun DashboardScreen(
                             destination = "taxcredit"
                         )
                     } else if (taxBack > 0.0) {
-                        DashboardCard(
+                        DashboardCards(
                             label = "Tax Back",
                             value = taxBack,
                             iconRes = R.drawable.taxes,

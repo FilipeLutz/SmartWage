@@ -41,35 +41,3 @@ fun validatePassword(password: String): List<PasswordValidationError> {
 
     return errors
 }
-
-// Error messages for password validation
-fun getPasswordErrorMessage(
-    errors: List<PasswordValidationError>): String
-{
-    return when {
-        errors.isEmpty() -> "Password is valid."
-        errors.size == 1 -> when (errors[0]) {
-            PasswordValidationError.TOO_SHORT ->
-                "Password must be at least 8 characters long."
-            PasswordValidationError.NO_UPPERCASE ->
-                "Password must contain at least one uppercase letter."
-            PasswordValidationError.NO_DIGIT ->
-                "Password must contain at least one digit."
-            PasswordValidationError.NO_SPECIAL_CHARACTER ->
-                "Password must contain at least one special character."
-        }
-        else -> "Password is invalid for the following reasons:\n" +
-                errors.joinToString("\n") { error ->
-                    when (error) {
-                        PasswordValidationError.TOO_SHORT ->
-                            "* Must be at least 8 characters long."
-                        PasswordValidationError.NO_UPPERCASE ->
-                            "* Must contain at least one uppercase letter."
-                        PasswordValidationError.NO_DIGIT ->
-                            "* Must contain at least one digit."
-                        PasswordValidationError.NO_SPECIAL_CHARACTER ->
-                            "* Must contain at least one special character."
-                    }
-                }
-    }
-}

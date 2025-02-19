@@ -62,7 +62,7 @@ fun SignUpScreen(
         // Create an Account Text
         Text(
             "Create an Account",
-            fontSize = 22.sp,
+            fontSize = 26.sp,
             fontWeight = FontWeight.SemiBold
         )
 
@@ -199,7 +199,7 @@ fun SignUpScreen(
                 .fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(35.dp))
 
         Button(
             onClick = {
