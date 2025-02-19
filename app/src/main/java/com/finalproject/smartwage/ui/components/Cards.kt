@@ -92,8 +92,9 @@ fun PasswordErrorCard(errors: List<PasswordValidationError>, onDismiss: () -> Un
             .fillMaxWidth()
     ) {
         Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(10.dp),
             modifier = Modifier.padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
                 horizontalArrangement = Arrangement.Start,
@@ -110,11 +111,11 @@ fun PasswordErrorCard(errors: List<PasswordValidationError>, onDismiss: () -> Un
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            Column (
+            Column(
                 verticalArrangement = Arrangement.spacedBy(6.dp),
                 horizontalAlignment = Alignment.Start,
                 modifier = Modifier.fillMaxWidth()
-            ){
+            ) {
                 errors.forEach { error ->
                     Text(
                         text = when (error) {
@@ -130,22 +131,24 @@ fun PasswordErrorCard(errors: List<PasswordValidationError>, onDismiss: () -> Un
                 }
             }
 
-            Spacer(modifier = Modifier.height(15.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             Row (
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.End,
-                modifier = Modifier
-                    .padding(end = 8.dp)
+                horizontalArrangement = Arrangement.Center
             ){
                 Button(
                     onClick = onDismiss,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
-                    modifier = Modifier.fillMaxWidth()
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Red
+                    ),
+                    modifier = Modifier
+                        .width(100.dp)
+                        .height(50.dp)
                 ) {
                     Text(
-                        "CLOSE",
-                        fontSize = 18.sp,
+                        "OK",
+                        fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
                     )
