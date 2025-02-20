@@ -17,7 +17,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.finalproject.smartwage.R
 import com.finalproject.smartwage.ui.components.DashboardBottomBar
-import com.finalproject.smartwage.ui.components.DashboardCards
+import com.finalproject.smartwage.ui.components.cards.DashboardCards
 import com.finalproject.smartwage.ui.components.DashboardTopBar
 import com.finalproject.smartwage.ui.components.TaxResultDialog
 import com.finalproject.smartwage.utils.TaxCalculator
