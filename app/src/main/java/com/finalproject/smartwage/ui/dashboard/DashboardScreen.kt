@@ -113,7 +113,11 @@ fun DashboardScreen(
                     ) {
                         OutlinedTextField(
                             value = incomeInput,
-                            onValueChange = { incomeInput = it },
+                            onValueChange = { newValue ->
+                                if (newValue.all { it.isDigit() }) {
+                                    incomeInput = newValue
+                                }
+                            },
                             label = { Text("Enter your income", fontSize = 18.sp) },
                             textStyle = TextStyle(fontSize = 24.sp),
                             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
