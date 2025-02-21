@@ -84,7 +84,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideIncomeRepository(incomeDao: IncomeDao, firestoreService: FirestoreService): IncomeRepository =
-        IncomeRepository(incomeDao, firestoreService)
+        IncomeRepository(incomeDao, firestoreService, FirebaseAuth.getInstance())
 
     @Provides
     @Singleton

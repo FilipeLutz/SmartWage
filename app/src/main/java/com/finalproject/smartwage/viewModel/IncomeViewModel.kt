@@ -4,40 +4,52 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.finalproject.smartwage.data.local.entities.Income
 import com.finalproject.smartwage.data.repository.IncomeRepository
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class IncomeViewModel @Inject constructor(
-    private val incomeRepo: IncomeRepository
+    private val incomeRepo: IncomeRepository,
+    private val auth: FirebaseAuth
 ) : ViewModel() {
 
     private val _userIncomes = MutableStateFlow<List<Income>>(emptyList())
     val userIncomes: StateFlow<List<Income>> = _userIncomes.asStateFlow()
 
-    fun loadIncomes(userId: String) {
-        viewModelScope.launch {
-            incomeRepo.getUserIncomes(userId).collect { incomes ->
-                _userIncomes.value = incomes
+    init {
+        loadIncomes()
+    }
+
+    fun loadIncomes() {
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            viewModelScope.launch {
+                incomeRepo.getUserIncomes().collect { incomes ->
+                    _userIncomes.value = incomes
+                }
             }
+        } else {
+            Timber.e("No logged-in user found. Cannot load incomes.")
         }
     }
 
     fun addIncome(income: Income) {
         viewModelScope.launch {
             incomeRepo.saveIncome(income)
-            loadIncomes(income.userId)
+            loadIncomes()
         }
     }
 
     fun deleteIncome(incomeId: String, userId: String) {
         viewModelScope.launch {
-            incomeRepo.deleteIncome(incomeId, userId)
-            loadIncomes(userId)
+            incomeRepo.deleteIncome(incomeId)
+            loadIncomes()
         }
     }
 }

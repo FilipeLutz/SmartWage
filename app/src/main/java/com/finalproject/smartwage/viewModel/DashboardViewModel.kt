@@ -55,7 +55,7 @@ class DashboardViewModel @Inject constructor(
 
             try {
                 // Fetch incomes
-                val incomes = incomeRepo.getUserIncomes(userId).first()
+                val incomes = incomeRepo.getUserIncomes().first()
                 var totalIncomeValue = 0.0
                 for (income in incomes) {
                     totalIncomeValue += income.amount

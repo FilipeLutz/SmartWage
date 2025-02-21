@@ -38,7 +38,7 @@ fun IncomeTaxScreen(navController: NavController, viewModel: IncomeViewModel = h
 
     // Reload incomes when the screen is displayed
     LaunchedEffect(Unit) {
-        viewModel.loadIncomes("currentUserId") // Replace with actual user ID
+        viewModel.loadIncomes()
     }
 
     Scaffold(

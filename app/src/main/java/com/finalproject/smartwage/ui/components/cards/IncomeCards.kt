@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.sp
 import com.finalproject.smartwage.data.local.entities.Income
 import com.finalproject.smartwage.ui.theme.DarkBlue
 import com.finalproject.smartwage.viewModel.IncomeViewModel
+import com.google.firebase.auth.FirebaseAuth
 import java.lang.System
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -51,6 +52,9 @@ import java.util.UUID
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PayslipFormCard(viewModel: IncomeViewModel, incomeToEdit: Income?, onDismiss: () -> Unit) {
+    val auth = FirebaseAuth.getInstance()
+    val currentUser = auth.currentUser
+
     var company by remember { mutableStateOf(incomeToEdit?.source ?: "") }
     var incomeAmount by remember { mutableStateOf(incomeToEdit?.amount?.toString() ?: "") }
     var taxPaid by remember { mutableStateOf(incomeToEdit?.paye?.toString() ?: "") }
@@ -61,8 +65,6 @@ fun PayslipFormCard(viewModel: IncomeViewModel, incomeToEdit: Income?, onDismiss
     var payPeriod by remember { mutableStateOf(incomeToEdit?.payPeriod?.toString() ?: "1") }
 
     var showDatePicker by remember { mutableStateOf(false) }
-    var isDatePickerDismissedWithoutSelection by remember { mutableStateOf(false) }
-
     val frequencies = listOf("Weekly", "Fortnightly", "Monthly")
     val payPeriods = (1..52).map { it.toString() }
 
@@ -130,30 +132,26 @@ fun PayslipFormCard(viewModel: IncomeViewModel, incomeToEdit: Income?, onDismiss
                 modifier = Modifier.fillMaxWidth()
             )
 
+            // Date Field with Calendar Picker
             OutlinedTextField(
                 value = incomeDate,
-                onValueChange = { newValue ->
-                    if (isDatePickerDismissedWithoutSelection) {
-                        incomeDate = newValue
-                    }
-                },
+                onValueChange = { incomeDate = it },
                 label = { Text("Income Date (dd-MM-yyyy)") },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { showDatePicker = true }, // ✅ Clicking the field opens the calendar
                 trailingIcon = {
                     IconButton(onClick = { showDatePicker = true }) {
                         Icon(Icons.Default.DateRange, contentDescription = "Select Date")
                     }
-                },
-                readOnly = !isDatePickerDismissedWithoutSelection
+                }
             )
 
+            // Show DatePickerDialog when needed
             if (showDatePicker) {
                 val datePickerState = rememberDatePickerState()
                 DatePickerDialog(
-                    onDismissRequest = {
-                        showDatePicker = false
-                        isDatePickerDismissedWithoutSelection = true
-                    },
+                    onDismissRequest = { showDatePicker = false },
                     confirmButton = {
                         Button(onClick = {
                             val selectedDate = datePickerState.selectedDateMillis
@@ -161,16 +159,12 @@ fun PayslipFormCard(viewModel: IncomeViewModel, incomeToEdit: Income?, onDismiss
                                 incomeDate = SimpleDateFormat("dd-MM-yyyy", Locale.UK).format(Date(selectedDate))
                             }
                             showDatePicker = false
-                            isDatePickerDismissedWithoutSelection = false
                         }) {
                             Text("OK")
                         }
                     },
                     dismissButton = {
-                        Button(onClick = {
-                            showDatePicker = false
-                            isDatePickerDismissedWithoutSelection = true
-                        }) {
+                        Button(onClick = { showDatePicker = false }) {
                             Text("Cancel")
                         }
                     }
@@ -196,7 +190,7 @@ fun PayslipFormCard(viewModel: IncomeViewModel, incomeToEdit: Income?, onDismiss
                         date = SimpleDateFormat("dd-MM-yyyy", Locale.UK).parse(incomeDate)?.time ?: System.currentTimeMillis(),
                         frequency = frequency,
                         payPeriod = payPeriod.toInt(),
-                        userId = "currentUserId"
+                        userId = currentUser?.uid ?: ""
                     )
 
                     viewModel.addIncome(newIncome)
@@ -275,15 +269,20 @@ fun DropdownMenuField(label: String, selectedItem: String, items: List<String>, 
             onValueChange = {},
             label = { Text(label) },
             readOnly = true,
-            modifier = Modifier.fillMaxWidth().clickable { expanded = true }
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { expanded = true } // ✅ Fix for opening dropdown
         )
 
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             items.forEach { item ->
-                DropdownMenuItem(text = { Text(item) }, onClick = {
-                    onItemSelected(item)
-                    expanded = false
-                })
+                DropdownMenuItem(
+                    text = { Text(item) },
+                    onClick = {
+                        onItemSelected(item)
+                        expanded = false
+                    }
+                )
             }
         }
     }

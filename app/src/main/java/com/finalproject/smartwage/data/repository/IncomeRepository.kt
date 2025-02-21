@@ -3,46 +3,52 @@ package com.finalproject.smartwage.data.repository
 import com.finalproject.smartwage.data.local.dao.IncomeDao
 import com.finalproject.smartwage.data.remote.FirestoreService
 import com.finalproject.smartwage.data.local.entities.Income
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 class IncomeRepository @Inject constructor(
     private val incomeDao: IncomeDao,
-    private val firestoreService: FirestoreService
+    private val firestoreService: FirestoreService,
+    private val auth: FirebaseAuth
 ) {
-
-    // Save Income (Sync to Firestore and Room)
     suspend fun saveIncome(income: Income) {
-        withContext(Dispatchers.IO) {
-            try {
-                val incomeId = if (income.id.isEmpty()) firestoreService.generateIncomeId() else income.id
-                val updatedIncome = income.copy(id = incomeId)
-
-                firestoreService.saveIncome(updatedIncome)  // Firestore
-                incomeDao.insertIncome(updatedIncome)  // Room
-            } catch (e: Exception) {
-                // Handle error (e.g., log or show a message)
-                println("Error saving income: ${e.message}")
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            val incomeWithUser = income.copy(userId = currentUser.uid)
+            withContext(Dispatchers.IO) {
+                try {
+                    firestoreService.saveIncome(incomeWithUser)  // Firestore
+                    incomeDao.insertIncome(incomeWithUser)  // Room (Local Database)
+                } catch (e: Exception) {
+                    Timber.e(e, "Error saving income")
+                }
             }
+        } else {
+            Timber.e("No logged-in user found. Cannot save income.")
         }
     }
 
-    // Get User Incomes (Flow for real-time updates from Room)
-    fun getUserIncomes(userId: String): Flow<List<Income>> {
-        return incomeDao.getUserIncome(userId)
+    fun getUserIncomes(): Flow<List<Income>> {
+        val currentUser = auth.currentUser
+        return if (currentUser != null) {
+            incomeDao.getUserIncome(currentUser.uid)
+        } else {
+            flowOf(emptyList())
+        }
     }
 
-    // Delete Income (Sync Firebase + Room)
-    suspend fun deleteIncome(incomeId: String, userId: String) {
+    suspend fun deleteIncome(incomeId: String) {
         withContext(Dispatchers.IO) {
             try {
-                firestoreService.deleteIncome(incomeId)  // Firestore
-                incomeDao.deleteIncome(incomeId)  // Room
+                firestoreService.deleteIncome(incomeId)
+                incomeDao.deleteIncome(incomeId)
             } catch (e: Exception) {
-                // Handle error (e.g., log or show a message)
-                println("Error deleting income: ${e.message}")
+                Timber.e(e, "Error deleting income")
             }
         }
     }

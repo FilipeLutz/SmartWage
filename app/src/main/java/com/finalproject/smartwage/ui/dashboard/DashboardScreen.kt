@@ -129,7 +129,8 @@ fun DashboardScreen(
                             onClick = {
                                 val income = incomeInput.toDoubleOrNull()
                                 if (income != null) {
-                                    calculatedTax = TaxCalculator.calculateTax(income)
+                                    val (paye, usc, prsi) = TaxCalculator.calculateTax(income)
+                                    calculatedTax = Triple(paye, usc, prsi)
                                     showTaxDialog = true
                                 } else {
                                     calculatedTax = null

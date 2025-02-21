@@ -6,26 +6,27 @@ import com.finalproject.smartwage.data.repository.IncomeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class TaxViewModel @Inject constructor(
-    private val IncomeRepo: IncomeRepository
+    private val incomeRepo: IncomeRepository
 ) : ViewModel() {
 
     // State for tax owed
     private val _taxOwed = MutableStateFlow(0.0)
-    val taxOwed: StateFlow<Double> = _taxOwed
+    val taxOwed: StateFlow<Double> = _taxOwed.asStateFlow()
 
     // State for loading
     private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
     // State for errors
     private val _errorMessage = MutableStateFlow<String?>(null)
-    val errorMessage: StateFlow<String?> = _errorMessage
+    val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
     // Fetch tax owed for a user
     fun fetchTaxOwed(userId: String) {
@@ -35,16 +36,19 @@ class TaxViewModel @Inject constructor(
             Timber.d("TaxViewModel: Fetching tax owed for userId: $userId")
 
             try {
-                IncomeRepo.getUserIncomes(userId).collect { incomes ->
-                    Timber.d("TaxViewModel: Received incomes: ${incomes.size}")
+                incomeRepo.getUserIncomes().collect { incomes ->
+                    Timber.d("TaxViewModel: Received ${incomes.size} incomes")
+
                     val totalPAYE = incomes.sumOf { it.paye }
                     val totalUSC = incomes.sumOf { it.usc }
                     val totalPRSI = incomes.sumOf { it.prsi }
+
                     _taxOwed.value = totalPAYE + totalUSC + totalPRSI
+                    Timber.d("TaxViewModel: Calculated tax owed: ${_taxOwed.value}")
                 }
             } catch (e: Exception) {
                 _errorMessage.value = "Failed to fetch tax data: ${e.message}"
-                Timber.e(e, "TaxViewModel: Error fetching tax data: ${e.message}")
+                Timber.e(e, "TaxViewModel: Error fetching tax data")
             } finally {
                 _isLoading.value = false
                 Timber.d("TaxViewModel: Finished fetching tax owed")
