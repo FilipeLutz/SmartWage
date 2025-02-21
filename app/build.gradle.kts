@@ -63,7 +63,7 @@ dependencies {
     testImplementation(libs.junit)
 
     // Firebase Authentication & Firestore
-    implementation(platform(libs.firebase.bom))
+    implementation (platform(libs.firebase.bom))
     implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.firestore.ktx)
 

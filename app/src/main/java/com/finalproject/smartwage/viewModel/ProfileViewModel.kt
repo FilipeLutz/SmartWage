@@ -23,7 +23,7 @@ class ProfileViewModel @Inject constructor(
 
     fun deleteUser(userId: String) {
         viewModelScope.launch {
-            userRepo.logout()
+            userRepo.logout(userId)
         }
     }
 

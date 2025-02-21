@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.finalproject.smartwage.R
+import com.finalproject.smartwage.navigation.Destinations
 import com.finalproject.smartwage.ui.components.DashboardBottomBar
 import com.finalproject.smartwage.ui.components.cards.DashboardCards
 import com.finalproject.smartwage.ui.components.DashboardTopBar
@@ -39,7 +40,7 @@ fun DashboardScreen(
     val errorMessage by viewModel.errorMessage.collectAsState()
 
     var incomeInput by remember { mutableStateOf("") }
-    var calculatedTax by remember { mutableStateOf<Double?>(null) }
+    var calculatedTax by remember { mutableStateOf<Triple<Double, Double, Double>?>(null) }
     var showTaxDialog by remember { mutableStateOf(false) }
 
     // Load user data when screen is first displayed
@@ -78,7 +79,6 @@ fun DashboardScreen(
                         .padding(top = 20.dp)
                         .padding(horizontal = 10.dp)
                 ) {
-
                     Spacer(modifier = Modifier.height(1.dp))
 
                     Text(
@@ -168,7 +168,7 @@ fun DashboardScreen(
                         value = totalIncome,
                         iconRes = R.drawable.income,
                         navController = navController,
-                        destination = "income"
+                        destination = Destinations.Income.route
                     )
 
                     DashboardCards(
@@ -176,7 +176,7 @@ fun DashboardScreen(
                         value = totalExpenses,
                         iconRes = R.drawable.expense,
                         navController = navController,
-                        destination = "expense"
+                        destination = Destinations.Expense.route
                     )
 
                     DashboardCards(
@@ -184,7 +184,7 @@ fun DashboardScreen(
                         value = taxPaid,
                         iconRes = R.drawable.taxes,
                         navController = navController,
-                        destination = "taxcredit"
+                        destination = Destinations.TaxCredit.route
                     )
 
                     // Show "Tax Owed" when it's > 0, otherwise show "Tax Back" when it's > 0
@@ -194,7 +194,7 @@ fun DashboardScreen(
                             value = taxOwed,
                             iconRes = R.drawable.taxes,
                             navController = navController,
-                            destination = "taxcredit"
+                            destination = Destinations.TaxCredit.route
                         )
                     } else if (taxBack > 0.0) {
                         DashboardCards(
@@ -202,7 +202,7 @@ fun DashboardScreen(
                             value = taxBack,
                             iconRes = R.drawable.taxes,
                             navController = navController,
-                            destination = "taxcredit"
+                            destination = Destinations.TaxCredit.route
                         )
                     }
 
@@ -214,7 +214,7 @@ fun DashboardScreen(
 
     // Call the TaxResultDialog composable if showTaxDialog is true
     if (calculatedTax != null && showTaxDialog) {
-        TaxResultDialog(calculatedTax = calculatedTax) {
+        TaxResultDialog(calculatedTax!!.first) {
             showTaxDialog = false
         }
     }

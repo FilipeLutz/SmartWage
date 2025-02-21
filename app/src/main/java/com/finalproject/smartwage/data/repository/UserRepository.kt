@@ -5,8 +5,8 @@ import com.finalproject.smartwage.data.local.entities.User
 import com.finalproject.smartwage.data.remote.FirestoreService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 class UserRepository @Inject constructor(
@@ -21,8 +21,7 @@ class UserRepository @Inject constructor(
                 firestoreService.saveUser(user)  // Save to Firestore
                 userDao.insertUser(user)  // Save to Local Room DB
             } catch (e: Exception) {
-                // Handle error (e.g., log or show a message)
-                println("Error saving user: ${e.message}")
+                Timber.e(e, "Error saving user: ${e.message}")
             }
         }
     }
@@ -33,13 +32,14 @@ class UserRepository @Inject constructor(
     }
 
     // Logout (Clear local user data)
-    suspend fun logout() {
+    suspend fun logout(userId: String) {
         withContext(Dispatchers.IO) {
             try {
-                userDao.deleteUser(userDao.getUserById(userId = String()).first().toString())
+                userDao.deleteUser(userId)
+                firestoreService.deleteUserData(userId)
+                Timber.d("UserRepository: User logged out and data deleted: $userId")
             } catch (e: Exception) {
-                // Handle error (e.g., log or show a message)
-                println("Error logging out: ${e.message}")
+                Timber.e(e, "Error logging out: ${e.message}")
             }
         }
     }

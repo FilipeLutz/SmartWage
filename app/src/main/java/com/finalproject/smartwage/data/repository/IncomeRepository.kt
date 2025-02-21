@@ -35,7 +35,7 @@ class IncomeRepository @Inject constructor(
     }
 
     // Delete Income (Sync Firebase + Room)
-    suspend fun deleteIncome(incomeId: String) {
+    suspend fun deleteIncome(incomeId: String, userId: String) {
         withContext(Dispatchers.IO) {
             try {
                 firestoreService.deleteIncome(incomeId)  // Firestore

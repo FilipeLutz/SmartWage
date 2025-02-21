@@ -11,5 +11,10 @@ data class User(
     @get:PropertyName("email") @set:PropertyName("email") var email: String = "",
     @get:PropertyName("phoneNumber") @set:PropertyName("phoneNumber") var phoneNumber: String = "",
     @get:PropertyName("taxCredit") @set:PropertyName("taxCredit") var taxCredit: Double = 4000.0,
-    @get:PropertyName("profilePicture") @set:PropertyName("profilePicture") var profilePicture: String? = null
+    @get:PropertyName("profilePicture") @set:PropertyName("profilePicture") var profilePicture: String? = null,
+    @get:PropertyName("taxPaid") @set:PropertyName("taxPaid") var taxPaid: Double = 0.0,
+    @get:PropertyName("taxOwed") @set:PropertyName("taxOwed") var taxOwed: Double = 0.0,
+    @get:PropertyName("taxBack") @set:PropertyName("taxBack") var taxBack: Double = 0.0,
+    @get:PropertyName("totalIncome") @set:PropertyName("totalIncome") var totalIncome: Double = 0.0,
+    @get:PropertyName("totalExpenses") @set:PropertyName("totalExpenses") var totalExpenses: Double = 0.0,
     )

@@ -36,7 +36,7 @@ class IncomeViewModel @Inject constructor(
 
     fun deleteIncome(incomeId: String, userId: String) {
         viewModelScope.launch {
-            incomeRepo.deleteIncome(incomeId)
+            incomeRepo.deleteIncome(incomeId, userId)
             loadIncomes(userId)
         }
     }

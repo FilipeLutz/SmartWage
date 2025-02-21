@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.finalproject.smartwage.ui.components
 
 import androidx.compose.foundation.Image
@@ -25,17 +27,15 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.finalproject.smartwage.navigation.Destinations
 import com.finalproject.smartwage.R
+import com.finalproject.smartwage.navigation.Destinations
 import com.finalproject.smartwage.viewModel.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -157,7 +157,7 @@ fun DashboardBottomBar(navController: NavController) {
 
 enum class BottomNavItem(val route: String, val iconRes: Int, val label: String) {
     Dashboard(route = "dashboard/{userId}", R.drawable.home, "Dashboard"),
-    Income(Destinations.Income.route, R.drawable.income, "Income"),
-    Expense(Destinations.Expense.route, R.drawable.expense, "Expenses"),
-    Settings(Destinations.Settings.route, R.drawable.setting, "Settings")
+    Income(route = Destinations.Income.route, R.drawable.income, "Income"),
+    Expense(route = Destinations.Expense.route, R.drawable.expense, "Expenses"),
+    Settings(route = Destinations.Settings.route, R.drawable.setting, "Settings")
 }
