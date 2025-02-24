@@ -2,8 +2,6 @@
 
 package com.finalproject.smartwage.ui.auth
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
@@ -38,7 +36,6 @@ import com.finalproject.smartwage.utils.isValidEmail
 import com.finalproject.smartwage.utils.validatePassword
 import com.finalproject.smartwage.viewModel.AuthViewModel
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun LoginScreen(
     navController: NavController,

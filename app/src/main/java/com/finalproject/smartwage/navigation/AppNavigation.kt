@@ -1,7 +1,5 @@
 package com.finalproject.smartwage.navigation
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -18,7 +16,6 @@ import com.finalproject.smartwage.ui.settings.HelpScreen
 import com.finalproject.smartwage.ui.settings.SettingsScreen
 import com.finalproject.smartwage.ui.tax.TaxCreditScreen
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNavigation(navController: NavHostController, isUserLoggedIn: Boolean, userId: String?) {
     NavHost(
