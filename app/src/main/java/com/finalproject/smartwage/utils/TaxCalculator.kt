@@ -28,7 +28,7 @@ object TaxCalculator {
             calculatedPAYE += (income - TAX_THRESHOLD) * TAX_RATE_HIGH
         }
         calculatedPAYE -= TAX_CREDIT
-        calculatedPAYE = maxOf(calculatedPAYE, 0.0)  // No negative tax
+        calculatedPAYE = maxOf(calculatedPAYE, 0.0)
 
         // USC Tax Calculation
         for ((bracket, rate) in USC_BRACKETS) {

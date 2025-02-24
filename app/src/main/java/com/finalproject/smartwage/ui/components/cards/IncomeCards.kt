@@ -139,7 +139,7 @@ fun PayslipFormCard(viewModel: IncomeViewModel, incomeToEdit: Income?, onDismiss
                 label = { Text("Income Date (dd-MM-yyyy)") },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { showDatePicker = true }, // ✅ Clicking the field opens the calendar
+                    .clickable { showDatePicker = true },
                 trailingIcon = {
                     IconButton(onClick = { showDatePicker = true }) {
                         Icon(Icons.Default.DateRange, contentDescription = "Select Date")
@@ -271,7 +271,7 @@ fun DropdownMenuField(label: String, selectedItem: String, items: List<String>, 
             readOnly = true,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { expanded = true } // ✅ Fix for opening dropdown
+                .clickable { expanded = true }
         )
 
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {

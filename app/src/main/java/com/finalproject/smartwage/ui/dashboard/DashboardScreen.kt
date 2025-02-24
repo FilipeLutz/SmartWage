@@ -114,7 +114,7 @@ fun DashboardScreen(
                         OutlinedTextField(
                             value = incomeInput,
                             onValueChange = { newValue ->
-                                if (newValue.all { it.isDigit() }) {
+                                if (newValue.matches(Regex("^\\d*\\.?\\d*\$"))) {
                                     incomeInput = newValue
                                 }
                             },
@@ -129,8 +129,8 @@ fun DashboardScreen(
                             onClick = {
                                 val income = incomeInput.toDoubleOrNull()
                                 if (income != null) {
-                                    val (paye, usc, prsi) = TaxCalculator.calculateTax(income)
-                                    calculatedTax = Triple(paye, usc, prsi)
+                                    val calculatedTaxes = TaxCalculator.calculateTax(income)
+                                    calculatedTax = calculatedTaxes
                                     showTaxDialog = true
                                 } else {
                                     calculatedTax = null
@@ -214,9 +214,10 @@ fun DashboardScreen(
     }
 
     // Call the TaxResultDialog composable if showTaxDialog is true
-    if (calculatedTax != null && showTaxDialog) {
-        TaxResultDialog(calculatedTax!!.first) {
-            showTaxDialog = false
-        }
+    if (showTaxDialog) {
+        TaxResultDialog(
+            calculatedTax = calculatedTax,
+            onDismiss = { showTaxDialog = false }
+        )
     }
 }
