@@ -22,8 +22,8 @@ class IncomeRepository @Inject constructor(
             val incomeWithUser = income.copy(userId = currentUser.uid)
             withContext(Dispatchers.IO) {
                 try {
-                    firestoreService.saveIncome(incomeWithUser)  // Firestore
-                    incomeDao.insertIncome(incomeWithUser)  // Room (Local Database)
+                    firestoreService.saveIncome(incomeWithUser)
+                    incomeDao.insertIncome(incomeWithUser)
                 } catch (e: Exception) {
                     Timber.e(e, "Error saving income")
                 }
@@ -33,9 +33,10 @@ class IncomeRepository @Inject constructor(
         }
     }
 
-    fun getUserIncomes(): Flow<List<Income>> {
+    suspend fun getUserIncomes(): Flow<List<Income>> {
         val currentUser = auth.currentUser
         return if (currentUser != null) {
+            firestoreService.getUserIncomes(currentUser.uid)
             incomeDao.getUserIncome(currentUser.uid)
         } else {
             flowOf(emptyList())

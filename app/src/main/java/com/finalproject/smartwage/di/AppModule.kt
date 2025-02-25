@@ -15,6 +15,7 @@ import com.finalproject.smartwage.data.repository.IncomeRepository
 import com.finalproject.smartwage.data.repository.TaxRepository
 import com.finalproject.smartwage.data.repository.UserRepository
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,7 +35,9 @@ object AppModule {
     /** Provide Firestore Service */
     @Provides
     @Singleton
-    fun provideFirestoreService(): FirestoreService = FirestoreService()
+    fun provideFirestoreService(): FirebaseFirestore {
+        return FirebaseFirestore.getInstance()
+    }
 
     /** Provide AuthService */
     @Provides
