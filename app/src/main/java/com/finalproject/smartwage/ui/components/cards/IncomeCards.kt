@@ -58,7 +58,6 @@ import com.finalproject.smartwage.ui.theme.DarkBlue
 import com.finalproject.smartwage.utils.TaxCalculator
 import com.finalproject.smartwage.viewModel.IncomeViewModel
 import com.google.firebase.auth.FirebaseAuth
-import java.lang.System
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -450,7 +449,7 @@ fun DropdownMenuField(
 
         if (expanded) {
             DropdownMenu(
-                expanded = expanded,
+                expanded = true,
                 onDismissRequest = { expanded = false },
                 modifier = Modifier
                     .width(167.dp)
