@@ -83,6 +83,15 @@ class FirestoreService @Inject constructor() {
         }
     }
 
+    // Update Income in Firestore
+    suspend fun updateIncome(income: Income) {
+        try {
+            db.collection("incomes").document(income.id).set(income, SetOptions.merge()).await()
+        } catch (e: Exception) {
+            Timber.e(e, "Error updating income in Firestore")
+        }
+    }
+
     // Delete Income from Firestore
     suspend fun deleteIncome(incomeId: String, userId: String) {
         try {

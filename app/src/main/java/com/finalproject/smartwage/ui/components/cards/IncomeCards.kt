@@ -315,7 +315,7 @@ fun PayslipFormCard(
                             underpaidTax = underpaidTax
                         )
 
-                        viewModel.addIncome(newIncome)
+                        viewModel.updateIncome(newIncome)
                         onDismiss()
                     },
                     modifier = Modifier

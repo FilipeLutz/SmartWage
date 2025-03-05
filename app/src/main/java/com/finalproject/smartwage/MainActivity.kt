@@ -18,7 +18,11 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val navController = rememberNavController()
-            AppNavigation(navController, isUserLoggedIn, userId = auth.currentUser?.uid)
+            AppNavigation(
+                navController,
+                isUserLoggedIn,
+                userId = auth.currentUser?.uid
+            )
         }
     }
 }

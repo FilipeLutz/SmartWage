@@ -1,5 +1,6 @@
 [versions]
 agp = "8.7.3"
+androidxWorkRuntimeKtx = "2.8.1"
 bcryptVersion = "0.10.2"
 converterGson = "2.11.0"
 facebookLogin = "18.0.2"
@@ -34,6 +35,7 @@ androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref =
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
+androidx-work-runtime-ktx-v281 = { module = "androidx.work:work-runtime-ktx", version.ref = "androidxWorkRuntimeKtx" }
 bcrypt-v0102 = { module = "at.favre.lib:bcrypt", version.ref = "bcryptVersion" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 facebook-login = { module = "com.facebook.android:facebook-login", version.ref = "facebookLogin" }

@@ -30,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -141,14 +142,15 @@ fun DashboardBottomBar(navController: NavController) {
                         contentDescription = item.label,
                         modifier = Modifier
                             .size(45.dp)
-                            .padding(horizontal = 5.dp)
-                            .padding(top = 5.dp)
+                            .padding(6.dp)
                     )
                 },
                 label = {
                     Text(
                         text = item.label,
-                        fontSize = 14.sp)
+                        fontSize = 15.sp,
+                        fontWeight = SemiBold
+                    )
                 }
             )
         }

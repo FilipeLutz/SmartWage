@@ -193,17 +193,17 @@ fun DashboardScreen(
                     // Show "Underpayment Tax" when it's > 0, otherwise show "Overpayment Tax" when it's > 0
                     if (taxOwed > 0.0) {
                         DashboardCards(
-                            label = "Underpayment",
+                            label = "Tax Underpayment",
                             value = taxOwed,
-                            iconRes = R.drawable.taxes,
+                            iconRes = R.drawable.taxbag,
                             navController = navController,
                             destination = Destinations.TaxCredit.route
                         )
                     } else if (taxBack > 0.0) {
                         DashboardCards(
-                            label = "Overpayment",
+                            label = "Tax Overpayment",
                             value = taxBack,
-                            iconRes = R.drawable.taxes,
+                            iconRes = R.drawable.taxbag,
                             navController = navController,
                             destination = Destinations.TaxCredit.route
                         )

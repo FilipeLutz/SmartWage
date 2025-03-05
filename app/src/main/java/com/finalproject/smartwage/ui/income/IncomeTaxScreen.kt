@@ -120,7 +120,7 @@ fun IncomeTaxScreen(navController: NavController, viewModel: IncomeViewModel = h
                     }
 
                     items(1) {
-                        Spacer(modifier = Modifier.height(10.dp))
+                        Spacer(modifier = Modifier.height(95.dp))
                     }
                 }
             }

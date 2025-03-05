@@ -76,26 +76,43 @@ object AppModule {
     /** Provide Repositories */
     @Provides
     @Singleton
-    fun provideAuthRepository(authService: AuthService, firestoreService: FirestoreService, userDao: UserDao): AuthRepository =
+    fun provideAuthRepository(
+        authService: AuthService,
+        firestoreService: FirestoreService,
+        userDao: UserDao
+    ): AuthRepository =
         AuthRepository(authService, firestoreService, userDao, FirebaseAuth.getInstance())
 
     @Provides
     @Singleton
-    fun provideUserRepository(userDao: UserDao, firestoreService: FirestoreService): UserRepository =
+    fun provideUserRepository(
+        userDao: UserDao,
+        firestoreService: FirestoreService
+    ): UserRepository =
         UserRepository(userDao, firestoreService)
 
     @Provides
     @Singleton
-    fun provideIncomeRepository(incomeDao: IncomeDao, firestoreService: FirestoreService): IncomeRepository =
-        IncomeRepository(incomeDao, firestoreService, FirebaseAuth.getInstance())
+    fun provideIncomeRepository(
+        incomeDao: IncomeDao,
+        firestoreService: FirestoreService,
+        context: Context
+    ): IncomeRepository =
+        IncomeRepository(incomeDao, firestoreService, FirebaseAuth.getInstance(), context)
 
     @Provides
     @Singleton
-    fun provideExpenseRepository(expenseDao: ExpenseDao, firestoreService: FirestoreService): ExpenseRepository =
+    fun provideExpenseRepository(
+        expenseDao: ExpenseDao,
+        firestoreService: FirestoreService
+    ): ExpenseRepository =
         ExpenseRepository(expenseDao, firestoreService)
 
     @Provides
     @Singleton
     fun provideTaxRepository(taxDao: TaxDao, firestoreService: FirestoreService): TaxRepository =
         TaxRepository(taxDao, firestoreService)
+
+    @Provides
+    fun provideContext(@ApplicationContext context: Context): Context = context
 }

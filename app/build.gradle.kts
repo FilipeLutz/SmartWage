@@ -58,6 +58,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.kotlin.stdlib)
+    implementation (libs.androidx.work.runtime.ktx)
 
     // test
     testImplementation(libs.junit)
