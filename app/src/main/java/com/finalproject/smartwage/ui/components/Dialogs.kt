@@ -91,13 +91,13 @@ fun ErrorMessageDialog(
                 defaultElevation = 8.dp
             ),
             modifier = Modifier
-                .width(IntrinsicSize.Max)
+                .width(IntrinsicSize.Max) // Key change: Use IntrinsicSize.Min
         ) {
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
+                    .fillMaxWidth() // Important: fillMaxWidth inside IntrinsicSize
+                    .padding(16.dp) // Add padding around the text
             ) {
                 Text(
                     text = message ?: "",
@@ -105,7 +105,7 @@ fun ErrorMessageDialog(
                     fontSize = 20.sp,
                     fontWeight = FontWeight.SemiBold,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.wrapContentWidth()
+                    modifier = Modifier.wrapContentWidth() // Wrap text width if needed
                 )
             }
         }
@@ -145,10 +145,9 @@ fun TaxResultDialog(
     calculatedTax: Triple<Double, Double, Double>?,
     onDismiss: () -> Unit
 ) {
-    val calculatedPAYE = calculatedTax?.first ?: 0.0
-    val calculatedUSC = calculatedTax?.second ?: 0.0
-    val calculatedPRSI = calculatedTax?.third ?: 0.0
-    val totalTax = calculatedPAYE + calculatedUSC + calculatedPRSI
+    val totalTax = calculatedTax?.let {
+        it.first + it.second + it.third
+    } ?: 0.0
 
     Dialog(
         onDismissRequest = onDismiss
@@ -228,7 +227,7 @@ fun TaxResultDialog(
                     )
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
-                        text = "• PRSI: 4.1% if annual income is above €18,304. No PRSI if income is below this threshold.",
+                        text = "• PRSI: 4% flat tax if your income exceeds €18,304.",
                         fontSize = 19.sp,
                         color = DarkBlue,
                         fontWeight = FontWeight.SemiBold
@@ -245,7 +244,7 @@ fun TaxResultDialog(
                 Spacer(modifier = Modifier.height(5.dp))
 
                 Text(
-                    text = "• This is a basic tax estimate. For a more accurate calculation, add your actual incomes and expenses in the app.",
+                    text = "• There is no tax relief calculated in this tax rate. For a complete tax calculation, please add your incomes and expenses.",
                     fontSize = 19.sp,
                     color = Color.Blue,
                     fontWeight = FontWeight.SemiBold

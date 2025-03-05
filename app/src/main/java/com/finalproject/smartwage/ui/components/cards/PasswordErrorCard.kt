@@ -28,7 +28,7 @@ import kotlin.collections.forEach
 fun PasswordErrorCard(errors: List<PasswordValidationError>, onDismiss: () -> Unit) {
     Card(
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFEBEE)),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFEBEE)), // Light Red Background
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         modifier = Modifier
             .fillMaxWidth()

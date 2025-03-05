@@ -28,6 +28,7 @@ fun AppNavigation(navController: NavHostController, isUserLoggedIn: Boolean, use
         composable(Destinations.Login.route) { LoginScreen(navController) }
         composable(Destinations.SignUp.route) { SignUpScreen(navController) }
 
+        // Fix DashboardScreen navigation
         composable(
             route = Destinations.Dashboard("{userId}").route, // Dynamic route
             arguments = listOf(navArgument("userId") { type = NavType.StringType })
