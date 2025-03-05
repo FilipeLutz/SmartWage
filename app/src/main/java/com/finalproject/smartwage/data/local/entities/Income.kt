@@ -16,5 +16,7 @@ data class Income(
     @get:PropertyName("prsi") @set:PropertyName("prsi") var prsi: Double = 0.0,
     @get:PropertyName("date") @set:PropertyName("date") var date: Long = System.currentTimeMillis(),
     @get:PropertyName("frequency") @set:PropertyName("frequency") var frequency: String = "",
-    @get:PropertyName("payPeriod") @set:PropertyName("payPeriod") var payPeriod: Int = 0
+    @get:PropertyName("payPeriod") @set:PropertyName("payPeriod") var payPeriod: Int = 0,
+    @get:PropertyName("overpaidTax") @set:PropertyName("overpaidTax") var overpaidTax: Double = 0.0,
+    @get:PropertyName("underpaidTax") @set:PropertyName("underpaidTax") var underpaidTax: Double = 0.0
 )
