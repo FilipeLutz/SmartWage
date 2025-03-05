@@ -393,7 +393,7 @@ fun IncomeListCard(income: Income, viewModel: IncomeViewModel, onEdit: (Income) 
                 }
                 // Delete Icon
                 IconButton(
-                    onClick = { viewModel.deleteIncome(income.id) },
+                    onClick = { viewModel.deleteIncome(income.id, income.userId) },
                     modifier = Modifier.size(80.dp)
                 ) {
                     Icon(

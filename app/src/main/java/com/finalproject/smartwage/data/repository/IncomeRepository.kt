@@ -46,7 +46,7 @@ class IncomeRepository @Inject constructor(
     suspend fun deleteIncome(incomeId: String) {
         withContext(Dispatchers.IO) {
             try {
-                firestoreService.deleteIncome(incomeId)
+                firestoreService.deleteIncome(incomeId, incomeId)
                 incomeDao.deleteIncome(incomeId)
             } catch (e: Exception) {
                 Timber.e(e, "Error deleting income")
