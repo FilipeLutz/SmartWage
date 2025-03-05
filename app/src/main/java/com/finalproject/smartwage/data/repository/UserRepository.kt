@@ -14,7 +14,7 @@ class UserRepository @Inject constructor(
     private val firestoreService: FirestoreService
 ) {
 
-    // Save User (Syncs to Firestore and Room)
+    // Save User
     suspend fun saveUser(user: User) {
         withContext(Dispatchers.IO) {
             try {
@@ -31,7 +31,7 @@ class UserRepository @Inject constructor(
         return userDao.getUserById(userId)
     }
 
-    // Logout (Clear local user data)
+    // Logout User
     suspend fun logout(userId: String) {
         withContext(Dispatchers.IO) {
             try {

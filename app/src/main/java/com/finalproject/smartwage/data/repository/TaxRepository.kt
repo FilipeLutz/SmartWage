@@ -20,24 +20,24 @@ class TaxRepository @Inject constructor (
                 firestoreService.saveTax(tax)  // Firestore
                 taxDao.insertTax(tax)  // Room
             } catch (e: Exception) {
-                // Handle error (e.g., log or show a message)
+                // Error message
                 println("Error saving tax: ${e.message}")
             }
         }
     }
 
-    // Get Latest Tax Calculation (Flow for real-time updates from Room)
+    // Get Latest Tax Calculation
     fun getUserTax(userId: String): Flow<List<Tax>> {
         return taxDao.getUserTax(userId)
     }
 
-    // Clear Tax Calculation for User (Used when logging out)
+    // Clear Tax Calculation for User
     suspend fun deleteTax(userId: String) {
         withContext(Dispatchers.IO) {
             try {
                 taxDao.deleteTax(userId)  // Room
             } catch (e: Exception) {
-                // Handle error (e.g., log or show a message)
+                // Error message
                 println("Error deleting tax: ${e.message}")
             }
         }

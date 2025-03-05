@@ -8,6 +8,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -18,10 +19,11 @@ import androidx.navigation.NavController
 import com.finalproject.smartwage.R
 import com.finalproject.smartwage.navigation.Destinations
 import com.finalproject.smartwage.ui.components.DashboardBottomBar
-import com.finalproject.smartwage.ui.components.cards.DashboardCards
 import com.finalproject.smartwage.ui.components.DashboardTopBar
 import com.finalproject.smartwage.ui.components.TaxResultDialog
-import com.finalproject.smartwage.utils.TaxCalculator
+import com.finalproject.smartwage.ui.components.cards.DashboardCards
+import com.finalproject.smartwage.ui.theme.DarkBlue
+import com.finalproject.smartwage.utils.QuickTaxCalculator
 import com.finalproject.smartwage.viewModel.DashboardViewModel
 
 @Composable
@@ -90,7 +92,7 @@ fun DashboardScreen(
 
                     Spacer(modifier = Modifier.height(1.dp))
 
-                    // Tax Calculator Section
+                    // Quick Tax Calculator
                     Row(
                         horizontalArrangement = Arrangement.Start,
                         modifier = Modifier
@@ -109,7 +111,7 @@ fun DashboardScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
+                            .padding(horizontal = 18.dp)
                     ) {
                         OutlinedTextField(
                             value = incomeInput,
@@ -118,35 +120,35 @@ fun DashboardScreen(
                                     incomeInput = newValue
                                 }
                             },
-                            label = { Text("Enter your income", fontSize = 18.sp) },
+                            label = { Text("Enter Income (€)", fontSize = 18.sp) },
                             textStyle = TextStyle(fontSize = 24.sp),
                             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                            modifier = Modifier
-                                .width(200.dp)
+                            modifier = Modifier.width(200.dp)
                         )
 
                         Button(
                             onClick = {
-                                val income = incomeInput.toDoubleOrNull()
-                                if (income != null) {
-                                    val calculatedTaxes = TaxCalculator.calculateTax(income)
-                                    calculatedTax = calculatedTaxes
+                                val annualIncome = incomeInput.toDoubleOrNull()
+                                if (annualIncome != null) {
+                                    val (calculatedPAYE, calculatedUSC, calculatedPRSI) = QuickTaxCalculator.calculateQuickTax(annualIncome)
+                                    calculatedTax = Triple(calculatedPAYE, calculatedUSC, calculatedPRSI)
                                     showTaxDialog = true
                                 } else {
                                     calculatedTax = null
                                     showTaxDialog = false
                                 }
                             },
-                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                            colors = ButtonDefaults.buttonColors(containerColor = DarkBlue),
                             modifier = Modifier
-                                .width(180.dp)
+                                .width(160.dp)
                                 .height(60.dp)
-                                .padding(8.dp)
+                                .padding(vertical = 6.dp)
                         ) {
                             Text(
                                 "Calculate",
                                 fontSize = 20.sp,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
+                                color = White
                             )
                         }
                     }
@@ -188,10 +190,10 @@ fun DashboardScreen(
                         destination = Destinations.TaxCredit.route
                     )
 
-                    // Show "Tax Owed" when it's > 0, otherwise show "Tax Back" when it's > 0
+                    // Show "Underpayment Tax" when it's > 0, otherwise show "Overpayment Tax" when it's > 0
                     if (taxOwed > 0.0) {
                         DashboardCards(
-                            label = "Tax Owed",
+                            label = "Underpayment",
                             value = taxOwed,
                             iconRes = R.drawable.taxes,
                             navController = navController,
@@ -199,7 +201,7 @@ fun DashboardScreen(
                         )
                     } else if (taxBack > 0.0) {
                         DashboardCards(
-                            label = "Tax Back",
+                            label = "Overpayment",
                             value = taxBack,
                             iconRes = R.drawable.taxes,
                             navController = navController,
