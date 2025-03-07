@@ -20,8 +20,8 @@ import com.finalproject.smartwage.R
 import com.finalproject.smartwage.navigation.Destinations
 import com.finalproject.smartwage.ui.components.DashboardBottomBar
 import com.finalproject.smartwage.ui.components.DashboardTopBar
-import com.finalproject.smartwage.ui.components.TaxResultDialog
 import com.finalproject.smartwage.ui.components.cards.DashboardCards
+import com.finalproject.smartwage.ui.components.dialogs.TaxResultDialog
 import com.finalproject.smartwage.ui.theme.DarkBlue
 import com.finalproject.smartwage.utils.QuickTaxCalculator
 import com.finalproject.smartwage.viewModel.DashboardViewModel
