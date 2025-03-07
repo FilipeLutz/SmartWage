@@ -149,7 +149,7 @@ fun SignUpScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(35.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
         // Sign-Up Button
         Button(
@@ -199,7 +199,7 @@ fun SignUpScreen(
             Text("SIGN UP", fontSize = 22.sp, fontWeight = FontWeight.Bold)
         }
 
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         // Login Navigation
         Row(
