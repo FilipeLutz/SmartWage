@@ -24,10 +24,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.finalproject.smartwage.R
 import com.finalproject.smartwage.navigation.Destinations
-import com.finalproject.smartwage.ui.components.ErrorMessageDialog
-import com.finalproject.smartwage.ui.components.LoadingDialog
-import com.finalproject.smartwage.ui.components.MessageType
-import com.finalproject.smartwage.ui.components.PasswordErrorDialog
+import com.finalproject.smartwage.ui.components.dialogs.ErrorMessageDialog
+import com.finalproject.smartwage.ui.components.dialogs.LoadingDialog
+import com.finalproject.smartwage.ui.components.dialogs.MessageType
+import com.finalproject.smartwage.ui.components.dialogs.PasswordErrorDialog
 import com.finalproject.smartwage.ui.theme.DarkBlue
 import com.finalproject.smartwage.utils.PasswordValidationError
 import com.finalproject.smartwage.utils.isValidEmail
