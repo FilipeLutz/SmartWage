@@ -22,6 +22,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
+import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -31,6 +33,7 @@ import com.finalproject.smartwage.ui.components.DashboardBottomBar
 import com.finalproject.smartwage.ui.components.DashboardTopBar
 import com.finalproject.smartwage.ui.components.cards.IncomeListCard
 import com.finalproject.smartwage.ui.components.cards.PayslipFormCard
+import com.finalproject.smartwage.ui.theme.DarkBlue
 import com.finalproject.smartwage.viewModel.IncomeViewModel
 import com.google.firebase.auth.FirebaseAuth
 
@@ -59,8 +62,9 @@ fun IncomeTaxScreen(navController: NavController, viewModel: IncomeViewModel = h
                         showFab = false
                     },
                     modifier = Modifier
-                        .size(70.dp),
-                    containerColor = MaterialTheme.colorScheme.primary,
+                        .padding(end = 4.dp)
+                        .size(60.dp),
+                    containerColor = DarkBlue,
                     contentColor = Color.White,
                 ) {
                     Icon(
@@ -77,50 +81,68 @@ fun IncomeTaxScreen(navController: NavController, viewModel: IncomeViewModel = h
                 .padding(paddingValues)
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            Column (
+            Column(
                 modifier = Modifier
                     .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
-            ){
+            ) {
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                Row (
+                Row(
                     modifier = Modifier
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
-                ){
+                ) {
 
                     Text(
                         text = "Income Tax",
                         fontSize = 35.sp,
                         fontWeight = Bold,
+                        color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(16.dp)
                     )
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 10.dp)
-                ) {
-                    items(userIncomes.size) { index ->
-                        val income = userIncomes[index]
-                        IncomeListCard(
-                            income = income,
-                            viewModel = viewModel,
-                            onEdit = { selectedIncome ->
-                                editingIncome = selectedIncome
-                                showPayslipForm = true
-                                showFab = false
-                            }
+                if (userIncomes.isEmpty()) {
+                    // Show message when there are no incomes
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Click on the \"+\" button to start adding your incomes.",
+                            fontSize = 25.sp,
+                            fontWeight = SemiBold,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(16.dp)
                         )
                     }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 10.dp)
+                    ) {
+                        items(userIncomes.size) { index ->
+                            val income = userIncomes[index]
+                            IncomeListCard(
+                                income = income,
+                                viewModel = viewModel,
+                                onEdit = { selectedIncome ->
+                                    editingIncome = selectedIncome
+                                    showPayslipForm = true
+                                    showFab = false
+                                }
+                            )
+                        }
 
-                    items(1) {
-                        Spacer(modifier = Modifier.height(95.dp))
+                        items(1) {
+                            Spacer(modifier = Modifier.height(95.dp))
+                        }
                     }
                 }
             }
