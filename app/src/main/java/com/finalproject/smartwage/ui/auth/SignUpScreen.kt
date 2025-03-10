@@ -28,6 +28,7 @@ import com.finalproject.smartwage.ui.components.dialogs.ErrorMessageDialog
 import com.finalproject.smartwage.ui.components.dialogs.LoadingDialog
 import com.finalproject.smartwage.ui.components.dialogs.MessageType
 import com.finalproject.smartwage.ui.components.dialogs.PasswordErrorDialog
+import com.finalproject.smartwage.ui.components.dialogs.VerificationDialog
 import com.finalproject.smartwage.ui.theme.DarkBlue
 import com.finalproject.smartwage.utils.PasswordValidationError
 import com.finalproject.smartwage.utils.isValidEmail
@@ -36,7 +37,8 @@ import com.finalproject.smartwage.viewModel.AuthViewModel
 
 @Composable
 fun SignUpScreen(
-    navController: NavController, viewModel: AuthViewModel = hiltViewModel()
+    navController: NavController,
+    viewModel: AuthViewModel = hiltViewModel()
 ) {
     var name by remember { mutableStateOf("") }
     var phoneNumber by remember { mutableStateOf("") }
@@ -50,6 +52,9 @@ fun SignUpScreen(
     var isConfirmPasswordVisible by remember { mutableStateOf(false) }
     var passwordErrors by remember { mutableStateOf<List<PasswordValidationError>>(emptyList()) }
     val emailExists by viewModel.emailExists.collectAsState()
+
+    // Show dialog after successful signup
+    var showVerificationDialog by remember { mutableStateOf(false) }
 
     // Function to show messages
     fun showMessage(newMessage: String, type: MessageType) {
@@ -124,7 +129,11 @@ fun SignUpScreen(
                 IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
                     val icon = if (isPasswordVisible) painterResource(id = R.drawable.view)
                     else painterResource(id = R.drawable.hidden)
-                    Image(painter = icon, contentDescription = "Toggle password visibility", Modifier.padding(end = 12.dp))
+                    Image(
+                        painter = icon,
+                        contentDescription = "Toggle password visibility",
+                        Modifier.padding(end = 12.dp)
+                    )
                 }
             },
             modifier = Modifier.fillMaxWidth()
@@ -143,7 +152,11 @@ fun SignUpScreen(
                 IconButton(onClick = { isConfirmPasswordVisible = !isConfirmPasswordVisible }) {
                     val icon = if (isConfirmPasswordVisible) painterResource(id = R.drawable.view)
                     else painterResource(id = R.drawable.hidden)
-                    Image(painter = icon, contentDescription = "Toggle password visibility", Modifier.padding(end = 12.dp))
+                    Image(
+                        painter = icon,
+                        contentDescription = "Toggle password visibility",
+                        Modifier.padding(end = 12.dp)
+                    )
                 }
             },
             modifier = Modifier.fillMaxWidth()
@@ -187,14 +200,17 @@ fun SignUpScreen(
                 viewModel.signUp(name, email, password, phoneNumber) { success ->
                     isLoading = false
                     if (success) {
-                        navController.navigate(Destinations.Login.route)
+                        showVerificationDialog =
+                            true
                     } else {
                         showMessage("Sign-up failed, please try again.", MessageType.ERROR)
                     }
                 }
             },
             colors = ButtonDefaults.buttonColors(containerColor = DarkBlue),
-            modifier = Modifier.width(300.dp).height(50.dp)
+            modifier = Modifier
+                .width(300.dp)
+                .height(50.dp)
         ) {
             Text("SIGN UP", fontSize = 22.sp, fontWeight = FontWeight.Bold)
         }
@@ -233,6 +249,17 @@ fun SignUpScreen(
         PasswordErrorDialog(
             errors = passwordErrors,
             onDismiss = { passwordErrors = emptyList() }
+        )
+    }
+
+    // Show verification email dialog
+    if (showVerificationDialog) {
+        VerificationDialog(
+            email = email,
+            onConfirm = {
+                showVerificationDialog = false
+                navController.navigate(Destinations.Login.route)
+            }
         )
     }
 }
