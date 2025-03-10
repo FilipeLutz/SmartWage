@@ -3,8 +3,12 @@
 package com.finalproject.smartwage.ui.auth
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -18,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -75,9 +80,17 @@ fun LoginScreen(
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Email", fontSize = 20.sp) },
+            label = { Text(
+                "Email", fontSize = 20.sp) },
             textStyle = TextStyle(fontSize = 24.sp),
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 25.dp)
+            singleLine = true,
+            modifier = Modifier
+                .fillMaxWidth()
+                .scrollable(
+                    orientation = Orientation.Horizontal,
+                    state = rememberScrollState(),
+                    enabled = true)
+                .padding(horizontal = 25.dp)
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -88,6 +101,7 @@ fun LoginScreen(
             onValueChange = { password = it },
             label = { Text("Password", fontSize = 20.sp) },
             textStyle = TextStyle(fontSize = 24.sp),
+            singleLine = true,
             visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
                 IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
@@ -102,7 +116,13 @@ fun LoginScreen(
                 }
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 25.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .scrollable(
+                    orientation = Orientation.Horizontal,
+                    state = rememberScrollState(),
+                    enabled = true)
+                .padding(horizontal = 25.dp)
         )
 
         Spacer(modifier = Modifier.height(8.dp))

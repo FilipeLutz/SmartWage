@@ -1,7 +1,11 @@
 package com.finalproject.smartwage.ui.auth
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -15,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -90,7 +95,13 @@ fun SignUpScreen(
             onValueChange = { name = it },
             label = { Text("Name *", fontSize = 18.sp) },
             textStyle = TextStyle(fontSize = 24.sp),
-            modifier = Modifier.fillMaxWidth()
+            singleLine = true,
+            modifier = Modifier
+                .fillMaxWidth()
+                .scrollable(
+                    orientation = Orientation.Horizontal,
+                    state = rememberScrollState(),
+                    enabled = true)
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -101,7 +112,13 @@ fun SignUpScreen(
             onValueChange = { email = it },
             label = { Text("Email *", fontSize = 18.sp) },
             textStyle = TextStyle(fontSize = 24.sp),
-            modifier = Modifier.fillMaxWidth()
+            singleLine = true,
+            modifier = Modifier
+                .fillMaxWidth()
+                .scrollable(
+                    orientation = Orientation.Horizontal,
+                    state = rememberScrollState(),
+                    enabled = true)
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -109,11 +126,20 @@ fun SignUpScreen(
         // Phone Number Field (Optional)
         OutlinedTextField(
             value = phoneNumber,
-            onValueChange = { phoneNumber = it },
+            onValueChange = { newValue ->
+                val filteredValue = newValue.filter { it.isDigit() || it == '+' }
+                phoneNumber = filteredValue
+            },
             label = { Text("Phone Number (Optional)", fontSize = 18.sp) },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
             textStyle = TextStyle(fontSize = 24.sp),
-            modifier = Modifier.fillMaxWidth()
+            singleLine = true,
+            modifier = Modifier
+                .fillMaxWidth()
+                .scrollable(
+                    orientation = Orientation.Horizontal,
+                    state = rememberScrollState(),
+                    enabled = true)
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -136,7 +162,13 @@ fun SignUpScreen(
                     )
                 }
             },
-            modifier = Modifier.fillMaxWidth()
+            singleLine = true,
+            modifier = Modifier
+                .fillMaxWidth()
+                .scrollable(
+                    orientation = Orientation.Horizontal,
+                    state = rememberScrollState(),
+                    enabled = true)
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -159,7 +191,13 @@ fun SignUpScreen(
                     )
                 }
             },
-            modifier = Modifier.fillMaxWidth()
+            singleLine = true,
+            modifier = Modifier
+                .fillMaxWidth()
+                .scrollable(
+                    orientation = Orientation.Horizontal,
+                    state = rememberScrollState(),
+                    enabled = true)
         )
 
         Spacer(modifier = Modifier.height(30.dp))
