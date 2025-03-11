@@ -2,9 +2,10 @@ package com.finalproject.smartwage.ui.components.cards
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,7 +20,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -27,17 +27,16 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,12 +45,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.Red
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.finalproject.smartwage.data.local.entities.Income
+import com.finalproject.smartwage.ui.components.dialogs.CalendarDialog
 import com.finalproject.smartwage.ui.theme.DarkBlue
 import com.finalproject.smartwage.utils.TaxCalculator
 import com.finalproject.smartwage.viewModel.IncomeViewModel
@@ -77,14 +78,8 @@ fun PayslipFormCard(
     var taxPaid by remember { mutableStateOf(incomeToEdit?.paye?.toString() ?: "") }
     var usc by remember { mutableStateOf(incomeToEdit?.usc?.toString() ?: "") }
     var prsi by remember { mutableStateOf(incomeToEdit?.prsi?.toString() ?: "") }
-    var incomeDate by remember {
-        mutableStateOf(
-            SimpleDateFormat("dd-MM-yyyy", Locale.UK).format(
-                Date(incomeToEdit?.date ?: System.currentTimeMillis())
-            )
-        )
-    }
-    var frequency by remember { mutableStateOf(incomeToEdit?.frequency ?: "Weekly") }
+    var incomeDate by remember { mutableStateOf(incomeToEdit?.date?.let { SimpleDateFormat("dd-MM-yyyy", Locale.UK).format(Date(it)) } ?: "") }
+    var frequency by remember { mutableStateOf(incomeToEdit?.frequency ?: "") }
     val frequencies = listOf("Weekly", "Fortnightly", "Monthly")
 
     Card(
@@ -117,44 +112,45 @@ fun PayslipFormCard(
                     .scrollable(
                         orientation = Orientation.Horizontal,
                         state = rememberScrollState(),
-                        enabled = true
-                    )
+                        enabled = true)
+                    .horizontalScroll(rememberScrollState())
             )
 
             Spacer(modifier = Modifier.height(10.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 DropdownMenuField(
                     label = "Frequency",
                     selectedItem = frequency,
-                    items = frequencies,
-                    modifier = Modifier
-                        .weight(1f)
+                    items = frequencies
                 ) { frequency = it }
 
                 OutlinedTextField(
                     value = incomeDate,
-                    onValueChange = { incomeDate = it },
+                    onValueChange = {},
                     label = { Text("Date", fontSize = 16.sp) },
                     textStyle = TextStyle(fontSize = 18.sp),
+                    enabled = false,
                     modifier = Modifier
                         .weight(1f)
-                        .clickable { showDatePicker = true },
+                        .clickable { showDatePicker = true }
+                        .pointerInput(Unit) {
+                            detectTapGestures { showDatePicker = true }
+                        },
                     trailingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.DateRange,
-                            contentDescription = "Select Date",
-                            tint = DarkBlue,
-                            modifier = Modifier
-                                .padding(horizontal = 5.dp)
-                                .size(30.dp)
-                                .clickable { showDatePicker = true }
-                        )
-                    },
-                    readOnly = true
+                        IconButton(
+                            onClick = { showDatePicker = true }) {
+                            Icon(
+                                imageVector = Icons.Default.DateRange,
+                                contentDescription = "Select Date",
+                                tint = DarkBlue,
+                                modifier = Modifier.size(30.dp)
+                            )
+                        }
+                    }
                 )
             }
 
@@ -246,44 +242,6 @@ fun PayslipFormCard(
                     )
             )
 
-            // Show DatePickerDialog when needed
-            if (showDatePicker) {
-                val datePickerState = rememberDatePickerState(
-                    initialSelectedDateMillis = incomeToEdit?.date ?: System.currentTimeMillis()
-                )
-                DatePickerDialog(
-                    onDismissRequest = { showDatePicker = false },
-                    confirmButton = {
-                        Button(
-                            colors = ButtonDefaults.buttonColors(DarkBlue),
-                            modifier = Modifier
-                                .padding(10.dp),
-                            onClick = {
-                                val selectedDate = datePickerState.selectedDateMillis
-                                if (selectedDate != null) {
-                                    incomeDate = SimpleDateFormat("dd-MM-yyyy", Locale.UK).format(
-                                        Date(selectedDate)
-                                    )
-                                }
-                                showDatePicker = false
-                            }) {
-                            Text("OK", fontSize = 18.sp)
-                        }
-                    },
-                    dismissButton = {
-                        Button(
-                            colors = ButtonDefaults.buttonColors(DarkBlue),
-                            modifier = Modifier
-                                .padding(10.dp),
-                            onClick = { showDatePicker = false }) {
-                            Text("Cancel", fontSize = 18.sp)
-                        }
-                    }
-                ) {
-                    DatePicker(state = datePickerState)
-                }
-            }
-
             Spacer(modifier = Modifier.height(30.dp))
 
             Row(
@@ -362,82 +320,68 @@ fun PayslipFormCard(
             }
         }
     }
+    // Show CalendarDialog when needed
+    CalendarDialog(
+        showDialog = showDatePicker,
+        onDismiss = { showDatePicker = false },
+        onDateSelected = { selectedDate -> incomeDate = selectedDate }
+    )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DropdownMenuField(
     label: String,
     selectedItem: String,
     items: List<String>,
-    modifier: Modifier = Modifier,
     onItemSelected: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val scrollState = rememberScrollState()
 
-    Box(
-        modifier = modifier
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded }
     ) {
         OutlinedTextField(
             value = selectedItem,
             onValueChange = {},
-            label = { Text(label, fontSize = 16.sp) },
-            textStyle = TextStyle(fontSize = 19.sp),
+            label = { Text(label, fontSize = 15.sp) },
+            textStyle = TextStyle(fontSize = 18.sp),
             readOnly = true,
             trailingIcon = {
-                IconButton(
-                    onClick = { expanded = !expanded },
+                Icon(
+                    Icons.Default.KeyboardArrowDown,
+                    contentDescription = "Dropdown",
+                    tint = DarkBlue,
                     modifier = Modifier
-                        .size(35.dp)
-                ) {
-                    Icon(
-                        Icons.Default.KeyboardArrowDown,
-                        contentDescription = "Dropdown",
-                        tint = DarkBlue
-                    )
-                }
+                        .clickable { expanded = true }
+                )
             },
             modifier = Modifier
-                .fillMaxWidth()
-                .clickable { expanded = !expanded }
+                .width(157.dp)
+                .menuAnchor(MenuAnchorType.PrimaryEditable, enabled = true)
+                .clickable { expanded = true }
         )
 
-        if (expanded) {
-            DropdownMenu(
-                expanded = true,
-                onDismissRequest = { expanded = false },
-                modifier = Modifier
-                    .width(157.dp)
-                    .heightIn(max = 200.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(max = 250.dp)
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .verticalScroll(scrollState)
-                            .fillMaxWidth()
-                    ) {
-                        items.forEachIndexed { index, item ->
-                            DropdownMenuItem(
-                                text = {
-                                    Text(item, style = TextStyle(fontSize = 19.sp))
-                                },
-                                onClick = {
-                                    onItemSelected(item)
-                                    expanded = false
-                                }
-                            )
-                            if (index < items.size - 1) {
-                                HorizontalDivider(
-                                    modifier = Modifier.padding(horizontal = 8.dp)
-                                )
-                            }
-                        }
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier
+                .exposedDropdownSize()
+                .heightIn(max = 200.dp)
+        ) {
+            items.forEach { item ->
+                DropdownMenuItem(
+                    text = { Text(item, style = TextStyle(fontSize = 19.sp)) },
+                    onClick = {
+                        onItemSelected(item)
+                        expanded = false
                     }
-                }
+                )
+                HorizontalDivider(
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                )
             }
         }
     }

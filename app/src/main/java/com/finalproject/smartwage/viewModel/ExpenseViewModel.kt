@@ -37,7 +37,7 @@ class ExpenseViewModel @Inject constructor(
         }
     }
 
-    fun addExpense(category: String, amount: Double, description: String) {
+    fun addExpense(category: String, amount: Double, description: String, date: String) {
         auth.currentUser?.let { user ->
             val newExpense = Expense(
                 category = category,

@@ -132,8 +132,8 @@ fun ExpenseScreen(navController: NavController) {
                             viewModel.showExpenseDialog.value = false
                             showFab = true
                         },
-                        onAddExpense = { category, amount, description ->
-                            viewModel.addExpense(category, amount, description)
+                        onAddExpense = { category, amount, description, date ->
+                            viewModel.addExpense(category, amount, description, date)
                         }
                     )
                 }
