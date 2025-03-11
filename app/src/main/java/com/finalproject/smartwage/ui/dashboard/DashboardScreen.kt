@@ -231,8 +231,7 @@ fun DashboardScreen(
                             destination = Destinations.TaxCredit.route
                         )
                     } else {
-                        Text(
-                            "Any overpayment or underpayment tax will appear here after incomes and expenses have been added.",
+                        Text("Any overpayment or underpayment tax will appear here after incomes and expenses have been added.",
                             fontSize = 22.sp,
                             color = Color.DarkGray,
                             fontWeight = FontWeight.SemiBold,
