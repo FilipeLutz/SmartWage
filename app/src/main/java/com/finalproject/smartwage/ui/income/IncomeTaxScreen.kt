@@ -1,3 +1,4 @@
+
 package com.finalproject.smartwage.ui.income
 
 import androidx.compose.foundation.background
