@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -77,13 +78,13 @@ fun DashboardScreen(
                 }
             } else {
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(14.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(top = 20.dp)
                         .padding(horizontal = 10.dp)
                 ) {
+
+                    Spacer(modifier = Modifier.height(25.dp))
 
                     Text(
                         text = "Dashboard",
@@ -91,6 +92,8 @@ fun DashboardScreen(
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
                     )
+
+                    Spacer(modifier = Modifier.height(18.dp))
 
                     // Quick Tax Calculator
                     Row(
@@ -105,6 +108,8 @@ fun DashboardScreen(
                             fontWeight = FontWeight.Bold
                         )
                     }
+
+                    Spacer(modifier = Modifier.height(10.dp))
 
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -160,6 +165,8 @@ fun DashboardScreen(
                         }
                     }
 
+                    Spacer(modifier = Modifier.height(15.dp))
+
                     Row(
                         horizontalArrangement = Arrangement.Start,
                         modifier = Modifier
@@ -173,6 +180,8 @@ fun DashboardScreen(
                         )
                     }
 
+                    Spacer(modifier = Modifier.height(14.dp))
+
                     DashboardCards(
                         label = "Income",
                         value = totalIncome,
@@ -180,6 +189,8 @@ fun DashboardScreen(
                         navController = navController,
                         destination = Destinations.Income.route
                     )
+
+                    Spacer(modifier = Modifier.height(14.dp))
 
                     DashboardCards(
                         label = "Expenses",
@@ -189,6 +200,8 @@ fun DashboardScreen(
                         destination = Destinations.Expense.route
                     )
 
+                    Spacer(modifier = Modifier.height(14.dp))
+
                     DashboardCards(
                         label = "Tax Paid",
                         value = taxPaid,
@@ -197,7 +210,9 @@ fun DashboardScreen(
                         destination = Destinations.TaxCredit.route
                     )
 
-                    // Show "Underpayment Tax" when it's > 0, otherwise show "Overpayment Tax" when it's > 0
+                    Spacer(modifier = Modifier.height(14.dp))
+
+                    // Show Tax Overpayment or Underpayment if applicable, else show a message
                     if (taxOwed > 0.0) {
                         DashboardCards(
                             label = "Tax Underpayment",
@@ -213,6 +228,17 @@ fun DashboardScreen(
                             iconRes = R.drawable.taxbag,
                             navController = navController,
                             destination = Destinations.TaxCredit.route
+                        )
+                    } else {
+                        Text(
+                            "Any overpayment or underpayment tax will appear here after incomes and expenses have been added.",
+                            fontSize = 22.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            textAlign = TextAlign.Start,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 17.dp)
+                                .padding(top = 5.dp)
                         )
                     }
 
