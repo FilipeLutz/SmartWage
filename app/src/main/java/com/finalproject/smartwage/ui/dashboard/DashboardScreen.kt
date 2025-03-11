@@ -11,6 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -233,11 +234,12 @@ fun DashboardScreen(
                         Text(
                             "Any overpayment or underpayment tax will appear here after incomes and expenses have been added.",
                             fontSize = 22.sp,
+                            color = Color.DarkGray,
                             fontWeight = FontWeight.SemiBold,
                             textAlign = TextAlign.Start,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 17.dp)
+                                .padding(horizontal = 20.dp)
                                 .padding(top = 5.dp)
                         )
                     }
