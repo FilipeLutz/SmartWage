@@ -7,6 +7,10 @@ import com.finalproject.smartwage.data.local.entities.Tax
 import com.finalproject.smartwage.data.local.entities.User
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
@@ -110,25 +114,29 @@ class FirestoreService @Inject constructor() {
     // Save Expense to Firestore
     suspend fun saveExpense(expense: Expense) {
         try {
-            db.collection("expenses").document(expense.id).set(expense).await()
+            val docRef = db.collection("expenses").document()
+            val newExpense = expense.copy(id = docRef.id)
+            docRef.set(newExpense).await()
         } catch (e: Exception) {
             Timber.e(e, "Error saving expense to Firestore")
         }
     }
 
     // Get Expenses for a Specific User
-    suspend fun getUserExpenses(userId: String): List<Expense> {
-        return try {
-            db.collection("expenses")
+    fun getUserExpenses(userId: String): Flow<List<Expense>> = flow {
+        try {
+            val snapshot = db.collection("expenses")
                 .whereEqualTo("userId", userId)
                 .get()
                 .await()
-                .toObjects(Expense::class.java)
+
+            val expenses = snapshot.toObjects(Expense::class.java)
+            emit(expenses)
         } catch (e: Exception) {
             Timber.e(e, "Error fetching expenses from Firestore")
-            emptyList()
+            emit(emptyList())
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
     // Delete Expense from Firestore
     suspend fun deleteExpense(expenseId: String) {

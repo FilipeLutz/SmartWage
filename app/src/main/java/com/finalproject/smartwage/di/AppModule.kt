@@ -106,7 +106,7 @@ object AppModule {
         expenseDao: ExpenseDao,
         firestoreService: FirestoreService
     ): ExpenseRepository =
-        ExpenseRepository(expenseDao, firestoreService)
+        ExpenseRepository(expenseDao, firestoreService, FirebaseAuth.getInstance())
 
     @Provides
     @Singleton

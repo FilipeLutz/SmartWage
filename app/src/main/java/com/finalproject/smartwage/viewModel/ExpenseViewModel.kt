@@ -1,9 +1,11 @@
 package com.finalproject.smartwage.viewModel
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.finalproject.smartwage.data.local.entities.Expense
 import com.finalproject.smartwage.data.repository.ExpenseRepository
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,31 +15,55 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ExpenseViewModel @Inject constructor(
-    private val expenseRepo: ExpenseRepository
+    private val repository: ExpenseRepository,
+    private val auth: FirebaseAuth
 ) : ViewModel() {
+    private val _expenses = MutableStateFlow<List<Expense>>(emptyList())
+    val expenses: StateFlow<List<Expense>> = _expenses.asStateFlow()
 
-    private val _userExpenses = MutableStateFlow<List<Expense>>(emptyList())
-    val userExpenses: StateFlow<List<Expense>> = _userExpenses.asStateFlow()
+    var showExpenseDialog = mutableStateOf(false)
 
-    fun loadExpenses(userId: String) {
+    init {
+        loadExpenses()
+    }
+
+    private fun loadExpenses() {
         viewModelScope.launch {
-            expenseRepo.getUserExpenses(userId).collect { expenses ->
-                _userExpenses.value = expenses
+            auth.currentUser?.let { user ->
+                repository.getExpenses(user.uid).collect { expenses ->
+                    _expenses.value = expenses
+                }
             }
         }
     }
 
-    fun addExpense(expense: Expense) {
-        viewModelScope.launch {
-            expenseRepo.saveExpense(expense)
-            loadExpenses(expense.userId)
+    fun addExpense(category: String, amount: Double, description: String) {
+        auth.currentUser?.let { user ->
+            val newExpense = Expense(
+                category = category,
+                amount = amount,
+                description = description,
+                date = System.currentTimeMillis(),
+                userId = user.uid
+            )
+            viewModelScope.launch {
+                repository.addExpense(newExpense)
+                loadExpenses()
+            }
         }
     }
 
-    fun deleteExpense(expenseId: String, userId: String) {
+    fun updateExpense(expense: Expense) {
         viewModelScope.launch {
-            expenseRepo.deleteExpense(expenseId)
-            loadExpenses(userId)
+            repository.addExpense(expense)
+            loadExpenses()
+        }
+    }
+
+    fun deleteExpense(expense: Expense) {
+        viewModelScope.launch {
+            repository.deleteExpense(expense.id)
+            loadExpenses()
         }
     }
 }
