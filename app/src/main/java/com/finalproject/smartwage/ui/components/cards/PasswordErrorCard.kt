@@ -75,10 +75,10 @@ fun PasswordErrorCard(errors: List<PasswordValidationError>, onDismiss: () -> Un
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            Row (
+            Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
-            ){
+            ) {
                 Button(
                     onClick = onDismiss,
                     colors = ButtonDefaults.buttonColors(

@@ -1,8 +1,11 @@
 package com.finalproject.smartwage.ui.dashboard
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -20,8 +23,8 @@ import com.finalproject.smartwage.R
 import com.finalproject.smartwage.navigation.Destinations
 import com.finalproject.smartwage.ui.components.DashboardBottomBar
 import com.finalproject.smartwage.ui.components.DashboardTopBar
-import com.finalproject.smartwage.ui.components.TaxResultDialog
 import com.finalproject.smartwage.ui.components.cards.DashboardCards
+import com.finalproject.smartwage.ui.components.dialogs.TaxResultDialog
 import com.finalproject.smartwage.ui.theme.DarkBlue
 import com.finalproject.smartwage.utils.QuickTaxCalculator
 import com.finalproject.smartwage.viewModel.DashboardViewModel
@@ -74,23 +77,20 @@ fun DashboardScreen(
                 }
             } else {
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(14.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(top = 20.dp)
                         .padding(horizontal = 10.dp)
                 ) {
-                    Spacer(modifier = Modifier.height(1.dp))
 
                     Text(
                         text = "Dashboard",
-                        fontSize = 36.sp,
+                        fontSize = 35.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
                     )
-
-                    Spacer(modifier = Modifier.height(1.dp))
 
                     // Quick Tax Calculator
                     Row(
@@ -101,7 +101,7 @@ fun DashboardScreen(
                     ) {
                         Text(
                             "Quick Tax Calculator",
-                            fontSize = 30.sp,
+                            fontSize = 28.sp,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -123,7 +123,14 @@ fun DashboardScreen(
                             label = { Text("Enter Income (€)", fontSize = 18.sp) },
                             textStyle = TextStyle(fontSize = 24.sp),
                             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                            modifier = Modifier.width(200.dp)
+                            singleLine = true,
+                            modifier = Modifier
+                                .width(180.dp)
+                                .scrollable(
+                                    orientation = Orientation.Horizontal,
+                                    state = rememberScrollState(),
+                                    enabled = true
+                                )
                         )
 
                         Button(
@@ -140,9 +147,9 @@ fun DashboardScreen(
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = DarkBlue),
                             modifier = Modifier
-                                .width(160.dp)
+                                .width(150.dp)
                                 .height(60.dp)
-                                .padding(vertical = 6.dp)
+                                .padding(top = 10.dp)
                         ) {
                             Text(
                                 "Calculate",
@@ -161,7 +168,7 @@ fun DashboardScreen(
                     ) {
                         Text(
                             "Overview",
-                            fontSize = 30.sp,
+                            fontSize = 28.sp,
                             fontWeight = FontWeight.Bold
                         )
                     }

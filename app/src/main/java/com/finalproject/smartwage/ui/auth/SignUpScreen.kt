@@ -1,7 +1,11 @@
 package com.finalproject.smartwage.ui.auth
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -15,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -24,10 +29,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.finalproject.smartwage.R
 import com.finalproject.smartwage.navigation.Destinations
-import com.finalproject.smartwage.ui.components.ErrorMessageDialog
-import com.finalproject.smartwage.ui.components.LoadingDialog
-import com.finalproject.smartwage.ui.components.MessageType
-import com.finalproject.smartwage.ui.components.PasswordErrorDialog
+import com.finalproject.smartwage.ui.components.dialogs.ErrorMessageDialog
+import com.finalproject.smartwage.ui.components.dialogs.LoadingDialog
+import com.finalproject.smartwage.ui.components.dialogs.MessageType
+import com.finalproject.smartwage.ui.components.dialogs.PasswordErrorDialog
+import com.finalproject.smartwage.ui.components.dialogs.VerificationDialog
 import com.finalproject.smartwage.ui.theme.DarkBlue
 import com.finalproject.smartwage.utils.PasswordValidationError
 import com.finalproject.smartwage.utils.isValidEmail
@@ -36,7 +42,8 @@ import com.finalproject.smartwage.viewModel.AuthViewModel
 
 @Composable
 fun SignUpScreen(
-    navController: NavController, viewModel: AuthViewModel = hiltViewModel()
+    navController: NavController,
+    viewModel: AuthViewModel = hiltViewModel()
 ) {
     var name by remember { mutableStateOf("") }
     var phoneNumber by remember { mutableStateOf("") }
@@ -50,6 +57,9 @@ fun SignUpScreen(
     var isConfirmPasswordVisible by remember { mutableStateOf(false) }
     var passwordErrors by remember { mutableStateOf<List<PasswordValidationError>>(emptyList()) }
     val emailExists by viewModel.emailExists.collectAsState()
+
+    // Show dialog after successful signup
+    var showVerificationDialog by remember { mutableStateOf(false) }
 
     // Function to show messages
     fun showMessage(newMessage: String, type: MessageType) {
@@ -85,7 +95,13 @@ fun SignUpScreen(
             onValueChange = { name = it },
             label = { Text("Name *", fontSize = 18.sp) },
             textStyle = TextStyle(fontSize = 24.sp),
-            modifier = Modifier.fillMaxWidth()
+            singleLine = true,
+            modifier = Modifier
+                .fillMaxWidth()
+                .scrollable(
+                    orientation = Orientation.Horizontal,
+                    state = rememberScrollState(),
+                    enabled = true)
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -96,7 +112,13 @@ fun SignUpScreen(
             onValueChange = { email = it },
             label = { Text("Email *", fontSize = 18.sp) },
             textStyle = TextStyle(fontSize = 24.sp),
-            modifier = Modifier.fillMaxWidth()
+            singleLine = true,
+            modifier = Modifier
+                .fillMaxWidth()
+                .scrollable(
+                    orientation = Orientation.Horizontal,
+                    state = rememberScrollState(),
+                    enabled = true)
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -104,11 +126,20 @@ fun SignUpScreen(
         // Phone Number Field (Optional)
         OutlinedTextField(
             value = phoneNumber,
-            onValueChange = { phoneNumber = it },
+            onValueChange = { newValue ->
+                val filteredValue = newValue.filter { it.isDigit() || it == '+' }
+                phoneNumber = filteredValue
+            },
             label = { Text("Phone Number (Optional)", fontSize = 18.sp) },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
             textStyle = TextStyle(fontSize = 24.sp),
-            modifier = Modifier.fillMaxWidth()
+            singleLine = true,
+            modifier = Modifier
+                .fillMaxWidth()
+                .scrollable(
+                    orientation = Orientation.Horizontal,
+                    state = rememberScrollState(),
+                    enabled = true)
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -124,10 +155,20 @@ fun SignUpScreen(
                 IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
                     val icon = if (isPasswordVisible) painterResource(id = R.drawable.view)
                     else painterResource(id = R.drawable.hidden)
-                    Image(painter = icon, contentDescription = "Toggle password visibility", Modifier.padding(end = 12.dp))
+                    Image(
+                        painter = icon,
+                        contentDescription = "Toggle password visibility",
+                        Modifier.padding(end = 12.dp)
+                    )
                 }
             },
-            modifier = Modifier.fillMaxWidth()
+            singleLine = true,
+            modifier = Modifier
+                .fillMaxWidth()
+                .scrollable(
+                    orientation = Orientation.Horizontal,
+                    state = rememberScrollState(),
+                    enabled = true)
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -143,13 +184,23 @@ fun SignUpScreen(
                 IconButton(onClick = { isConfirmPasswordVisible = !isConfirmPasswordVisible }) {
                     val icon = if (isConfirmPasswordVisible) painterResource(id = R.drawable.view)
                     else painterResource(id = R.drawable.hidden)
-                    Image(painter = icon, contentDescription = "Toggle password visibility", Modifier.padding(end = 12.dp))
+                    Image(
+                        painter = icon,
+                        contentDescription = "Toggle password visibility",
+                        Modifier.padding(end = 12.dp)
+                    )
                 }
             },
-            modifier = Modifier.fillMaxWidth()
+            singleLine = true,
+            modifier = Modifier
+                .fillMaxWidth()
+                .scrollable(
+                    orientation = Orientation.Horizontal,
+                    state = rememberScrollState(),
+                    enabled = true)
         )
 
-        Spacer(modifier = Modifier.height(35.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
         // Sign-Up Button
         Button(
@@ -187,19 +238,22 @@ fun SignUpScreen(
                 viewModel.signUp(name, email, password, phoneNumber) { success ->
                     isLoading = false
                     if (success) {
-                        navController.navigate(Destinations.Login.route)
+                        showVerificationDialog =
+                            true
                     } else {
                         showMessage("Sign-up failed, please try again.", MessageType.ERROR)
                     }
                 }
             },
             colors = ButtonDefaults.buttonColors(containerColor = DarkBlue),
-            modifier = Modifier.width(300.dp).height(50.dp)
+            modifier = Modifier
+                .width(300.dp)
+                .height(50.dp)
         ) {
             Text("SIGN UP", fontSize = 22.sp, fontWeight = FontWeight.Bold)
         }
 
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         // Login Navigation
         Row(
@@ -233,6 +287,17 @@ fun SignUpScreen(
         PasswordErrorDialog(
             errors = passwordErrors,
             onDismiss = { passwordErrors = emptyList() }
+        )
+    }
+
+    // Show verification email dialog
+    if (showVerificationDialog) {
+        VerificationDialog(
+            email = email,
+            onConfirm = {
+                showVerificationDialog = false
+                navController.navigate(Destinations.Login.route)
+            }
         )
     }
 }

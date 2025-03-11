@@ -3,46 +3,41 @@ package com.finalproject.smartwage.data.repository
 import com.finalproject.smartwage.data.local.dao.ExpenseDao
 import com.finalproject.smartwage.data.local.entities.Expense
 import com.finalproject.smartwage.data.remote.FirestoreService
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 class ExpenseRepository @Inject constructor(
     private val expenseDao: ExpenseDao,
-    private val firestoreService: FirestoreService
+    private val firestoreService: FirestoreService,
+    private val auth: FirebaseAuth
 ) {
+    fun getExpenses(userId: String): Flow<List<Expense>> = firestoreService.getUserExpenses(userId)
 
-    // Save Expense (Sync to Firestore and Room)
-    suspend fun saveExpense(expense: Expense) {
+    suspend fun addExpense(expense: Expense) {
+        val currentUser = auth.currentUser ?: return
+        val newExpense = expense.copy(userId = currentUser.uid)
+
         withContext(Dispatchers.IO) {
             try {
-                val expenseId = if (expense.id.isEmpty()) firestoreService.generateExpenseId() else expense.id
-                val updatedExpense = expense.copy(id = expenseId)
-
-                firestoreService.saveExpense(updatedExpense)  // Cloud Firestore
-                expenseDao.insertExpense(updatedExpense)  // Local Room DB
+                firestoreService.saveExpense(newExpense)
+                expenseDao.insertExpenses(newExpense)
             } catch (e: Exception) {
-                // Handle error (e.g., log or show a message)
-                println("Error saving expense: ${e.message}")
+                Timber.e(e, "Error adding expense")
             }
         }
     }
 
-    // Get User Expenses (Flow for real-time updates from Room)
-    fun getUserExpenses(userId: String): Flow<List<Expense>> {
-        return expenseDao.getUserExpenses(userId)
-    }
-
-    // Delete Expense (Sync Firebase + Room)
     suspend fun deleteExpense(expenseId: String) {
         withContext(Dispatchers.IO) {
             try {
-                firestoreService.deleteExpense(expenseId)  // Firestore
-                expenseDao.deleteExpense(expenseId)  // Room
+                firestoreService.deleteExpense(expenseId)
+                expenseDao.deleteExpenses(expenseId)
             } catch (e: Exception) {
-                // Handle error (e.g., log or show a message)
-                println("Error deleting expense: ${e.message}")
+                Timber.e(e, "Error deleting expense")
             }
         }
     }

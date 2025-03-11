@@ -40,7 +40,7 @@ class DashboardViewModel @Inject constructor(
     val errorMessage: StateFlow<String?> = _errorMessage
 
     /**
-     * 🔹 Load user data (Income, Expenses, and Tax calculations)
+     * Load user data (Income, Expenses, and Tax calculations)
      */
     fun loadUserData(userId: String) {
         viewModelScope.launch {
@@ -57,7 +57,7 @@ class DashboardViewModel @Inject constructor(
                     totalIncomeValue += income.amount
                     totalTaxPaidValue += income.paye + income.usc + income.prsi
 
-                    // 🔹 Calculate expected tax using TaxCalculator
+                    // Calculate expected tax using TaxCalculator
                     val selectedFrequency = when (income.frequency) {
                         "Weekly" -> TaxCalculator.PaymentFrequency.WEEKLY
                         "Fortnightly" -> TaxCalculator.PaymentFrequency.FORTNIGHTLY
@@ -72,13 +72,13 @@ class DashboardViewModel @Inject constructor(
                 _totalIncome.value = totalIncomeValue
                 _taxPaid.value = totalTaxPaidValue
 
-                // 🔹 Compare actual tax vs expected tax
+                // Compare actual tax vs expected tax
                 val taxDifference = totalTaxPaidValue - totalExpectedTaxValue
                 _taxOwed.value = if (taxDifference < 0) -taxDifference else 0.0
                 _taxBack.value = if (taxDifference > 0) taxDifference else 0.0
 
-                // 🔹 Fetch expenses
-                val expenses = expenseRepo.getUserExpenses(userId).first()
+                // Fetch expenses
+                val expenses = expenseRepo.getExpenses(userId).first()
                 _totalExpenses.value = expenses.sumOf { it.amount }
 
             } catch (e: Exception) {

@@ -1,7 +1,8 @@
 package com.finalproject.smartwage.ui.components.cards
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,8 +22,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -46,10 +45,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -79,30 +77,21 @@ fun PayslipFormCard(
     var taxPaid by remember { mutableStateOf(incomeToEdit?.paye?.toString() ?: "") }
     var usc by remember { mutableStateOf(incomeToEdit?.usc?.toString() ?: "") }
     var prsi by remember { mutableStateOf(incomeToEdit?.prsi?.toString() ?: "") }
-    var incomeDate by remember { mutableStateOf(SimpleDateFormat("dd-MM-yyyy", Locale.UK).format(Date(incomeToEdit?.date ?: System.currentTimeMillis()))) }
-    var frequency by remember { mutableStateOf(incomeToEdit?.frequency ?: "") }
+    var incomeDate by remember {
+        mutableStateOf(
+            SimpleDateFormat("dd-MM-yyyy", Locale.UK).format(
+                Date(incomeToEdit?.date ?: System.currentTimeMillis())
+            )
+        )
+    }
+    var frequency by remember { mutableStateOf(incomeToEdit?.frequency ?: "Weekly") }
     val frequencies = listOf("Weekly", "Fortnightly", "Monthly")
-
-    //var payPeriod by remember { mutableStateOf(incomeToEdit?.payPeriod?.toString() ?: "1") }
-    /*val payPeriods = remember(frequency) {
-        when (frequency) {
-            "Weekly" -> (1..52).map { it.toString() }
-            "Fortnightly" -> (1..26).map { it.toString() }
-            else -> (1..12).map { it.toString() }
-        }
-    }
-
-    // Reset payPeriod when frequency changes
-    LaunchedEffect(frequency) {
-        payPeriod = payPeriods.firstOrNull() ?: "1"
-    }
-    */
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(16.dp),
+            .padding(12.dp),
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
@@ -113,7 +102,7 @@ fun PayslipFormCard(
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
         ) {
-            Text("Add Payslip Details", fontSize = 28.sp, fontWeight = FontWeight.Bold)
+            Text("Add Payslip Details", fontSize = 28.sp, fontWeight = Bold)
 
             Spacer(modifier = Modifier.height(35.dp))
 
@@ -122,30 +111,35 @@ fun PayslipFormCard(
                 onValueChange = { company = it },
                 label = { Text("Company Name", fontSize = 17.sp) },
                 textStyle = TextStyle(fontSize = 22.sp),
+                singleLine = true,
                 modifier = Modifier
                     .fillMaxWidth()
+                    .scrollable(
+                        orientation = Orientation.Horizontal,
+                        state = rememberScrollState(),
+                        enabled = true
+                    )
             )
 
             Spacer(modifier = Modifier.height(10.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 DropdownMenuField(
                     label = "Frequency",
                     selectedItem = frequency,
                     items = frequencies,
                     modifier = Modifier
-                        .weight(0.95f)
-                        .clickable { frequency }
+                        .weight(1f)
                 ) { frequency = it }
 
                 OutlinedTextField(
                     value = incomeDate,
                     onValueChange = { incomeDate = it },
-                    label = { Text("Income Date", fontSize = 17.sp) },
-                    textStyle = TextStyle(fontSize = 20.sp),
+                    label = { Text("Date", fontSize = 16.sp) },
+                    textStyle = TextStyle(fontSize = 18.sp),
                     modifier = Modifier
                         .weight(1f)
                         .clickable { showDatePicker = true },
@@ -155,8 +149,8 @@ fun PayslipFormCard(
                             contentDescription = "Select Date",
                             tint = DarkBlue,
                             modifier = Modifier
-                                .padding(horizontal = 10.dp)
-                                .size(33.dp)
+                                .padding(horizontal = 5.dp)
+                                .size(30.dp)
                                 .clickable { showDatePicker = true }
                         )
                     },
@@ -175,8 +169,15 @@ fun PayslipFormCard(
                 },
                 label = { Text("Income Amount (€)", fontSize = 17.sp) },
                 textStyle = TextStyle(fontSize = 22.sp),
+                singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .scrollable(
+                        orientation = Orientation.Horizontal,
+                        state = rememberScrollState(),
+                        enabled = true
+                    )
             )
 
             Spacer(modifier = Modifier.height(10.dp))
@@ -190,8 +191,15 @@ fun PayslipFormCard(
                 },
                 label = { Text("Tax Paid (PAYE) (€)", fontSize = 17.sp) },
                 textStyle = TextStyle(fontSize = 22.sp),
+                singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .scrollable(
+                        orientation = Orientation.Horizontal,
+                        state = rememberScrollState(),
+                        enabled = true
+                    )
             )
 
             Spacer(modifier = Modifier.height(10.dp))
@@ -205,8 +213,15 @@ fun PayslipFormCard(
                 },
                 label = { Text("PRSI (€)", fontSize = 17.sp) },
                 textStyle = TextStyle(fontSize = 22.sp),
+                singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .scrollable(
+                        orientation = Orientation.Horizontal,
+                        state = rememberScrollState(),
+                        enabled = true
+                    )
             )
 
             Spacer(modifier = Modifier.height(10.dp))
@@ -220,8 +235,15 @@ fun PayslipFormCard(
                 },
                 label = { Text("USC (€)", fontSize = 17.sp) },
                 textStyle = TextStyle(fontSize = 22.sp),
+                singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .scrollable(
+                        orientation = Orientation.Horizontal,
+                        state = rememberScrollState(),
+                        enabled = true
+                    )
             )
 
             // Show DatePickerDialog when needed
@@ -239,7 +261,9 @@ fun PayslipFormCard(
                             onClick = {
                                 val selectedDate = datePickerState.selectedDateMillis
                                 if (selectedDate != null) {
-                                    incomeDate = SimpleDateFormat("dd-MM-yyyy", Locale.UK).format(Date(selectedDate))
+                                    incomeDate = SimpleDateFormat("dd-MM-yyyy", Locale.UK).format(
+                                        Date(selectedDate)
+                                    )
                                 }
                                 showDatePicker = false
                             }) {
@@ -260,7 +284,7 @@ fun PayslipFormCard(
                 }
             }
 
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(30.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -277,7 +301,7 @@ fun PayslipFormCard(
                     Text(
                         "Cancel",
                         fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = Bold
                     )
                 }
 
@@ -290,10 +314,15 @@ fun PayslipFormCard(
                         }
 
                         val incomeAmountValue = incomeAmount.toDoubleOrNull() ?: 0.0
-                        val actualTaxPaid = (taxPaid.toDoubleOrNull() ?: 0.0) + (usc.toDoubleOrNull() ?: 0.0) + (prsi.toDoubleOrNull() ?: 0.0)
+                        val actualTaxPaid =
+                            (taxPaid.toDoubleOrNull() ?: 0.0) + (usc.toDoubleOrNull()
+                                ?: 0.0) + (prsi.toDoubleOrNull() ?: 0.0)
 
                         // Calculate tax using correct frequency
-                        val (expectedPAYE, expectedUSC, expectedPRSI) = TaxCalculator.calculateTax(incomeAmountValue, selectedFrequency)
+                        val (expectedPAYE, expectedUSC, expectedPRSI) = TaxCalculator.calculateTax(
+                            incomeAmountValue,
+                            selectedFrequency
+                        )
                         val totalExpectedTax = expectedPAYE + expectedUSC + expectedPRSI
 
                         // Compare tax paid vs expected tax
@@ -308,7 +337,8 @@ fun PayslipFormCard(
                             paye = taxPaid.toDoubleOrNull() ?: 0.0,
                             usc = usc.toDoubleOrNull() ?: 0.0,
                             prsi = prsi.toDoubleOrNull() ?: 0.0,
-                            date = SimpleDateFormat("dd-MM-yyyy", Locale.UK).parse(incomeDate)?.time ?: System.currentTimeMillis(),
+                            date = SimpleDateFormat("dd-MM-yyyy", Locale.UK).parse(incomeDate)?.time
+                                ?: System.currentTimeMillis(),
                             frequency = frequency,
                             userId = currentUser?.uid ?: "",
                             overpaidTax = overpaidTax,
@@ -326,88 +356,13 @@ fun PayslipFormCard(
                     Text(
                         "Save",
                         fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = Bold
                     )
                 }
             }
         }
     }
 }
-
-@SuppressLint("DefaultLocale")
-@Composable
-fun IncomeListCard(income: Income, viewModel: IncomeViewModel, onEdit: (Income) -> Unit) {
-    val totalTax = income.paye + income.usc + income.prsi
-    val netPay = income.amount - totalTax
-    val incomeTextStyle = TextStyle(
-        fontSize = 16.sp,
-        color = Color.Black
-    )
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(10.dp),
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(6.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(10.dp)
-                .fillMaxWidth()
-        ) {
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(10.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                Text(
-                    text = "Company: ${income.source}",
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Text("Gross Pay: ${String.format("%.2f", income.amount)}", style = incomeTextStyle, fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
-                Text("Total Tax: ${String.format("%.2f", totalTax)}", style = incomeTextStyle, fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
-                Text("Net Pay: ${String.format("%.2f", netPay)}", style = incomeTextStyle, fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
-                Text("Date: ${SimpleDateFormat("dd-MM-yyyy", Locale.UK).format(Date(income.date))}", style = incomeTextStyle, fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
-            }
-
-            // Icons
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                // Edit Icon
-                IconButton(
-                    onClick = { onEdit(income) },
-                    modifier = Modifier.size(80.dp)
-                ) {
-                    Icon(
-                        modifier = Modifier
-                        .size(35.dp),
-                        imageVector = Icons.Filled.Edit,
-                        contentDescription = "Edit Income",
-                        tint = DarkBlue
-                    )
-                }
-                // Delete Icon
-                IconButton(
-                    onClick = { viewModel.deleteIncome(income.id, income.userId) },
-                    modifier = Modifier.size(80.dp)
-                ) {
-                    Icon(
-                        modifier = Modifier
-                            .size(35.dp),
-                        imageVector = Icons.Filled.Delete,
-                        contentDescription = "Delete Income",
-                        tint = Red
-                    )
-                }
-            }
-        }
-    }
-}
-
 
 @Composable
 fun DropdownMenuField(
@@ -426,8 +381,8 @@ fun DropdownMenuField(
         OutlinedTextField(
             value = selectedItem,
             onValueChange = {},
-            label = { Text(label, fontSize = 17.sp) },
-            textStyle = TextStyle(fontSize = 20.sp),
+            label = { Text(label, fontSize = 16.sp) },
+            textStyle = TextStyle(fontSize = 19.sp),
             readOnly = true,
             trailingIcon = {
                 IconButton(
@@ -452,7 +407,7 @@ fun DropdownMenuField(
                 expanded = true,
                 onDismissRequest = { expanded = false },
                 modifier = Modifier
-                    .width(167.dp)
+                    .width(157.dp)
                     .heightIn(max = 200.dp)
             ) {
                 Box(
@@ -468,7 +423,8 @@ fun DropdownMenuField(
                         items.forEachIndexed { index, item ->
                             DropdownMenuItem(
                                 text = {
-                                    Text(item, style = TextStyle(fontSize = 22.sp)) },
+                                    Text(item, style = TextStyle(fontSize = 19.sp))
+                                },
                                 onClick = {
                                     onItemSelected(item)
                                     expanded = false
