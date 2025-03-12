@@ -107,7 +107,10 @@ fun AddExpenseDialog(
                                     onClick = { expanded = !expanded }) {
                                     Icon(
                                         Icons.Default.ArrowDropDown,
-                                        contentDescription = "Dropdown"
+                                        contentDescription = "Dropdown",
+                                        tint = DarkBlue,
+                                        modifier = Modifier
+                                            .size(30.dp)
                                     )
                                 }
                             },
@@ -259,7 +262,6 @@ fun AddExpenseDialog(
                                 if (expenseCategory.isBlank()) add("Category")
                                 if (expenseDate.isBlank()) add("Date")
                                 if (amount.isBlank() || amount == "0") add("Expense Amount (€)")
-                                if (description.isBlank()) add("Description")
                             }
 
                             if (missingFields.isNotEmpty()) {

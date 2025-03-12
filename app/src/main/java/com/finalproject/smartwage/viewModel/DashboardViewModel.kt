@@ -42,7 +42,7 @@ class DashboardViewModel @Inject constructor(
     /**
      * Load user data (Income, Expenses, and Tax calculations)
      */
-    fun loadUserData(userId: String) {
+    fun loadUserData() {
         viewModelScope.launch {
             _isLoading.value = true
             _errorMessage.value = null
@@ -78,7 +78,7 @@ class DashboardViewModel @Inject constructor(
                 _taxBack.value = if (taxDifference > 0) taxDifference else 0.0
 
                 // Fetch expenses
-                val expenses = expenseRepo.getExpenses(userId).first()
+                val expenses = expenseRepo.getUserExpenses().first()
                 _totalExpenses.value = expenses.sumOf { it.amount }
 
             } catch (e: Exception) {

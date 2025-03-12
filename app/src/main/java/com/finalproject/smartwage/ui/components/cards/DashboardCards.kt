@@ -24,6 +24,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.finalproject.smartwage.ui.theme.LightPurple
+import com.finalproject.smartwage.ui.theme.PurpleGrey80
 
 @SuppressLint("DefaultLocale")
 @Composable
@@ -40,7 +42,7 @@ fun DashboardCards(
             .clickable(onClick = {navController.navigate(destination)})
             .padding(horizontal = 16.dp),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        colors = CardDefaults.cardColors(PurpleGrey80),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
         Row(

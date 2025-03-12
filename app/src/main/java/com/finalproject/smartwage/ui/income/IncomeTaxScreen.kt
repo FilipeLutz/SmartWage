@@ -137,7 +137,7 @@ fun IncomeTaxScreen(navController: NavController, viewModel: IncomeViewModel = h
                                     editingIncome = selectedIncome
                                     showPayslipForm = true
                                     showFab = false
-                                }
+                                },
                             )
                         }
 

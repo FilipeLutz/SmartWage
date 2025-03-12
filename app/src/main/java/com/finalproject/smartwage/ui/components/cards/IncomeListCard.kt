@@ -18,14 +18,14 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Red
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.finalproject.smartwage.data.local.entities.Income
+import com.finalproject.smartwage.ui.theme.Black
 import com.finalproject.smartwage.ui.theme.DarkBlue
+import com.finalproject.smartwage.ui.theme.LightPurple
 import com.finalproject.smartwage.viewModel.IncomeViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -40,16 +40,13 @@ fun IncomeListCard(
 ) {
     val totalTax = income.paye + income.usc + income.prsi
     val netPay = income.amount - totalTax
-    val incomeTextStyle = TextStyle(
-        fontSize = 16.sp,
-        color = Color.Black
-    )
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp),
         shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(LightPurple),
         elevation = CardDefaults.cardElevation(6.dp)
     ) {
         Row(
@@ -61,36 +58,37 @@ fun IncomeListCard(
                 modifier = Modifier
                     .weight(1f)
                     .padding(10.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
                     text = "Company: ${income.source}",
                     fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = Black
                 )
                 Text(
                     "Gross Pay: ${String.format("%.2f", income.amount)}",
-                    style = incomeTextStyle,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.SemiBold
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Black
                 )
                 Text(
                     "Total Tax: ${String.format("%.2f", totalTax)}",
-                    style = incomeTextStyle,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.SemiBold
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Black
                 )
                 Text(
                     "Net Pay: ${String.format("%.2f", netPay)}",
-                    style = incomeTextStyle,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.SemiBold
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Black
                 )
                 Text(
                     "Date: ${SimpleDateFormat("dd-MM-yyyy", Locale.UK).format(Date(income.date))}",
-                    style = incomeTextStyle,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.SemiBold
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Black
                 )
             }
 

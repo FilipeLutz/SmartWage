@@ -52,7 +52,7 @@ fun DashboardScreen(
 
     // Load user data when screen is first displayed
     LaunchedEffect(userId) {
-        viewModel.loadUserData(userId)
+        viewModel.loadUserData()
     }
 
     Scaffold(

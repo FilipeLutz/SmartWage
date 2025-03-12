@@ -20,6 +20,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,18 +36,29 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.finalproject.smartwage.data.local.entities.Expense
 import com.finalproject.smartwage.ui.components.DashboardBottomBar
 import com.finalproject.smartwage.ui.components.DashboardTopBar
 import com.finalproject.smartwage.ui.components.cards.ExpenseItem
 import com.finalproject.smartwage.ui.components.dialogs.AddExpenseDialog
 import com.finalproject.smartwage.ui.theme.DarkBlue
 import com.finalproject.smartwage.viewModel.ExpenseViewModel
+import com.google.firebase.auth.FirebaseAuth
+import java.util.UUID
 
 @Composable
 fun ExpenseScreen(navController: NavController) {
     val viewModel: ExpenseViewModel = hiltViewModel()
-    val expenses = viewModel.expenses.collectAsState().value
+    var editingExpenses by remember { mutableStateOf<Expense?>(null) }
+    val userExpenses = viewModel.userExpenses.collectAsState()
     var showFab by remember { mutableStateOf(true) }
+    var showExpenseDialog by remember { mutableStateOf(false) }
+    val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+
+    // Load expenses when the screen opens
+    LaunchedEffect(userId) {
+        viewModel.loadExpenses()
+    }
 
     Scaffold(
         topBar = { DashboardTopBar(navController) },
@@ -55,7 +67,8 @@ fun ExpenseScreen(navController: NavController) {
             if (showFab) {
                 FloatingActionButton(
                     onClick = {
-                        viewModel.showExpenseDialog.value = true
+                        showExpenseDialog = true
+                        editingExpenses = null
                         showFab = false
                     },
                     modifier = Modifier
@@ -76,19 +89,15 @@ fun ExpenseScreen(navController: NavController) {
                 .background(MaterialTheme.colorScheme.background)
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxSize(),
+                modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
-
                     Text(
                         text = "Expenses",
                         fontSize = 35.sp,
@@ -100,7 +109,7 @@ fun ExpenseScreen(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                if (expenses.isEmpty()) {
+                if (userExpenses.value.isEmpty()) {
                     Column(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.Center,
@@ -115,25 +124,56 @@ fun ExpenseScreen(navController: NavController) {
                         )
                     }
                 } else {
-                    LazyColumn {
-                        items(expenses.size) { index ->
+                    // Display the list of expenses
+                    LazyColumn (
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 16.dp)
+                    ){
+                        items(userExpenses.value.size) { index ->
                             ExpenseItem(
-                                expense = expenses[index],
-                                onDelete = { viewModel.deleteExpense(expenses[index]) },
-                                onEdit = { viewModel.updateExpense(expenses[index]) }
+                                expense = userExpenses.value[index],
+                                onDelete = {
+                                    viewModel.deleteExpense(userExpenses.value[index].id)
+                                },
+                                onEdit = {
+                                    editingExpenses = userExpenses.value[index]
+                                    showExpenseDialog = true
+                                    showFab = false
+                                }
                             )
                         }
                     }
                 }
 
-                if (viewModel.showExpenseDialog.value) {
+                if (showExpenseDialog) {
                     AddExpenseDialog(
                         onDismiss = {
-                            viewModel.showExpenseDialog.value = false
+                            showExpenseDialog = false
                             showFab = true
+                            editingExpenses = null // Reset after dismissing
                         },
                         onAddExpense = { category, amount, description, date ->
-                            viewModel.addExpense(category, amount, description, date)
+                            if (editingExpenses == null) {
+                                viewModel.updateExpense(
+                                    Expense(
+                                        id = UUID.randomUUID().toString(),
+                                        category = category,
+                                        amount = amount,
+                                        description = description,
+                                        date = System.currentTimeMillis(),
+                                        userId = userId
+                                    )
+                                )
+                            } else {
+                                val updatedExpense = editingExpenses!!.copy(
+                                    category = category,
+                                    amount = amount,
+                                    description = description,
+                                    date = System.currentTimeMillis()
+                                )
+                                viewModel.updateExpense(updatedExpense)
+                            }
                         }
                     )
                 }

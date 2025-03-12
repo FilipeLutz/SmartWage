@@ -7,10 +7,6 @@ import com.finalproject.smartwage.data.local.entities.Tax
 import com.finalproject.smartwage.data.local.entities.User
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
@@ -114,32 +110,41 @@ class FirestoreService @Inject constructor() {
     // Save Expense to Firestore
     suspend fun saveExpense(expense: Expense) {
         try {
-            val docRef = db.collection("expenses").document()
-            val newExpense = expense.copy(id = docRef.id)
-            docRef.set(newExpense).await()
+            db.collection("expenses").document(expense.id).set(expense).await()
+            Timber.d("Expense saved successfully: $expense")
         } catch (e: Exception) {
             Timber.e(e, "Error saving expense to Firestore")
         }
     }
 
     // Get Expenses for a Specific User
-    fun getUserExpenses(userId: String): Flow<List<Expense>> = flow {
-        try {
-            val snapshot = db.collection("expenses")
+    suspend fun getUserExpenses(userId: String): List<Expense> {
+        return try {
+            val expenses = db.collection("expenses")
                 .whereEqualTo("userId", userId)
                 .get()
                 .await()
+                .toObjects(Expense::class.java)
 
-            val expenses = snapshot.toObjects(Expense::class.java)
-            emit(expenses)
+            Timber.d("Fetched expenses from Firestore: $expenses") // Log results
+            expenses
         } catch (e: Exception) {
             Timber.e(e, "Error fetching expenses from Firestore")
-            emit(emptyList())
+            emptyList()
         }
-    }.flowOn(Dispatchers.IO)
+    }
+
+    // Update Expense in Firestore
+    suspend fun updateExpense(expense: Expense) {
+        try {
+            db.collection("expenses").document(expense.id).set(expense, SetOptions.merge()).await()
+        } catch (e: Exception) {
+            Timber.e(e, "Error updating expense in Firestore")
+        }
+    }
 
     // Delete Expense from Firestore
-    suspend fun deleteExpense(expenseId: String) {
+    suspend fun deleteExpense(expenseId: String, string: String) {
         try {
             db.collection("expenses").document(expenseId).delete().await()
         } catch (e: Exception) {
