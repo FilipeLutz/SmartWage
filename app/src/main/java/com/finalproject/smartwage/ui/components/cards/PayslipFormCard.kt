@@ -49,8 +49,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.finalproject.smartwage.data.local.entities.Income
+import com.finalproject.smartwage.ui.components.dialogs.AddErrorDialog
 import com.finalproject.smartwage.ui.components.dialogs.CalendarDialog
-import com.finalproject.smartwage.ui.components.dialogs.IncomeErrorDialog
 import com.finalproject.smartwage.ui.theme.DarkBlue
 import com.finalproject.smartwage.utils.TaxCalculator
 import com.finalproject.smartwage.viewModel.IncomeViewModel
@@ -349,7 +349,7 @@ fun PayslipFormCard(
 
     // Show IncomeErrorDialog if fields are missing
     if (missingFields.isNotEmpty()) {
-        IncomeErrorDialog(
+        AddErrorDialog(
             missingFields = missingFields,
             onDismiss = { missingFields = emptyList() }
         )
