@@ -243,7 +243,7 @@ fun PayslipFormCard(
                     )
             )
 
-            Spacer(modifier = Modifier.height(30.dp))
+            Spacer(modifier = Modifier.height(35.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -253,13 +253,13 @@ fun PayslipFormCard(
                 Button(
                     onClick = { onCancel() },
                     modifier = Modifier
-                        .width(120.dp)
-                        .height(50.dp),
+                        .width(110.dp)
+                        .height(45.dp),
                     colors = ButtonDefaults.buttonColors(Red)
                 ) {
                     Text(
-                        "Cancel",
-                        fontSize = 20.sp,
+                        "CANCEL",
+                        fontSize = 16.sp,
                         fontWeight = Bold
                     )
                 }
@@ -271,8 +271,12 @@ fun PayslipFormCard(
                         if (company.isBlank()) tempMissingFields.add("Company Name")
                         if (frequency.isBlank()) tempMissingFields.add("Frequency")
                         if (incomeDate.isBlank() || incomeDate == "Date") tempMissingFields.add("Date")
-                        if (incomeAmount.isBlank() || incomeAmount.toDoubleOrNull() == null) tempMissingFields.add("Income Amount")
-                        if (taxPaid.isBlank() || taxPaid.toDoubleOrNull() == null) tempMissingFields.add("Tax Paid (PAYE)")
+                        if (incomeAmount.isBlank() || incomeAmount.toDoubleOrNull() == null) tempMissingFields.add(
+                            "Income Amount"
+                        )
+                        if (taxPaid.isBlank() || taxPaid.toDoubleOrNull() == null) tempMissingFields.add(
+                            "Tax Paid (PAYE)"
+                        )
                         if (prsi.isBlank() || prsi.toDoubleOrNull() == null) tempMissingFields.add("PRSI")
                         if (usc.isBlank() || usc.toDoubleOrNull() == null) tempMissingFields.add("USC")
 
@@ -290,7 +294,8 @@ fun PayslipFormCard(
 
                         val incomeAmountValue = incomeAmount.toDoubleOrNull() ?: 0.0
                         val actualTaxPaid =
-                            (taxPaid.toDoubleOrNull() ?: 0.0) + (usc.toDoubleOrNull() ?: 0.0) + (prsi.toDoubleOrNull() ?: 0.0)
+                            (taxPaid.toDoubleOrNull() ?: 0.0) + (usc.toDoubleOrNull()
+                                ?: 0.0) + (prsi.toDoubleOrNull() ?: 0.0)
 
                         val (expectedPAYE, expectedUSC, expectedPRSI) = TaxCalculator.calculateTax(
                             incomeAmountValue,
@@ -321,13 +326,13 @@ fun PayslipFormCard(
                         onDismiss()
                     },
                     modifier = Modifier
-                        .width(120.dp)
-                        .height(50.dp),
+                        .width(110.dp)
+                        .height(45.dp),
                     colors = ButtonDefaults.buttonColors(DarkBlue)
                 ) {
                     Text(
-                        "Save",
-                        fontSize = 20.sp,
+                        "SAVE",
+                        fontSize = 16.sp,
                         fontWeight = Bold
                     )
                 }
