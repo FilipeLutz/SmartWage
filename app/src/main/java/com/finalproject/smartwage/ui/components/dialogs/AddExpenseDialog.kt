@@ -158,7 +158,12 @@ fun AddExpenseDialog(
                     // Expense Date Input Opens CalendarDialog
                     OutlinedTextField(
                         value = expenseDate,
-                        onValueChange = { expenseDate = it },
+                        onValueChange = { newValue ->
+                            if (newValue.matches(Regex("^[0-9-]*$"))) {
+                                expenseDate = newValue
+                            }
+                        },
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.NumberPassword),
                         label = { Text("Date  (dd-MM-yyyy)", fontSize = 18.sp) },
                         textStyle = TextStyle(fontSize = 20.sp),
                         modifier = Modifier
