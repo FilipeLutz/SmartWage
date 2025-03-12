@@ -6,8 +6,13 @@ import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -15,6 +20,7 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,9 +37,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color.Companion.Red
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight.Companion.Bold
+import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.finalproject.smartwage.ui.theme.DarkBlue
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,18 +57,31 @@ fun AddExpenseDialog(
     onAddExpense: (String, Double, String, String) -> Unit
 ) {
     var expenseCategory by remember { mutableStateOf("") }
-    var expenseDate by remember { mutableStateOf("") }
     var amount by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var showExpenseForm by remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
+    var expenseDate by remember {
+        mutableStateOf(
+            SimpleDateFormat("dd-MM-yyyy", Locale.UK).format(
+                Date(System.currentTimeMillis())
+            )
+        )
+    }
 
     AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Add Expense") },
+        onDismissRequest = { },
+        title = {
+            Text(
+                "Add Expenses",
+                fontSize = 26.sp,
+                fontWeight = SemiBold,
+                textAlign = TextAlign.Center
+            )
+        },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 if (!showExpenseForm) {
                     // Category Selection Dropdown
                     ExposedDropdownMenuBox(
@@ -63,6 +91,7 @@ fun AddExpenseDialog(
                         OutlinedTextField(
                             value = expenseCategory,
                             onValueChange = {},
+                            textStyle = TextStyle(fontSize = 20.sp),
                             readOnly = true,
                             trailingIcon = {
                                 IconButton(
@@ -80,7 +109,7 @@ fun AddExpenseDialog(
                                 .fillMaxWidth()
                                 .menuAnchor(MenuAnchorType.PrimaryEditable, enabled = true)
                                 .clickable { expanded = true },
-                            label = { Text("Select Category") }
+                            label = { Text("Select Category", fontSize = 18.sp) }
                         )
                         DropdownMenu(
                             modifier = Modifier
@@ -98,7 +127,7 @@ fun AddExpenseDialog(
                             )
 
                             HorizontalDivider(
-                                modifier = Modifier.padding(vertical = 4.dp)
+                                modifier = Modifier.padding(vertical = 10.dp)
                             )
 
                             DropdownMenuItem(
@@ -116,23 +145,29 @@ fun AddExpenseDialog(
                     OutlinedTextField(
                         value = expenseCategory,
                         onValueChange = {},
+                        textStyle = TextStyle(fontSize = 22.sp),
                         readOnly = true,
-                        label = { Text("Category") },
+                        label = { Text("Category", fontSize = 18.sp) },
                         modifier = Modifier.fillMaxWidth()
                     )
 
                     // Expense Date Input Opens CalendarDialog
                     OutlinedTextField(
                         value = expenseDate,
-                        onValueChange = {},
-                        readOnly = true,
-                        label = { Text("Date (dd/MM/yyyy)") },
+                        onValueChange = { expenseDate = it },
+                        label = { Text("Date", fontSize = 18.sp) },
+                        textStyle = TextStyle(fontSize = 20.sp),
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable { showDatePicker = true },
                         trailingIcon = {
                             IconButton(onClick = { showDatePicker = true }) {
-                                Icon(Icons.Default.DateRange, contentDescription = "Select Date")
+                                Icon(
+                                    imageVector = Icons.Default.DateRange,
+                                    contentDescription = "Select Date",
+                                    tint = DarkBlue,
+                                    modifier = Modifier.size(30.dp)
+                                )
                             }
                         }
                     )
@@ -146,7 +181,8 @@ fun AddExpenseDialog(
                             }
                         },
                         singleLine = true,
-                        label = { Text("Amount (€)") },
+                        label = { Text("Amount (€)", fontSize = 18.sp) },
+                        textStyle = TextStyle(fontSize = 20.sp),
                         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -162,10 +198,10 @@ fun AddExpenseDialog(
                         value = description,
                         onValueChange = { description = it },
                         singleLine = true,
-                        label = { Text("Description") },
+                        label = { Text("Description", fontSize = 18.sp) },
+                        textStyle = TextStyle(fontSize = 22.sp),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .horizontalScroll(rememberScrollState())
                             .scrollable(
                                 orientation = Orientation.Horizontal,
                                 state = rememberScrollState(),
@@ -177,24 +213,79 @@ fun AddExpenseDialog(
         },
         confirmButton = {
             if (showExpenseForm) {
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    Button(
+                        modifier = Modifier
+                            .width(110.dp)
+                            .height(45.dp),
+                        onClick = {
+                            if (showExpenseForm) {
+                                showExpenseForm = false
+                            } else {
+                                onDismiss()
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(DarkBlue)
+                    ) {
+                        Text("BACK",
+                            fontSize = 16.sp,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(22.dp))
+
+                    Button(
+                        modifier = Modifier
+                            .width(110.dp)
+                            .height(45.dp),
+                        colors = ButtonDefaults.buttonColors(DarkBlue),
+                        onClick = {
+                            val expenseAmount = amount.toDoubleOrNull() ?: 0.0
+                            if (expenseAmount > 0 && expenseDate.isNotBlank()) {
+                                onAddExpense(
+                                    expenseCategory,
+                                    expenseAmount,
+                                    description,
+                                    expenseDate
+                                )
+                                onDismiss()
+                            }
+                        }
+                    ) {
+                        Text("SAVE",
+                            fontSize = 16.sp,
+                            fontWeight = Bold,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+            } else {
                 Button(
+                    modifier = Modifier
+                        .width(110.dp)
+                        .height(45.dp),
                     onClick = {
-                        val expenseAmount = amount.toDoubleOrNull() ?: 0.0
-                        if (expenseAmount > 0 && expenseDate.isNotBlank()) {
-                            onAddExpense(expenseCategory, expenseAmount, description, expenseDate)
+                        if (showExpenseForm) {
+                            showExpenseForm = false
+                        } else {
                             onDismiss()
                         }
-                    }
+                    },
+                    colors = ButtonDefaults.buttonColors(Red)
                 ) {
-                    Text("Add")
+                    Text("CANCEL",
+                        fontSize = 15.sp,
+                        fontWeight = Bold,
+                        textAlign = TextAlign.Center
+                    )
                 }
             }
         },
-        dismissButton = {
-            Button(onClick = onDismiss) {
-                Text(if (showExpenseForm) "Cancel" else "Back")
-            }
-        }
     )
 
     // Show CalendarDialog when needed
