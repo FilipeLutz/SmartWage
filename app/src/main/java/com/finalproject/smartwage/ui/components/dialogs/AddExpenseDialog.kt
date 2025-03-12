@@ -3,7 +3,6 @@ package com.finalproject.smartwage.ui.components.dialogs
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -60,6 +59,8 @@ fun AddExpenseDialog(
     var amount by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var showExpenseForm by remember { mutableStateOf(false) }
+    var showExpenseErrorDialog by remember { mutableStateOf(false) }
+    var missingFields by remember { mutableStateOf(listOf<String>()) }
     var expanded by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
     var expenseDate by remember {
@@ -73,12 +74,17 @@ fun AddExpenseDialog(
     AlertDialog(
         onDismissRequest = { },
         title = {
-            Text(
-                "Add Expenses",
-                fontSize = 26.sp,
-                fontWeight = SemiBold,
-                textAlign = TextAlign.Center
-            )
+            Row (
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+            ){
+                Text(
+                    "Add Expenses",
+                    fontSize = 28.sp,
+                    fontWeight = SemiBold
+                )
+            }
         },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -118,7 +124,7 @@ fun AddExpenseDialog(
                             onDismissRequest = { expanded = false }
                         ) {
                             DropdownMenuItem(
-                                text = { Text("Rent Tax Credit", fontSize = 20.sp) },
+                                text = { Text("RENT TAX CREDIT", fontSize = 18.sp) },
                                 onClick = {
                                     expenseCategory = "Rent Tax Credit"
                                     showExpenseForm = true
@@ -126,14 +132,12 @@ fun AddExpenseDialog(
                                 }
                             )
 
-                            HorizontalDivider(
-                                modifier = Modifier.padding(vertical = 10.dp)
-                            )
+                            HorizontalDivider()
 
                             DropdownMenuItem(
-                                text = { Text("Tuition Fees Relief", fontSize = 20.sp) },
+                                text = { Text("TUITION FEE RELIEF", fontSize = 18.sp) },
                                 onClick = {
-                                    expenseCategory = "Tuition Fees Relief"
+                                    expenseCategory = "Tuition Fee Relief"
                                     showExpenseForm = true
                                     expanded = false
                                 }
@@ -155,7 +159,7 @@ fun AddExpenseDialog(
                     OutlinedTextField(
                         value = expenseDate,
                         onValueChange = { expenseDate = it },
-                        label = { Text("Date", fontSize = 18.sp) },
+                        label = { Text("Date  (dd-MM-yyyy)", fontSize = 18.sp) },
                         textStyle = TextStyle(fontSize = 20.sp),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -166,7 +170,9 @@ fun AddExpenseDialog(
                                     imageVector = Icons.Default.DateRange,
                                     contentDescription = "Select Date",
                                     tint = DarkBlue,
-                                    modifier = Modifier.size(30.dp)
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .padding(end = 5.dp)
                                 )
                             }
                         }
@@ -241,19 +247,29 @@ fun AddExpenseDialog(
 
                     Button(
                         modifier = Modifier
-                            .width(110.dp)
-                            .height(45.dp),
+                            .size(110.dp, 45.dp),
                         colors = ButtonDefaults.buttonColors(DarkBlue),
                         onClick = {
-                            val expenseAmount = amount.toDoubleOrNull() ?: 0.0
-                            if (expenseAmount > 0 && expenseDate.isNotBlank()) {
-                                onAddExpense(
-                                    expenseCategory,
-                                    expenseAmount,
-                                    description,
-                                    expenseDate
-                                )
-                                onDismiss()
+                            missingFields = mutableListOf<String>().apply {
+                                if (expenseCategory.isBlank()) add("Category")
+                                if (expenseDate.isBlank()) add("Date")
+                                if (amount.isBlank() || amount == "0") add("Expense Amount (€)")
+                                if (description.isBlank()) add("Description")
+                            }
+
+                            if (missingFields.isNotEmpty()) {
+                                showExpenseErrorDialog = true
+                            } else {
+                                val expenseAmount = amount.toDoubleOrNull() ?: 0.0
+                                if (expenseAmount > 0) {
+                                    onAddExpense(
+                                        expenseCategory,
+                                        expenseAmount,
+                                        description,
+                                        expenseDate
+                                    )
+                                    onDismiss()
+                                }
                             }
                         }
                     ) {
@@ -294,4 +310,11 @@ fun AddExpenseDialog(
         onDismiss = { showDatePicker = false },
         onDateSelected = { selectedDate -> expenseDate = selectedDate }
     )
+
+    if (showExpenseErrorDialog) {
+        AddErrorDialog(
+            missingFields = missingFields,
+            onDismiss = { showExpenseErrorDialog = false }
+        )
+    }
 }
