@@ -77,10 +77,10 @@ fun IncomeErrorDialog(
                 Spacer(modifier = Modifier.height(10.dp))
 
                 // "OK" button
-                Row (
+                Row(
                     horizontalArrangement = Arrangement.End,
                     modifier = Modifier.fillMaxWidth()
-                ){
+                ) {
                     Button(
                         onClick = { onDismiss() },
                         colors = ButtonDefaults.buttonColors(DarkBlue),
