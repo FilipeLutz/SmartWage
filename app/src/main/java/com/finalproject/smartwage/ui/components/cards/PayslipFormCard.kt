@@ -2,9 +2,7 @@ package com.finalproject.smartwage.ui.components.cards
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.scrollable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -45,7 +43,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.Red
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.input.KeyboardType
@@ -53,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.finalproject.smartwage.data.local.entities.Income
 import com.finalproject.smartwage.ui.components.dialogs.CalendarDialog
+import com.finalproject.smartwage.ui.components.dialogs.IncomeErrorDialog
 import com.finalproject.smartwage.ui.theme.DarkBlue
 import com.finalproject.smartwage.utils.TaxCalculator
 import com.finalproject.smartwage.viewModel.IncomeViewModel
@@ -78,9 +76,16 @@ fun PayslipFormCard(
     var taxPaid by remember { mutableStateOf(incomeToEdit?.paye?.toString() ?: "") }
     var usc by remember { mutableStateOf(incomeToEdit?.usc?.toString() ?: "") }
     var prsi by remember { mutableStateOf(incomeToEdit?.prsi?.toString() ?: "") }
-    var incomeDate by remember { mutableStateOf(incomeToEdit?.date?.let { SimpleDateFormat("dd-MM-yyyy", Locale.UK).format(Date(it)) } ?: "") }
     var frequency by remember { mutableStateOf(incomeToEdit?.frequency ?: "") }
     val frequencies = listOf("Weekly", "Fortnightly", "Monthly")
+    var missingFields by remember { mutableStateOf<List<String>>(emptyList()) }
+    var incomeDate by remember {
+        mutableStateOf(
+            SimpleDateFormat("dd-MM-yyyy", Locale.UK).format(
+                Date(incomeToEdit?.date ?: System.currentTimeMillis())
+            )
+        )
+    }
 
     Card(
         modifier = Modifier
@@ -112,8 +117,8 @@ fun PayslipFormCard(
                     .scrollable(
                         orientation = Orientation.Horizontal,
                         state = rememberScrollState(),
-                        enabled = true)
-                    .horizontalScroll(rememberScrollState())
+                        enabled = true
+                    )
             )
 
             Spacer(modifier = Modifier.height(10.dp))
@@ -130,16 +135,12 @@ fun PayslipFormCard(
 
                 OutlinedTextField(
                     value = incomeDate,
-                    onValueChange = {},
+                    onValueChange = { incomeDate = it },
                     label = { Text("Date", fontSize = 16.sp) },
                     textStyle = TextStyle(fontSize = 18.sp),
-                    enabled = false,
                     modifier = Modifier
                         .weight(1f)
-                        .clickable { showDatePicker = true }
-                        .pointerInput(Unit) {
-                            detectTapGestures { showDatePicker = true }
-                        },
+                        .clickable { showDatePicker = true },
                     trailingIcon = {
                         IconButton(
                             onClick = { showDatePicker = true }) {
@@ -265,6 +266,22 @@ fun PayslipFormCard(
 
                 Button(
                     onClick = {
+                        val tempMissingFields = mutableListOf<String>()
+
+                        if (company.isBlank()) tempMissingFields.add("Company Name")
+                        if (frequency.isBlank()) tempMissingFields.add("Frequency")
+                        if (incomeDate.isBlank() || incomeDate == "Date") tempMissingFields.add("Date")
+                        if (incomeAmount.isBlank() || incomeAmount.toDoubleOrNull() == null) tempMissingFields.add("Income Amount")
+                        if (taxPaid.isBlank() || taxPaid.toDoubleOrNull() == null) tempMissingFields.add("Tax Paid (PAYE)")
+                        if (prsi.isBlank() || prsi.toDoubleOrNull() == null) tempMissingFields.add("PRSI")
+                        if (usc.isBlank() || usc.toDoubleOrNull() == null) tempMissingFields.add("USC")
+
+                        if (tempMissingFields.isNotEmpty()) {
+                            missingFields = tempMissingFields
+                            return@Button
+                        }
+
+                        // If all fields are filled, proceed with saving
                         val selectedFrequency = when (frequency) {
                             "Weekly" -> TaxCalculator.PaymentFrequency.WEEKLY
                             "Fortnightly" -> TaxCalculator.PaymentFrequency.FORTNIGHTLY
@@ -273,17 +290,14 @@ fun PayslipFormCard(
 
                         val incomeAmountValue = incomeAmount.toDoubleOrNull() ?: 0.0
                         val actualTaxPaid =
-                            (taxPaid.toDoubleOrNull() ?: 0.0) + (usc.toDoubleOrNull()
-                                ?: 0.0) + (prsi.toDoubleOrNull() ?: 0.0)
+                            (taxPaid.toDoubleOrNull() ?: 0.0) + (usc.toDoubleOrNull() ?: 0.0) + (prsi.toDoubleOrNull() ?: 0.0)
 
-                        // Calculate tax using correct frequency
                         val (expectedPAYE, expectedUSC, expectedPRSI) = TaxCalculator.calculateTax(
                             incomeAmountValue,
                             selectedFrequency
                         )
                         val totalExpectedTax = expectedPAYE + expectedUSC + expectedPRSI
 
-                        // Compare tax paid vs expected tax
                         val taxDifference = actualTaxPaid - totalExpectedTax
                         val overpaidTax = if (taxDifference > 0) taxDifference else 0.0
                         val underpaidTax = if (taxDifference < 0) -taxDifference else 0.0
@@ -320,12 +334,21 @@ fun PayslipFormCard(
             }
         }
     }
+
     // Show CalendarDialog when needed
     CalendarDialog(
         showDialog = showDatePicker,
         onDismiss = { showDatePicker = false },
         onDateSelected = { selectedDate -> incomeDate = selectedDate }
     )
+
+    // Show IncomeErrorDialog if fields are missing
+    if (missingFields.isNotEmpty()) {
+        IncomeErrorDialog(
+            missingFields = missingFields,
+            onDismiss = { missingFields = emptyList() }
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
