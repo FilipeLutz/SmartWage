@@ -33,7 +33,7 @@ import com.finalproject.smartwage.data.local.entities.Income
 import com.finalproject.smartwage.ui.components.DashboardBottomBar
 import com.finalproject.smartwage.ui.components.DashboardTopBar
 import com.finalproject.smartwage.ui.components.cards.IncomeListCard
-import com.finalproject.smartwage.ui.components.cards.PayslipFormCard
+import com.finalproject.smartwage.ui.components.dialogs.PayslipFormDialog
 import com.finalproject.smartwage.ui.theme.DarkBlue
 import com.finalproject.smartwage.viewModel.IncomeViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -163,7 +163,7 @@ fun IncomeTaxScreen(navController: NavController, viewModel: IncomeViewModel = h
                         verticalArrangement = Arrangement.Center
                     ) {
 
-                        PayslipFormCard(
+                        PayslipFormDialog(
                             viewModel = viewModel,
                             incomeToEdit = editingIncome,
                             onDismiss = {
@@ -173,6 +173,7 @@ fun IncomeTaxScreen(navController: NavController, viewModel: IncomeViewModel = h
                             onCancel = {
                                 showPayslipForm = false
                                 showFab = true
+
                             }
                         )
                     }
