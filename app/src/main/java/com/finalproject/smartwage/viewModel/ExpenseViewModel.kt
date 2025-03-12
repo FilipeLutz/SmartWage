@@ -53,4 +53,16 @@ class ExpenseViewModel @Inject constructor(
             loadExpenses()
         }
     }
+
+    fun getTuitionFeeRelief(): Double {
+        return _userExpenses.value
+            .filter { it.category == "Tuition Fee Relief" }
+            .sumOf { it.amount }
+    }
+
+    fun getRentTaxCredit(): Double {
+        return _userExpenses.value
+            .filter { it.category == "Rent Tax Credit" }
+            .sumOf { it.amount }
+    }
 }

@@ -166,7 +166,7 @@ fun AddExpenseDialog(
                                 expenseDate = newValue
                             }
                         },
-                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.NumberPassword),
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                         label = { Text("Date  (dd-MM-yyyy)", fontSize = 18.sp) },
                         textStyle = TextStyle(fontSize = 20.sp),
                         modifier = Modifier

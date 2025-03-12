@@ -6,7 +6,14 @@ object TaxCalculator {
     private const val TAX_THRESHOLD = 44000.0  // Annual PAYE threshold
     private const val TAX_RATE_LOW = 0.20 // PAYE rate for income below threshold
     private const val TAX_RATE_HIGH = 0.40 // PAYE rate for income above threshold
-    private const val TAX_CREDIT = 4000.0 // Tax credit
+    private const val TAX_CREDIT = 4000.0 // Standard Tax Credit
+
+    private const val FULL_TIME_DISREGARD = 3000.0 // Tuition Fee disregard
+    private const val MAX_TUITION_CLAIM = 7000.0 // Max tuition fee eligible for relief
+    private const val TUITION_RELIEF_RATE = 0.20 // 20% tax relief
+
+    private const val RENT_CREDIT_2024_2025 = 1000.0 // Rent tax credit for single person
+    private const val RENT_TAX_RELIEF = 0.20 // 20% rent tax relief
 
     // USC Brackets
     private val USC_BRACKETS = listOf(
@@ -16,7 +23,6 @@ object TaxCalculator {
         Double.MAX_VALUE to 0.08  // 8% on anything above
     )
 
-    // PRSI Thresholds
     enum class PaymentFrequency(val divisor: Double) {
         WEEKLY(52.0), FORTNIGHTLY(26.0), MONTHLY(12.0)
     }
@@ -24,17 +30,26 @@ object TaxCalculator {
     /**
      * Calculates tax based on ANNUAL income.
      */
-    fun calculateTax(income: Double, frequency: PaymentFrequency): Triple<Double, Double, Double> {
-        val annualIncome = income * frequency.divisor  // Convert to annual income
+    fun calculateTax(
+        income: Double,
+        frequency: PaymentFrequency,
+        tuitionFees: Double,
+        rentPaid: Double
+    ): Triple<Double, Double, Double> {
+        val annualIncome = income * frequency.divisor
         val calculatedPAYE = calculatePAYE(annualIncome)
         val calculatedUSC = calculateUSC(annualIncome)
         val calculatedPRSI = calculatePRSI(annualIncome)
-        return Triple(calculatedPAYE / frequency.divisor, calculatedUSC / frequency.divisor, calculatedPRSI / frequency.divisor)
+
+        val tuitionRelief = calculateTuitionFeeRelief(tuitionFees)
+        val rentCredit = calculateRentTaxCredit(rentPaid, calculatedPAYE)
+
+        val totalTaxReduction = tuitionRelief + rentCredit
+        val finalPAYE = maxOf(calculatedPAYE - totalTaxReduction, 0.0)
+
+        return Triple(finalPAYE / frequency.divisor, calculatedUSC / frequency.divisor, calculatedPRSI / frequency.divisor)
     }
 
-    /**
-     * PAYE Calculation
-     */
     private fun calculatePAYE(annualIncome: Double): Double {
         var payeTax = if (annualIncome <= TAX_THRESHOLD) {
             annualIncome * TAX_RATE_LOW
@@ -45,9 +60,6 @@ object TaxCalculator {
         return maxOf(payeTax, 0.0) // No negative tax
     }
 
-    /**
-     * USC Calculation
-     */
     private fun calculateUSC(annualIncome: Double): Double {
         if (annualIncome <= 13000) return 0.0  // No USC if income below 13,000
 
@@ -64,11 +76,8 @@ object TaxCalculator {
         return calculatedUSC
     }
 
-    /**
-     * PRSI Calculation based on ANNUAL income.
-     */
     private fun calculatePRSI(annualIncome: Double): Double {
-        val weeklyIncome = annualIncome / 52.0 // Convert annual to weekly
+        val weeklyIncome = annualIncome / 52.0
         val weeklyThreshold = 352.0
         val weeklyTaperedLimit = 424.0
         val prsiRate = 0.041
@@ -81,7 +90,18 @@ object TaxCalculator {
             val prsiCredit = maxOf(12.0 - (excess / 6.0), 0.0)
             prsiCharge -= prsiCredit
         }
-        return maxOf(prsiCharge, 0.0) * 52 // Convert back to annual PRSI
+        return maxOf(prsiCharge, 0.0) * 52
+    }
+
+    private fun calculateTuitionFeeRelief(tuitionFees: Double): Double {
+        if (tuitionFees <= FULL_TIME_DISREGARD) return 0.0
+        val claimableAmount = minOf(tuitionFees, MAX_TUITION_CLAIM) - FULL_TIME_DISREGARD
+        return maxOf(0.0, claimableAmount * TUITION_RELIEF_RATE)
+    }
+
+    private fun calculateRentTaxCredit(rentPaid: Double, taxLiability: Double): Double {
+        val rentRelief = minOf(rentPaid * RENT_TAX_RELIEF, RENT_CREDIT_2024_2025)
+        return minOf(rentRelief, taxLiability) // Cannot exceed tax liability
     }
 }
 

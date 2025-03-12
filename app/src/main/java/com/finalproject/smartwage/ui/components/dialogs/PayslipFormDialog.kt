@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.sp
 import com.finalproject.smartwage.data.local.entities.Income
 import com.finalproject.smartwage.ui.theme.DarkBlue
 import com.finalproject.smartwage.utils.TaxCalculator
+import com.finalproject.smartwage.viewModel.ExpenseViewModel
 import com.finalproject.smartwage.viewModel.IncomeViewModel
 import com.google.firebase.auth.FirebaseAuth
 import java.text.SimpleDateFormat
@@ -56,6 +57,7 @@ import java.util.UUID
 @Composable
 fun PayslipFormDialog(
     viewModel: IncomeViewModel,
+    expenseViewModel: ExpenseViewModel,
     incomeToEdit: Income?,
     onDismiss: () -> Unit,
     onCancel: () -> Unit
@@ -127,7 +129,7 @@ fun PayslipFormDialog(
                     },
                     label = { Text("Date  (dd-MM-yyyy)", fontSize = 17.sp) },
                     textStyle = TextStyle(fontSize = 22.sp),
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.NumberPassword),
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable { showDatePicker = true },
@@ -303,9 +305,14 @@ fun PayslipFormDialog(
                                 (taxPaid.toDoubleOrNull() ?: 0.0) + (usc.toDoubleOrNull()
                                     ?: 0.0) + (prsi.toDoubleOrNull() ?: 0.0)
 
+                            val tuitionFeeRelief = expenseViewModel.getTuitionFeeRelief()
+                            val rentTaxCredit = expenseViewModel.getRentTaxCredit()
+
                             val (expectedPAYE, expectedUSC, expectedPRSI) = TaxCalculator.calculateTax(
                                 incomeAmountValue,
-                                selectedFrequency
+                                selectedFrequency,
+                                tuitionFeeRelief,
+                                rentTaxCredit
                             )
                             val totalExpectedTax = expectedPAYE + expectedUSC + expectedPRSI
 

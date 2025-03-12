@@ -63,9 +63,14 @@ class DashboardViewModel @Inject constructor(
                         "Fortnightly" -> TaxCalculator.PaymentFrequency.FORTNIGHTLY
                         else -> TaxCalculator.PaymentFrequency.MONTHLY
                     }
-
+                    //The tuitionFees and rentPaid values will be passed from the composable.
                     val (expectedPAYE, expectedUSC, expectedPRSI) =
-                        TaxCalculator.calculateTax(income.amount, selectedFrequency)
+                        TaxCalculator.calculateTax(
+                            income.amount,
+                            selectedFrequency,
+                            0.0, // tuitionFees
+                            0.0  // rentPaid
+                        )
                     totalExpectedTaxValue += expectedPAYE + expectedUSC + expectedPRSI
                 }
 

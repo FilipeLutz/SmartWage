@@ -36,10 +36,15 @@ import com.finalproject.smartwage.ui.components.cards.IncomeListCard
 import com.finalproject.smartwage.ui.components.dialogs.PayslipFormDialog
 import com.finalproject.smartwage.ui.theme.DarkBlue
 import com.finalproject.smartwage.viewModel.IncomeViewModel
+import com.finalproject.smartwage.viewModel.ExpenseViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun IncomeTaxScreen(navController: NavController, viewModel: IncomeViewModel = hiltViewModel()) {
+fun IncomeTaxScreen(
+    navController: NavController,
+    viewModel: IncomeViewModel = hiltViewModel(),
+    expenseViewModel: ExpenseViewModel = hiltViewModel()
+) {
     var showPayslipForm by remember { mutableStateOf(false) }
     var editingIncome by remember { mutableStateOf<Income?>(null) }
     var showFab by remember { mutableStateOf(true) }
@@ -171,10 +176,12 @@ fun IncomeTaxScreen(navController: NavController, viewModel: IncomeViewModel = h
                                 showFab = true
                             },
                             onCancel = {
+
                                 showPayslipForm = false
                                 showFab = true
 
-                            }
+                            },
+                            expenseViewModel = expenseViewModel
                         )
                     }
                 }

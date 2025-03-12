@@ -111,7 +111,7 @@ fun IncomeListCard(
                 }
                 // Delete Icon
                 IconButton(
-                    onClick = { viewModel.deleteIncome(income.id, income.userId) },
+                    onClick = { viewModel.deleteIncome(income.id) },
                     modifier = Modifier.size(80.dp)
                 ) {
                     Icon(
