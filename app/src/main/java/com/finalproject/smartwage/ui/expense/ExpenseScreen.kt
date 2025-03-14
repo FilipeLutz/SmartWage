@@ -2,6 +2,7 @@ package com.finalproject.smartwage.ui.expense
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -36,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.finalproject.smartwage.data.local.entities.Expense
+import com.finalproject.smartwage.data.local.entities.Expenses
 import com.finalproject.smartwage.ui.components.DashboardBottomBar
 import com.finalproject.smartwage.ui.components.DashboardTopBar
 import com.finalproject.smartwage.ui.components.cards.ExpenseItem
@@ -44,12 +45,12 @@ import com.finalproject.smartwage.ui.components.dialogs.AddExpenseDialog
 import com.finalproject.smartwage.ui.theme.DarkBlue
 import com.finalproject.smartwage.viewModel.ExpenseViewModel
 import com.google.firebase.auth.FirebaseAuth
-import java.util.UUID
 
 @Composable
 fun ExpenseScreen(navController: NavController) {
     val viewModel: ExpenseViewModel = hiltViewModel()
-    var editingExpenses by remember { mutableStateOf<Expense?>(null) }
+    var editingExpense by remember { mutableStateOf<Expenses?>(null) }
+    var isEditMode by remember { mutableStateOf(false) }
     val userExpenses = viewModel.userExpenses.collectAsState()
     var showFab by remember { mutableStateOf(true) }
     var showExpenseDialog by remember { mutableStateOf(false) }
@@ -68,7 +69,7 @@ fun ExpenseScreen(navController: NavController) {
                 FloatingActionButton(
                     onClick = {
                         showExpenseDialog = true
-                        editingExpenses = null
+                        editingExpense = null
                         showFab = false
                     },
                     modifier = Modifier
@@ -77,7 +78,10 @@ fun ExpenseScreen(navController: NavController) {
                     containerColor = DarkBlue,
                     contentColor = Color.White,
                 ) {
-                    Icon(Icons.Default.Add, contentDescription = "Add Expense")
+                    Icon(
+                        Icons.Default.Add,
+                        contentDescription = "Add Expense"
+                    )
                 }
             }
         }
@@ -89,15 +93,19 @@ fun ExpenseScreen(navController: NavController) {
                 .background(MaterialTheme.colorScheme.background)
         ) {
             Column(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
+
                     Text(
                         text = "Expenses",
                         fontSize = 35.sp,
@@ -110,6 +118,7 @@ fun ExpenseScreen(navController: NavController) {
                 Spacer(modifier = Modifier.height(10.dp))
 
                 if (userExpenses.value.isEmpty()) {
+                    // Show message when there are no expenses
                     Column(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.Center,
@@ -124,20 +133,19 @@ fun ExpenseScreen(navController: NavController) {
                         )
                     }
                 } else {
-                    // Display the list of expenses
+                    // Show expenses
                     LazyColumn (
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(horizontal = 16.dp)
-                    ){
+                    ) {
                         items(userExpenses.value.size) { index ->
                             ExpenseItem(
-                                expense = userExpenses.value[index],
-                                onDelete = {
-                                    viewModel.deleteExpense(userExpenses.value[index].id)
-                                },
+                                expenses = userExpenses.value[index],
+                                viewModel = viewModel,
                                 onEdit = {
-                                    editingExpenses = userExpenses.value[index]
+                                    editingExpense = userExpenses.value[index]
+                                    isEditMode = true
                                     showExpenseDialog = true
                                     showFab = false
                                 }
@@ -147,35 +155,43 @@ fun ExpenseScreen(navController: NavController) {
                 }
 
                 if (showExpenseDialog) {
-                    AddExpenseDialog(
-                        onDismiss = {
-                            showExpenseDialog = false
-                            showFab = true
-                            editingExpenses = null // Reset after dismissing
-                        },
-                        onAddExpense = { category, amount, description, date ->
-                            if (editingExpenses == null) {
-                                viewModel.updateExpense(
-                                    Expense(
-                                        id = UUID.randomUUID().toString(),
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            AddExpenseDialog(
+                                expenseToEdit = editingExpense,
+                                isEditMode = isEditMode,
+                                onDismiss = {
+                                    showExpenseDialog = false
+                                    showFab = true
+                                    editingExpense = null
+                                    isEditMode = false
+                                },
+                                onAddExpense = { category, amount, description, date ->
+                                    val newExpense = Expenses(
+                                        id = editingExpense?.id ?: "",
                                         category = category,
                                         amount = amount,
                                         description = description,
                                         date = System.currentTimeMillis(),
                                         userId = userId
                                     )
-                                )
-                            } else {
-                                val updatedExpense = editingExpenses!!.copy(
-                                    category = category,
-                                    amount = amount,
-                                    description = description,
-                                    date = System.currentTimeMillis()
-                                )
-                                viewModel.updateExpense(updatedExpense)
-                            }
+
+                                    viewModel.addOrUpdateExpense(newExpense)
+                                    showExpenseDialog = false
+                                    showFab = true
+                                }
+                            )
                         }
-                    )
+                    }
                 }
             }
         }

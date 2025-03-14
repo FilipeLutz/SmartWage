@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -21,23 +22,29 @@ import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.finalproject.smartwage.data.local.entities.Expense
+import com.finalproject.smartwage.data.local.entities.Expenses
 import com.finalproject.smartwage.ui.theme.DarkBlue
 import com.finalproject.smartwage.ui.theme.PurpleGrey40
+import com.finalproject.smartwage.viewModel.ExpenseViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 @SuppressLint("DefaultLocale")
 @Composable
-fun ExpenseItem(expense: Expense, onDelete: () -> Unit, onEdit: () -> Unit) {
+fun ExpenseItem(
+    expenses: Expenses,
+    viewModel: ExpenseViewModel,
+    onEdit: (Expenses) -> Unit
+) {
     // Expense Item Card
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        elevation = CardDefaults.cardElevation(4.dp),
-        colors = CardDefaults.cardColors(PurpleGrey40)
+            .padding(10.dp),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(PurpleGrey40),
+        elevation = CardDefaults.cardElevation(6.dp)
     ) {
         Row(
             modifier = Modifier
@@ -48,40 +55,49 @@ fun ExpenseItem(expense: Expense, onDelete: () -> Unit, onEdit: () -> Unit) {
                 modifier = Modifier
                     .weight(1f)
                     .padding(10.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 // Expense Category
                 Text(
-                    text = "Category: ${expense.category}",
-                    fontSize = 22.sp,
+                    expenses.category.uppercase(Locale.getDefault()),
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
                 // Expense Amount
                 Text(
-                    "Amount Paid: ${String.format("%.2f", expense.amount)}",
+                    "Amount Paid: ${String.format("%.2f", expenses.amount)}",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.SemiBold
                 )
                 // Expense Date
                 Text(
-                    "Date: ${SimpleDateFormat("dd-MM-yyyy", Locale.UK).format(Date(expense.date))}",
+                    "Date: ${SimpleDateFormat("dd-MM-yyyy", Locale.UK).format(Date(expenses.date))}",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+                // Expense Description Label
+                Text(
+                    "Description:",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.SemiBold
                 )
                 // Expense Description
                 Text(
-                    "Description: ${expense.description}",
+                    expenses.description,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.SemiBold
                 )
             }
 
             // Icons
-            Column {
+            Column (
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ){
                 // Edit Icon
                 IconButton(
-                    onClick = { onEdit() },
-                    modifier = Modifier.size(80.dp)
+                    onClick = { onEdit(expenses) },
+                    modifier = Modifier
+                        .size(80.dp)
                 ) {
                     Icon(
                         modifier = Modifier.size(35.dp),
@@ -92,8 +108,9 @@ fun ExpenseItem(expense: Expense, onDelete: () -> Unit, onEdit: () -> Unit) {
                 }
                 // Delete Icon
                 IconButton(
-                    onClick = { onDelete() },
-                    modifier = Modifier.size(80.dp)
+                    onClick = { viewModel.deleteExpense(expenses.id) },
+                    modifier = Modifier
+                        .size(80.dp)
                 ) {
                     Icon(
                         modifier = Modifier.size(35.dp),

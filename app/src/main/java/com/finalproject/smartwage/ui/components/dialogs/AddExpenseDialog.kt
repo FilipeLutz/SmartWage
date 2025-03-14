@@ -44,6 +44,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.finalproject.smartwage.data.local.entities.Expenses
 import com.finalproject.smartwage.ui.theme.DarkBlue
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -52,35 +53,34 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddExpenseDialog(
+    expenseToEdit: Expenses?,
     onDismiss: () -> Unit,
-    onAddExpense: (String, Double, String, String) -> Unit
+    onAddExpense: (String, Double, String, Long) -> Unit,
+    isEditMode: Boolean
 ) {
-    var expenseCategory by remember { mutableStateOf("") }
-    var amount by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var showExpenseForm by remember { mutableStateOf(false) }
+    var expenseCategory by remember { mutableStateOf(expenseToEdit?.category ?: "") }
+    var amount by remember { mutableStateOf(expenseToEdit?.amount?.toString() ?: "") }
+    var description by remember { mutableStateOf(expenseToEdit?.description ?: "") }
+    var showExpenseForm by remember { mutableStateOf(isEditMode) }
     var showExpenseErrorDialog by remember { mutableStateOf(false) }
     var missingFields by remember { mutableStateOf(listOf<String>()) }
     var expanded by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
+    val isEditing = expenseToEdit != null
     var expenseDate by remember {
         mutableStateOf(
             SimpleDateFormat("dd-MM-yyyy", Locale.UK).format(
-                Date(System.currentTimeMillis())
+                Date(expenseToEdit?.date ?: System.currentTimeMillis())
             )
         )
     }
 
     AlertDialog(
-        onDismissRequest = { },
+        onDismissRequest = {},
         title = {
-            Row (
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ){
+            Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    "Add Expenses",
+                    if (isEditing) "Edit Expense" else "Add Expense",
                     fontSize = 28.sp,
                     fontWeight = SemiBold
                 )
@@ -95,7 +95,7 @@ fun AddExpenseDialog(
                         onExpandedChange = { expanded = !expanded }
                     ) {
                         OutlinedTextField(
-                            value = expenseCategory,
+                            value = expenseCategory.uppercase(Locale.getDefault()),
                             onValueChange = {},
                             textStyle = TextStyle(fontSize = 20.sp),
                             readOnly = true,
@@ -127,9 +127,9 @@ fun AddExpenseDialog(
                             onDismissRequest = { expanded = false }
                         ) {
                             DropdownMenuItem(
-                                text = { Text("RENT TAX CREDIT", fontSize = 18.sp) },
+                                text = { Text("RENT TAX CREDIT", fontSize = 20.sp) },
                                 onClick = {
-                                    expenseCategory = "Rent Tax Credit"
+                                    expenseCategory = "RENT TAX CREDIT"
                                     showExpenseForm = true
                                     expanded = false
                                 }
@@ -138,9 +138,9 @@ fun AddExpenseDialog(
                             HorizontalDivider()
 
                             DropdownMenuItem(
-                                text = { Text("TUITION FEE RELIEF", fontSize = 18.sp) },
+                                text = { Text("TUITION FEE RELIEF", fontSize = 20.sp) },
                                 onClick = {
-                                    expenseCategory = "Tuition Fee Relief"
+                                    expenseCategory = "TUITION FEE RELIEF"
                                     showExpenseForm = true
                                     expanded = false
                                 }
@@ -150,9 +150,9 @@ fun AddExpenseDialog(
                 } else {
                     // Category Display Read-Only
                     OutlinedTextField(
-                        value = expenseCategory,
+                        value = expenseCategory.uppercase(Locale.getDefault()),
                         onValueChange = {},
-                        textStyle = TextStyle(fontSize = 22.sp),
+                        textStyle = TextStyle(fontSize = 20.sp),
                         readOnly = true,
                         label = { Text("Category", fontSize = 18.sp) },
                         modifier = Modifier.fillMaxWidth()
@@ -212,7 +212,7 @@ fun AddExpenseDialog(
                         value = description,
                         onValueChange = { description = it },
                         singleLine = true,
-                        label = { Text("Description", fontSize = 18.sp) },
+                        label = { Text("Description (Optional)", fontSize = 18.sp) },
                         textStyle = TextStyle(fontSize = 22.sp),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -273,7 +273,7 @@ fun AddExpenseDialog(
                                         expenseCategory,
                                         expenseAmount,
                                         description,
-                                        expenseDate
+                                        SimpleDateFormat("dd-MM-yyyy", Locale.UK).parse(expenseDate)?.time ?: System.currentTimeMillis()
                                     )
                                     onDismiss()
                                 }

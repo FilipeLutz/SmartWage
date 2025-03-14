@@ -8,13 +8,13 @@ import com.finalproject.smartwage.data.local.dao.ExpenseDao
 import com.finalproject.smartwage.data.local.dao.IncomeDao
 import com.finalproject.smartwage.data.local.dao.TaxDao
 import com.finalproject.smartwage.data.local.dao.UserDao
-import com.finalproject.smartwage.data.local.entities.Expense
+import com.finalproject.smartwage.data.local.entities.Expenses
 import com.finalproject.smartwage.data.local.entities.Tax
 import com.finalproject.smartwage.data.local.entities.User
 import com.finalproject.smartwage.data.local.entities.Income
 
 @Database(
-    entities = [User::class, Income::class, Expense::class, Tax::class],
+    entities = [User::class, Income::class, Expenses::class, Tax::class],
     version = 1,
     exportSchema = false
 )

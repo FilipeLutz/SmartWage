@@ -6,7 +6,7 @@ import com.google.firebase.firestore.PropertyName
 import java.util.*
 
 @Entity(tableName = "expenses")
-data class Expense(
+data class Expenses(
     @PrimaryKey @get:PropertyName("id") @set:PropertyName("id") var id: String = UUID.randomUUID().toString(),
     @get:PropertyName("userId") @set:PropertyName("userId") var userId: String = "",
     @get:PropertyName("category") @set:PropertyName("category") var category: String = "",

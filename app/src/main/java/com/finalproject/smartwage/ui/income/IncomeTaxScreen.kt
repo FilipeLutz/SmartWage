@@ -1,4 +1,3 @@
-
 package com.finalproject.smartwage.ui.income
 
 import androidx.compose.foundation.background
@@ -128,10 +127,11 @@ fun IncomeTaxScreen(
                         )
                     }
                 } else {
+                    // Show incomes
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(horizontal = 10.dp)
+                            .padding(horizontal = 16.dp)
                     ) {
                         items(userIncomes.size) { index ->
                             val income = userIncomes[index]

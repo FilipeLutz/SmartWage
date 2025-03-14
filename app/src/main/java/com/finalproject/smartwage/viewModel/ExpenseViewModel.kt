@@ -2,7 +2,7 @@ package com.finalproject.smartwage.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.finalproject.smartwage.data.local.entities.Expense
+import com.finalproject.smartwage.data.local.entities.Expenses
 import com.finalproject.smartwage.data.repository.ExpenseRepository
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.collections.filter
 
 @HiltViewModel
 class ExpenseViewModel @Inject constructor(
@@ -19,8 +20,8 @@ class ExpenseViewModel @Inject constructor(
     private val auth: FirebaseAuth
 ) : ViewModel() {
 
-    private val _userExpenses = MutableStateFlow<List<Expense>>(emptyList())
-    val userExpenses: StateFlow<List<Expense>> = _userExpenses.asStateFlow()
+    private val _userExpenses = MutableStateFlow<List<Expenses>>(emptyList())
+    val userExpenses: StateFlow<List<Expenses>> = _userExpenses.asStateFlow()
 
     init {
         loadExpenses()
@@ -40,29 +41,25 @@ class ExpenseViewModel @Inject constructor(
         }
     }
 
-    fun updateExpense(expense: Expense) {
+    fun addOrUpdateExpense(expenses: Expenses) {
         viewModelScope.launch {
-            expenseRepo.saveOrUpdateExpenses(expense)
+            expenseRepo.saveOrUpdateExpenses(expenses)
             loadExpenses()
         }
     }
 
-    fun deleteExpense(expenseId: String) {
+    fun deleteExpense(expenses: String) {
         viewModelScope.launch {
-            expenseRepo.deleteExpense(expenseId)
+            expenseRepo.deleteExpense(expenses)
             loadExpenses()
         }
     }
 
     fun getTuitionFeeRelief(): Double {
-        return _userExpenses.value
-            .filter { it.category == "Tuition Fee Relief" }
-            .sumOf { it.amount }
+        return _userExpenses.value.filter { it.category == "Tuition Fee Relief" }.sumOf { it.amount }
     }
 
     fun getRentTaxCredit(): Double {
-        return _userExpenses.value
-            .filter { it.category == "Rent Tax Credit" }
-            .sumOf { it.amount }
+        return _userExpenses.value.filter { it.category == "Rent Tax Credit" }.sumOf { it.amount }
     }
 }
