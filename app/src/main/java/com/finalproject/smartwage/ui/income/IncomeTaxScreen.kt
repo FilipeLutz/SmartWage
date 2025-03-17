@@ -147,7 +147,7 @@ fun IncomeTaxScreen(
                         }
 
                         items(1) {
-                            Spacer(modifier = Modifier.height(95.dp))
+                            Spacer(modifier = Modifier.height(90.dp))
                         }
                     }
                 }
