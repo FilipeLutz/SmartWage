@@ -4,11 +4,16 @@ package com.finalproject.smartwage.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -24,11 +29,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -141,82 +145,88 @@ fun DashboardBottomBar(navController: NavController) {
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry.value?.destination?.route
 
-    NavigationBar(
-        containerColor = MaterialTheme.colorScheme.primaryContainer,
-        contentColor = MaterialTheme.colorScheme.onPrimary
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(100.dp)
+            .background(MaterialTheme.colorScheme.primaryContainer)
     ) {
         BottomNavItem.entries.forEach { item ->
             // Check if the current item is selected
             val isSelected = currentRoute == item.route
 
-            NavigationBarItem(
-                selected = isSelected,
-                onClick = {
-                    // Navigate to the selected item
-                    navController.navigate(item.route) {
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                },
-                icon = {
-                    // Wrap both the icon and text in a Box
-                    Box(
-                        modifier = Modifier
-                            .size(100.dp, 80.dp)
-                            .background(
-                                if (isSelected) {
-                                    // Background color for the selected item
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
-                                } else {
-                                    // Transparent background for unselected items
-                                    Color.Transparent
-                                },
-                                shape = RoundedCornerShape(16.dp)
-                            )
-                            .padding(8.dp)
+            // Custom clickable wrapper for the icon and text
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = ripple(
+                            bounded = false,
+                            radius = 5.dp
+                        )
                     ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center,
-                            modifier = Modifier.fillMaxSize()
-                        ) {
-                            // Icon
-                            Image(
-                                painter = painterResource(id = item.iconRes),
-                                contentDescription = item.label,
-                                modifier = Modifier
-                                    .size(30.dp), // Adjust the size of the icon
-                                colorFilter = if (isSelected) {
-                                    // Apply a color filter for the selected icon
-                                    ColorFilter.tint(MaterialTheme.colorScheme.primary)
-                                } else {
-                                    // Apply a color filter for the unselected icon
-                                    ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant)
-                                }
-                            )
-
-                            Spacer(modifier = Modifier.height(4.dp))
-
-                            // Text (Label)
-                            Text(
-                                text = item.label,
-                                fontSize = 14.sp,
-                                fontWeight = SemiBold,
-                                color = if (isSelected) {
-                                    // Change text color for the selected item
-                                    MaterialTheme.colorScheme.primary
-                                } else {
-                                    // Default text color for unselected items
-                                    MaterialTheme.colorScheme.onSurfaceVariant
-                                }
-                            )
+                        // Navigate to the selected item
+                        navController.navigate(item.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
                         }
                     }
+                    .background(
+                        if (isSelected) {
+                            // Background color for the selected item
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                        } else {
+                            // Transparent background for unselected items
+                            Color.Transparent
+                        },
+                        shape = RoundedCornerShape(10.dp)
+                    )
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(6.dp)
+                ) {
+                    // Icon
+                    Image(
+                        painter = painterResource(id = item.iconRes),
+                        contentDescription = item.label,
+                        modifier = Modifier
+                            .size(50.dp)
+                            .padding(6.dp),
+                        colorFilter = if (isSelected) {
+                            // Apply a color filter for the selected icon
+                            ColorFilter.tint(MaterialTheme.colorScheme.primary)
+                        } else {
+                            // Apply a color filter for the unselected icon
+                            ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    // Text
+                    Text(
+                        text = item.label,
+                        fontSize = 15.sp,
+                        fontWeight = SemiBold,
+                        color = if (isSelected) {
+                            // Change text color for the selected item
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            // Default text color for unselected items
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        }
+                    )
                 }
-            )
+            }
         }
     }
 }
