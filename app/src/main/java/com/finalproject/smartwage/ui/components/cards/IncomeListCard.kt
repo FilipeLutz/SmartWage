@@ -61,7 +61,7 @@ fun IncomeListCard(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = "Company: ${income.source}",
+                    text = income.source,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     color = Black
