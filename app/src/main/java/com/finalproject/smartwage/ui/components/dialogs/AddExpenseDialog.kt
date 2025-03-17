@@ -261,7 +261,7 @@ fun AddExpenseDialog(
                             missingFields = mutableListOf<String>().apply {
                                 if (expenseCategory.isBlank()) add("Category")
                                 if (expenseDate.isBlank()) add("Date")
-                                if (amount.isBlank() || amount == "0") add("Expense Amount (€)")
+                                if (amount.isBlank() || amount == "0") add("Amount (€)")
                             }
 
                             if (missingFields.isNotEmpty()) {
