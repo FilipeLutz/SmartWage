@@ -140,16 +140,20 @@ fun ExpenseScreen(navController: NavController) {
                             .padding(horizontal = 16.dp)
                     ) {
                         items(userExpenses.value.size) { index ->
+                            val expenses = userExpenses.value[index]
                             ExpenseItem(
-                                expenses = userExpenses.value[index],
+                                expenses = expenses,
                                 viewModel = viewModel,
                                 onEdit = {
-                                    editingExpense = userExpenses.value[index]
+                                    editingExpense = expenses
                                     isEditMode = true
                                     showExpenseDialog = true
                                     showFab = false
                                 }
                             )
+                        }
+                        items(1) {
+                            Spacer(modifier = Modifier.height(90.dp))
                         }
                     }
                 }
@@ -175,20 +179,7 @@ fun ExpenseScreen(navController: NavController) {
                                     editingExpense = null
                                     isEditMode = false
                                 },
-                                onAddExpense = { category, amount, description, date ->
-                                    val newExpense = Expenses(
-                                        id = editingExpense?.id ?: "",
-                                        category = category,
-                                        amount = amount,
-                                        description = description,
-                                        date = System.currentTimeMillis(),
-                                        userId = userId
-                                    )
-
-                                    viewModel.addOrUpdateExpense(newExpense)
-                                    showExpenseDialog = false
-                                    showFab = true
-                                }
+                                viewModel = viewModel
                             )
                         }
                     }

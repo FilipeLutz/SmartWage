@@ -46,16 +46,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.finalproject.smartwage.data.local.entities.Expenses
 import com.finalproject.smartwage.ui.theme.DarkBlue
+import com.finalproject.smartwage.viewModel.ExpenseViewModel
+import com.google.firebase.auth.FirebaseAuth
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddExpenseDialog(
+    viewModel: ExpenseViewModel,
     expenseToEdit: Expenses?,
     onDismiss: () -> Unit,
-    onAddExpense: (String, Double, String, Long) -> Unit,
     isEditMode: Boolean
 ) {
     var expenseCategory by remember { mutableStateOf(expenseToEdit?.category ?: "") }
@@ -268,13 +272,24 @@ fun AddExpenseDialog(
                                 showExpenseErrorDialog = true
                             } else {
                                 val expenseAmount = amount.toDoubleOrNull() ?: 0.0
+                                val parsedDate = try {
+                                    SimpleDateFormat("dd-MM-yyyy", Locale.UK).parse(expenseDate)?.time
+                                } catch (e: Exception) {
+                                    Timber.e(e, "Date parsing error. Using current time instead.")
+                                    System.currentTimeMillis()
+                                }
+
+
                                 if (expenseAmount > 0) {
-                                    onAddExpense(
-                                        expenseCategory,
-                                        expenseAmount,
-                                        description,
-                                        SimpleDateFormat("dd-MM-yyyy", Locale.UK).parse(expenseDate)?.time ?: System.currentTimeMillis()
+                                    val newExpense = Expenses(
+                                        id = UUID.randomUUID().toString(),
+                                        category = expenseCategory,
+                                        amount = expenseAmount,
+                                        description = description,
+                                        date = parsedDate ?: System.currentTimeMillis(),
+                                        userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
                                     )
+                                    viewModel.addOrUpdateExpense(newExpense)
                                     onDismiss()
                                 }
                             }

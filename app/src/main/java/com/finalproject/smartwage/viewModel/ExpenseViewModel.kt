@@ -32,8 +32,7 @@ class ExpenseViewModel @Inject constructor(
         if (currentUser != null) {
             viewModelScope.launch {
                 expenseRepo.getUserExpenses().collect { expenses ->
-                    Timber.d("Expenses updated in ViewModel: $expenses")
-                    _userExpenses.value = expenses
+                    _userExpenses.value = expenses.sortedByDescending { it.date }
                 }
             }
         } else {
