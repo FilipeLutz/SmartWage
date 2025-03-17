@@ -39,6 +39,10 @@ class IncomeViewModel @Inject constructor(
         }
     }
 
+    fun getLastCompanyName(): String {
+        return userIncomes.value.lastOrNull()?.source ?: ""
+    }
+
     fun updateIncome(income: Income) {
         viewModelScope.launch {
             incomeRepo.saveOrUpdateIncome(income)

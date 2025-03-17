@@ -65,7 +65,7 @@ fun PayslipFormDialog(
     val auth = FirebaseAuth.getInstance()
     val currentUser = auth.currentUser
     var showDatePicker by remember { mutableStateOf(false) }
-    var company by remember { mutableStateOf(incomeToEdit?.source ?: "") }
+    var company by remember { mutableStateOf(incomeToEdit?.source ?: viewModel.getLastCompanyName()) }
     var incomeAmount by remember { mutableStateOf(incomeToEdit?.amount?.toString() ?: "") }
     var taxPaid by remember { mutableStateOf(incomeToEdit?.paye?.toString() ?: "") }
     var usc by remember { mutableStateOf(incomeToEdit?.usc?.toString() ?: "") }
