@@ -15,18 +15,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,6 +38,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.finalproject.smartwage.data.local.entities.Income
+import com.finalproject.smartwage.ui.components.dropdown.CompanyNameDropdownMenuField
+import com.finalproject.smartwage.ui.components.dropdown.FrequencyDropdownMenuField
 import com.finalproject.smartwage.ui.theme.DarkBlue
 import com.finalproject.smartwage.utils.TaxCalculator
 import com.finalproject.smartwage.viewModel.ExpenseViewModel
@@ -71,6 +68,7 @@ fun PayslipFormDialog(
     var usc by remember { mutableStateOf(incomeToEdit?.usc?.toString() ?: "") }
     var prsi by remember { mutableStateOf(incomeToEdit?.prsi?.toString() ?: "") }
     var frequency by remember { mutableStateOf(incomeToEdit?.frequency ?: "") }
+    val companyNames = viewModel.getAllCompanyNames()
     val frequencies = listOf("Weekly", "Fortnightly", "Monthly")
     var missingFields by remember { mutableStateOf<List<String>>(emptyList()) }
     var incomeDate by remember {
@@ -103,20 +101,14 @@ fun PayslipFormDialog(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                OutlinedTextField(
-                    value = company,
-                    onValueChange = { company = it },
-                    label = { Text("Company Name", fontSize = 17.sp) },
-                    textStyle = TextStyle(fontSize = 22.sp),
-                    singleLine = true,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .scrollable(
-                            orientation = Orientation.Horizontal,
-                            state = rememberScrollState(),
-                            enabled = true
-                        )
-                )
+                // Company Name Dropdown
+                CompanyNameDropdownMenuField(
+                    label = "Company Name",
+                    selectedItem = company,
+                    items = companyNames
+                ) { selectedCompany ->
+                    company = selectedCompany
+                }
 
                 Spacer(modifier = Modifier.height(10.dp))
 
@@ -150,7 +142,7 @@ fun PayslipFormDialog(
 
                 Spacer(modifier = Modifier.height(5.dp))
 
-                DropdownMenuField(
+                FrequencyDropdownMenuField(
                     label = "Frequency",
                     selectedItem = frequency,
                     items = frequencies
@@ -370,64 +362,5 @@ fun PayslipFormDialog(
             missingFields = missingFields,
             onDismiss = { missingFields = emptyList() }
         )
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DropdownMenuField(
-    label: String,
-    selectedItem: String,
-    items: List<String>,
-    onItemSelected: (String) -> Unit
-) {
-    var expanded by remember { mutableStateOf(false) }
-
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = { expanded = !expanded }
-    ) {
-        OutlinedTextField(
-            value = selectedItem,
-            onValueChange = {},
-            label = { Text(label, fontSize = 17.sp) },
-            textStyle = TextStyle(fontSize = 22.sp),
-            readOnly = true,
-            trailingIcon = {
-                Icon(
-                    Icons.Default.ArrowDropDown,
-                    contentDescription = "Dropdown",
-                    tint = DarkBlue,
-                    modifier = Modifier
-                        .size(30.dp)
-                        .clickable { expanded = true }
-                )
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .menuAnchor(MenuAnchorType.PrimaryEditable, enabled = true)
-                .clickable { expanded = true }
-        )
-
-        ExposedDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier
-                .exposedDropdownSize()
-        ) {
-            items.forEach { item ->
-                DropdownMenuItem(
-                    text = { Text(item, style = TextStyle(fontSize = 22.sp)) },
-                    onClick = {
-                        onItemSelected(item)
-                        expanded = false
-                    }
-                )
-                HorizontalDivider(
-                    modifier = Modifier
-                        .padding(horizontal = 10.dp)
-                )
-            }
-        }
     }
 }
