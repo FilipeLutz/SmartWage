@@ -2,12 +2,16 @@ package com.finalproject.smartwage.ui.components.dropdown
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
@@ -32,14 +36,19 @@ fun CompanyNameDropdownMenuField(
     onItemSelected: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
+    var filteredItems by remember { mutableStateOf(items) }
 
     ExposedDropdownMenuBox(
         expanded = expanded,
-        onExpandedChange = { expanded = it && items.isNotEmpty() }
+        onExpandedChange = { expanded = it && filteredItems.isNotEmpty() }
     ) {
         OutlinedTextField(
             value = selectedItem,
-            onValueChange = { onItemSelected(it) },
+            onValueChange = { newValue ->
+                onItemSelected(newValue)
+                filteredItems = items.filter { it.contains(newValue, ignoreCase = true) }
+                expanded = filteredItems.isNotEmpty()
+            },
             label = { Text(label, fontSize = 17.sp) },
             textStyle = TextStyle(fontSize = 22.sp),
             singleLine = true,
@@ -69,20 +78,30 @@ fun CompanyNameDropdownMenuField(
             },
         )
 
-        // Only show the dropdown if there are items
-        if (items.isNotEmpty()) {
+        // Show the dropdown if there are items
+        if (filteredItems.isNotEmpty()) {
             ExposedDropdownMenu(
                 expanded = expanded,
-                onDismissRequest = { expanded = false }
+                onDismissRequest = { expanded = false },
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
             ) {
-                items.forEach { item ->
+                // Show only the first 3 items
+                filteredItems.take(3).forEach { item ->
                     DropdownMenuItem(
-                        text = { Text(item, fontSize = 18.sp) },
+                        text = { Text(item, fontSize = 21.sp) },
                         onClick = {
                             onItemSelected(item)
                             expanded = false
                         }
                     )
+                    // Divider between each item when more than one item
+                    if (filteredItems.size > 1 && item != filteredItems.last()) {
+                        HorizontalDivider(
+                            modifier = Modifier
+                                .padding(horizontal = 10.dp)
+                        )
+                    }
                 }
             }
         }
