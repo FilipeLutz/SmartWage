@@ -26,6 +26,7 @@ class IncomeViewModel @Inject constructor(
         loadIncomes()
     }
 
+    // Load the list of incomes
     fun loadIncomes() {
         val currentUser = auth.currentUser
         if (currentUser != null) {
@@ -39,10 +40,17 @@ class IncomeViewModel @Inject constructor(
         }
     }
 
-    fun getLastCompanyName(): String {
-        return userIncomes.value.lastOrNull()?.source ?: ""
+    // Get all unique company names
+    fun getAllCompanyNames(): List<String> {
+        return userIncomes.value.map { it.source }.distinct()
     }
 
+    // Get the most recently saved company name
+    fun getLastCompanyName(): String {
+        return userIncomes.value.firstOrNull()?.source ?: ""
+    }
+
+    // Get the last income amount from the list of incomes
     fun updateIncome(income: Income) {
         viewModelScope.launch {
             incomeRepo.saveOrUpdateIncome(income)
@@ -50,6 +58,7 @@ class IncomeViewModel @Inject constructor(
         }
     }
 
+    // Delete an income from the list of incomes
     fun deleteIncome(incomeId: String) {
         viewModelScope.launch {
             incomeRepo.deleteIncome(incomeId)
