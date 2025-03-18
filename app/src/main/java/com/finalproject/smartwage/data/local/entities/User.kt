@@ -14,8 +14,8 @@ data class User(
     @get:PropertyName("taxCredit") @set:PropertyName("taxCredit") var taxCredit: Double = 4000.0,
     @get:PropertyName("profilePicture") @set:PropertyName("profilePicture") var profilePicture: String? = null,
     @get:PropertyName("taxPaid") @set:PropertyName("taxPaid") var taxPaid: Double = 0.0,
-    @get:PropertyName("taxOwed") @set:PropertyName("taxOwed") var taxOwed: Double = 0.0,
-    @get:PropertyName("taxBack") @set:PropertyName("taxBack") var taxBack: Double = 0.0,
+    @get:PropertyName("overpaidTax") @set:PropertyName("overpaidTax") var overpaidTax: Double = 0.0,
+    @get:PropertyName("underpaidTax") @set:PropertyName("underpaidTax") var underpaidTax: Double = 0.0,
     @get:PropertyName("totalIncome") @set:PropertyName("totalIncome") var totalIncome: Double = 0.0,
     @get:PropertyName("totalExpenses") @set:PropertyName("totalExpenses") var totalExpenses: Double = 0.0,
     )
