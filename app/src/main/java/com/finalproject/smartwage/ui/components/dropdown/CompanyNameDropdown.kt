@@ -59,7 +59,7 @@ fun CompanyNameDropdownMenuField(
                     enabled = items.isNotEmpty()
                 ),
             trailingIcon = {
-                if (items.isNotEmpty()) {
+                if (items.isNotEmpty() && items.size > 1) {
                     Icon(
                         Icons.Default.ArrowDropDown,
                         contentDescription = "Dropdown",
@@ -78,8 +78,8 @@ fun CompanyNameDropdownMenuField(
             },
         )
 
-        // Show the dropdown if there are items
-        if (filteredItems.isNotEmpty()) {
+        // Show the dropdown if there are more than one item
+        if (filteredItems.isNotEmpty() && filteredItems.size > 1) {
             ExposedDropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
