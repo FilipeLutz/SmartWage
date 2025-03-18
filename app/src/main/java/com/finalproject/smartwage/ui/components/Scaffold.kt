@@ -164,7 +164,7 @@ fun DashboardBottomBar(navController: NavController) {
                         interactionSource = remember { MutableInteractionSource() },
                         indication = ripple(
                             bounded = false,
-                            radius = 5.dp
+                            radius = 0.dp
                         )
                     ) {
                         // Navigate to the selected item
