@@ -23,6 +23,9 @@ class ExpenseViewModel @Inject constructor(
     private val _userExpenses = MutableStateFlow<List<Expenses>>(emptyList())
     val userExpenses: StateFlow<List<Expenses>> = _userExpenses.asStateFlow()
 
+    private val userId: String
+        get() = auth.currentUser?.uid ?: ""
+
     init {
         loadExpenses()
     }
@@ -31,7 +34,7 @@ class ExpenseViewModel @Inject constructor(
         val currentUser = auth.currentUser
         if (currentUser != null) {
             viewModelScope.launch {
-                expenseRepo.getUserExpenses().collect { expenses ->
+                expenseRepo.getUserExpenses(userId).collect { expenses ->
                     _userExpenses.value = expenses.sortedByDescending { it.date }
                 }
             }
@@ -54,11 +57,11 @@ class ExpenseViewModel @Inject constructor(
         }
     }
 
-    fun getTuitionFeeRelief(): Double {
-        return _userExpenses.value.filter { it.category == "Tuition Fee Relief" }.sumOf { it.amount }
-    }
-
     fun getRentTaxCredit(): Double {
         return _userExpenses.value.filter { it.category == "Rent Tax Credit" }.sumOf { it.amount }
+    }
+
+    fun getTuitionFeeRelief(): Double {
+        return _userExpenses.value.filter { it.category == "Tuition Fee Relief" }.sumOf { it.amount }
     }
 }
