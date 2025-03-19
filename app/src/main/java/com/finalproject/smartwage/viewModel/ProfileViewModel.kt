@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.finalproject.smartwage.data.local.entities.User
 import com.finalproject.smartwage.data.repository.AuthRepository
 import com.finalproject.smartwage.data.repository.UserRepository
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -12,7 +13,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val userRepo: UserRepository,
-    private val authRepo: AuthRepository
+    private val authRepo: AuthRepository,
+    private val auth: FirebaseAuth
 ) : ViewModel() {
 
     fun updateUser(remoteUser: User) {
