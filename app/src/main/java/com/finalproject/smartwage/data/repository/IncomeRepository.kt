@@ -51,7 +51,7 @@ class IncomeRepository @Inject constructor(
         }
     }
 
-    fun getUserIncomes(): Flow<List<Income>> {
+    fun getUserIncomes(userId: String): Flow<List<Income>> {
         val currentUser = auth.currentUser
         return if (currentUser != null) {
             flow {
