@@ -1,44 +1,47 @@
 package com.finalproject.smartwage.data.repository
 
 import com.finalproject.smartwage.data.local.dao.TaxDao
-import com.finalproject.smartwage.data.local.entities.Tax
 import com.finalproject.smartwage.data.remote.FirestoreService
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.flow
+import timber.log.Timber
 import javax.inject.Inject
 
-class TaxRepository @Inject constructor (
+class TaxRepository @Inject constructor(
     private val taxDao: TaxDao,
     private val firestoreService: FirestoreService
 ) {
 
-    // Save Tax Calculation Result
-    suspend fun saveTax(tax: Tax) {
-        withContext(Dispatchers.IO) {
+    fun getRentTaxCredit(userId: String): Flow<Double> = flow {
+        try {
+            val firestoreData = firestoreService.getRentTaxCredit(userId)
+            emit(firestoreData)
+        } catch (firestoreException: Exception) {
+            Timber.e(firestoreException, "Error fetching rent tax credit from Firestore")
             try {
-                firestoreService.saveTax(tax)  // Firestore
-                taxDao.insertTax(tax)  // Room
-            } catch (e: Exception) {
-                // Error message
-                println("Error saving tax: ${e.message}")
+                taxDao.getRentTaxCredit(userId).collect { daoData ->
+                    emit(daoData)
+                }
+            } catch (roomException: Exception) {
+                Timber.e(roomException, "Error fetching rent tax credit from Room")
+                emit(0.0)
             }
         }
     }
 
-    // Get Latest Tax Calculation
-    fun getUserTax(userId: String): Flow<List<Tax>> {
-        return taxDao.getUserTax(userId)
-    }
-
-    // Clear Tax Calculation for User
-    suspend fun deleteTax(userId: String) {
-        withContext(Dispatchers.IO) {
+    fun getTuitionFeeRelief(userId: String): Flow<Double> = flow {
+        try {
+            val firestoreData = firestoreService.getTuitionFeeRelief(userId)
+            emit(firestoreData)
+        } catch (firestoreException: Exception) {
+            Timber.e(firestoreException, "Error fetching tuition fee relief from Firestore")
             try {
-                taxDao.deleteTax(userId)  // Room
-            } catch (e: Exception) {
-                // Error message
-                println("Error deleting tax: ${e.message}")
+                taxDao.getTuitionFeeRelief(userId).collect { daoData ->
+                    emit(daoData)
+                }
+            } catch (roomException: Exception) {
+                Timber.e(roomException, "Error fetching tuition fee relief from Room")
+                emit(0.0)
             }
         }
     }
