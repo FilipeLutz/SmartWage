@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.finalproject.smartwage.data.repository.ExpenseRepository
 import com.finalproject.smartwage.data.repository.IncomeRepository
 import com.finalproject.smartwage.utils.TaxCalculator
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +16,8 @@ import javax.inject.Inject
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
     private val incomeRepo: IncomeRepository,
-    private val expenseRepo: ExpenseRepository
+    private val expenseRepo: ExpenseRepository,
+    private val auth: FirebaseAuth
 ) : ViewModel() {
 
     private val _totalIncome = MutableStateFlow(0.0)
@@ -39,6 +41,9 @@ class DashboardViewModel @Inject constructor(
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage
 
+    private val userId: String
+        get() = auth.currentUser?.uid ?: ""
+
     /**
      * Load user data (Income, Expenses, and Tax calculations)
      */
@@ -48,7 +53,7 @@ class DashboardViewModel @Inject constructor(
             _errorMessage.value = null
 
             try {
-                val incomes = incomeRepo.getUserIncomes().first()
+                val incomes = incomeRepo.getUserIncomes(userId).first()
                 var totalIncomeValue = 0.0
                 var totalTaxPaidValue = 0.0
                 var totalExpectedTaxValue = 0.0
@@ -83,7 +88,7 @@ class DashboardViewModel @Inject constructor(
                 _taxBack.value = if (taxDifference > 0) taxDifference else 0.0
 
                 // Fetch expenses
-                val expenses = expenseRepo.getUserExpenses().first()
+                val expenses = expenseRepo.getUserExpenses(userId).first()
                 _totalExpenses.value = expenses.sumOf { it.amount }
 
             } catch (e: Exception) {
