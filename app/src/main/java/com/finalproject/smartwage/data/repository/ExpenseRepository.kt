@@ -34,15 +34,16 @@ class ExpenseRepository @Inject constructor(
         }
     }
 
-    fun getUserExpenses(): Flow<List<Expenses>> {
+    fun getUserExpenses(userId: String): Flow<List<Expenses>> {
         val currentUser = auth.currentUser
         return if (currentUser != null) {
             flow {
-                val firebaseExpenses = firestoreService.getUserExpenses(currentUser.uid)
-                if (firebaseExpenses.isNotEmpty()) {
-                    emit(firebaseExpenses)
-                } else {
-                    incomeDao.getUserExpenses(currentUser.uid).firstOrNull()?.let { emit(it) }
+                firestoreService.getUserExpenses(currentUser.uid).let { firebaseExpenses ->
+                    if (firebaseExpenses.isNotEmpty()) {
+                        emit(firebaseExpenses)
+                    } else {
+                        emit(incomeDao.getUserExpenses(currentUser.uid).firstOrNull() ?: emptyList())
+                    }
                 }
             }.flowOn(Dispatchers.IO)
         } else {
