@@ -14,4 +14,10 @@ interface TaxDao {
 
     @Query("DELETE FROM tax WHERE userId = :userId")
     suspend fun deleteTax(userId: String)
+
+    @Query("SELECT rentTaxCredit FROM Tax WHERE userId = :userId")
+    fun getRentTaxCredit(userId: String): Flow<Double>
+
+    @Query("SELECT tuitionFeeRelief FROM Tax WHERE userId = :userId")
+    fun getTuitionFeeRelief(userId: String): Flow<Double>
 }
