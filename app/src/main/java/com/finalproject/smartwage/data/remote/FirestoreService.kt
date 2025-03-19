@@ -117,6 +117,50 @@ class FirestoreService @Inject constructor() {
         }
     }
 
+    // Rent Tax Credit
+    suspend fun getRentTaxCredit(userId: String): Double {
+        return try {
+            val taxRecord = db.collection("taxes")
+                .whereEqualTo("userId", userId)
+                .get()
+                .await()
+                .toObjects(Tax::class.java)
+
+            if (taxRecord.isNotEmpty()) {
+                val rentTaxCredit = taxRecord.first().rentTaxCredit
+                Timber.d("Fetched Rent Tax Credit: $rentTaxCredit")
+                rentTaxCredit
+            } else {
+                0.0
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "Error fetching rent tax credit")
+            0.0
+        }
+    }
+
+    // Tuition Fee Relief
+    suspend fun getTuitionFeeRelief(userId: String): Double {
+        return try {
+            val taxRecord = db.collection("taxes")
+                .whereEqualTo("userId", userId)
+                .get()
+                .await()
+                .toObjects(Tax::class.java)
+
+            if (taxRecord.isNotEmpty()) {
+                val tuitionRelief = taxRecord.first().tuitionFeeRelief
+                Timber.d("Fetched Tuition Fee Relief: $tuitionRelief")
+                tuitionRelief
+            } else {
+                0.0
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "Error fetching tuition fee relief")
+            0.0
+        }
+    }
+
     // Get Expenses for a Specific User
     suspend fun getUserExpenses(userId: String): List<Expenses> {
         return try {
