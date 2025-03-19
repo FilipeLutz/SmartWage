@@ -22,6 +22,9 @@ class IncomeViewModel @Inject constructor(
     private val _userIncomes = MutableStateFlow<List<Income>>(emptyList())
     val userIncomes: StateFlow<List<Income>> = _userIncomes.asStateFlow()
 
+    private val userId: String
+        get() = auth.currentUser?.uid ?: ""
+
     init {
         loadIncomes()
     }
@@ -31,7 +34,7 @@ class IncomeViewModel @Inject constructor(
         val currentUser = auth.currentUser
         if (currentUser != null) {
             viewModelScope.launch {
-                incomeRepo.getUserIncomes().collect { incomes ->
+                incomeRepo.getUserIncomes(userId).collect { incomes ->
                     _userIncomes.value = incomes.sortedByDescending { it.date }
                 }
             }
