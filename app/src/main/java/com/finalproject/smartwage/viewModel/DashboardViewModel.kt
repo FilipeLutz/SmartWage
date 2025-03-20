@@ -35,6 +35,10 @@ class DashboardViewModel @Inject constructor(
     private val _taxBack = MutableStateFlow(0.0)
     val taxBack: StateFlow<Double> = _taxBack
 
+    private val _rentTaxCredit = MutableStateFlow(0.0)
+
+    private val _tuitionFeeRelief = MutableStateFlow(0.0)
+
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
@@ -54,30 +58,54 @@ class DashboardViewModel @Inject constructor(
 
             try {
                 val incomes = incomeRepo.getUserIncomes(userId).first()
+                val expenses = expenseRepo.getUserExpenses(userId).first()
+
                 var totalIncomeValue = 0.0
                 var totalTaxPaidValue = 0.0
                 var totalExpectedTaxValue = 0.0
+
+                // Get rent and tuition fee from expenses
+                val rentPaid = expenses
+                    .filter { it.category == "RENT TAX CREDIT" }
+                    .sumOf { it.amount }
+
+                val tuitionFees = expenses
+                    .filter { it.category == "TUITION FEE RELIEF" }
+                    .sumOf { it.amount }
+
+                // Calculate tax credit and relief amounts
+                val rentTaxCreditAmount = TaxCalculator.calculateRentTaxCredit(rentPaid, totalTaxPaidValue)
+                val tuitionFeeReliefAmount = TaxCalculator.calculateTuitionFeeRelief(tuitionFees)
+
+                // Update state with tax credits
+                _rentTaxCredit.value = rentTaxCreditAmount
+                _tuitionFeeRelief.value = tuitionFeeReliefAmount
 
                 for (income in incomes) {
                     totalIncomeValue += income.amount
                     totalTaxPaidValue += income.paye + income.usc + income.prsi
 
-                    // Calculate expected tax using TaxCalculator
+                    // Determine payment frequency
                     val selectedFrequency = when (income.frequency) {
                         "Weekly" -> TaxCalculator.PaymentFrequency.WEEKLY
                         "Fortnightly" -> TaxCalculator.PaymentFrequency.FORTNIGHTLY
                         else -> TaxCalculator.PaymentFrequency.MONTHLY
                     }
-                    //The tuitionFees and rentPaid values will be passed from the composable.
+
+                    // Calculate expected tax based on user expenses
                     val (expectedPAYE, expectedUSC, expectedPRSI) =
                         TaxCalculator.calculateTax(
                             income.amount,
                             selectedFrequency,
-                            0.0, // tuitionFees
-                            0.0  // rentPaid
+                            tuitionFees,
+                            rentPaid
                         )
                     totalExpectedTaxValue += expectedPAYE + expectedUSC + expectedPRSI
                 }
+
+                // Apply tax credits before comparison
+                totalExpectedTaxValue -= (rentTaxCreditAmount + tuitionFeeReliefAmount)
+                totalExpectedTaxValue = maxOf(totalExpectedTaxValue, 0.0)
 
                 _totalIncome.value = totalIncomeValue
                 _taxPaid.value = totalTaxPaidValue
@@ -87,8 +115,7 @@ class DashboardViewModel @Inject constructor(
                 _taxOwed.value = if (taxDifference < 0) -taxDifference else 0.0
                 _taxBack.value = if (taxDifference > 0) taxDifference else 0.0
 
-                // Fetch expenses
-                val expenses = expenseRepo.getUserExpenses(userId).first()
+                // Store total expenses
                 _totalExpenses.value = expenses.sumOf { it.amount }
 
             } catch (e: Exception) {
