@@ -70,7 +70,7 @@ fun TaxCreditScreen(
                     item {
                         if (totalIncome == 0.0 && totalExpenses == 0.0) {
                             // No income or expenses saved yet
-                            NoDataMessage(navController)
+                            TaxDataMessage(navController)
                         } else {
                             // Show tax breakdown when data is available
                             TaxSummaryCard(
@@ -83,7 +83,7 @@ fun TaxCreditScreen(
 
                     item {
                         Spacer(modifier = Modifier.height(24.dp))
-                        TaxCalculationExplanationCard()
+                        TaxExplanationCard()
                     }
 
                     item {
@@ -182,7 +182,7 @@ fun TaxSummaryCard(
 }
 
 @Composable
-fun TaxCalculationExplanationCard() {
+fun TaxExplanationCard() {
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
@@ -210,7 +210,7 @@ fun TaxCalculationExplanationCard() {
 
 @Suppress("DEPRECATION")
 @Composable
-fun NoDataMessage(navController: NavController) {
+fun TaxDataMessage(navController: NavController) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
