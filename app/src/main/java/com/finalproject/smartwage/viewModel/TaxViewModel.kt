@@ -23,12 +23,6 @@ class TaxViewModel @Inject constructor(
     private val auth: FirebaseAuth
 ) : ViewModel() {
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
-
-    private val _errorMessage = MutableStateFlow<String?>(null)
-    val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
-
     private val _taxPaid = MutableStateFlow(0.0)
     val taxPaid: StateFlow<Double> = _taxPaid.asStateFlow()
 
@@ -43,6 +37,9 @@ class TaxViewModel @Inject constructor(
 
     private val _totalIncome = MutableStateFlow(0.0)
     val totalIncome: StateFlow<Double> = _totalIncome.asStateFlow()
+
+    private val _totalExpenses = MutableStateFlow(0.0)
+    val totalExpenses: StateFlow<Double> = _totalExpenses.asStateFlow()
 
     private val _rentTaxCredit = MutableStateFlow(0.0)
     val rentTaxCredit: StateFlow<Double> = _rentTaxCredit.asStateFlow()
@@ -64,8 +61,7 @@ class TaxViewModel @Inject constructor(
 
     fun fetchTaxData() {
         viewModelScope.launch {
-            _isLoading.value = true
-            _errorMessage.value = null
+
             val userId = auth.currentUser?.uid ?: return@launch
 
             try {
@@ -74,36 +70,42 @@ class TaxViewModel @Inject constructor(
                     expenseRepo.getUserExpenses(userId)
                 ) { incomes, expenses ->
 
-                    val rentCredit = expenses
+                    val userIncomes = incomes.filter { it.userId == userId }
+                    val userExpenses = expenses.filter { it.userId == userId }
+
+                    val totalIncome = userIncomes.sumOf { it.amount }
+                    val totalPAYE = userIncomes.sumOf { it.paye }
+                    val totalUSC = userIncomes.sumOf { it.usc }
+                    val totalPRSI = userIncomes.sumOf { it.prsi }
+                    val totalTaxLiability = totalPAYE + totalUSC + totalPRSI
+
+                    val rentPaid = userExpenses
                         .filter { it.category == "RENT TAX CREDIT" }
                         .sumOf { it.amount }
 
-                    val tuitionRelief = expenses
+                    val tuitionFees = userExpenses
                         .filter { it.category == "TUITION FEE RELIEF" }
                         .sumOf { it.amount }
 
-                    val totalPAYE = incomes.sumOf { it.paye }
-                    val totalUSC = incomes.sumOf { it.usc }
-                    val totalPRSI = incomes.sumOf { it.prsi }
-                    val totalIncome = incomes.sumOf { it.amount }
+                    val rentTaxCreditAmount = TaxCalculator.calculateRentTaxCredit(rentPaid, totalIncome)
+                    val tuitionFeeReliefAmount = TaxCalculator.calculateTuitionFeeRelief(tuitionFees)
 
+                    // Tax values
                     _paye.value = totalPAYE
                     _usc.value = totalUSC
                     _prsi.value = totalPRSI
-                    _taxPaid.value = totalPAYE + totalUSC + totalPRSI
+                    _taxPaid.value = totalTaxLiability
                     _totalIncome.value = totalIncome
 
-                    // Update tax credits
-                    _rentTaxCredit.value = rentCredit
-                    _tuitionFeeRelief.value = tuitionRelief
+                    _rentTaxCredit.value = rentTaxCreditAmount
+                    _tuitionFeeRelief.value = tuitionFeeReliefAmount
 
-                    // Expected Tax Calculation
                     var expectedTotalTax = 0.0
                     var expectedPAYE = 0.0
                     var expectedUSC = 0.0
                     var expectedPRSI = 0.0
 
-                    incomes.forEach { income ->
+                    userIncomes.forEach { income ->
                         val selectedFrequency = when (income.frequency) {
                             "Weekly" -> TaxCalculator.PaymentFrequency.WEEKLY
                             "Fortnightly" -> TaxCalculator.PaymentFrequency.FORTNIGHTLY
@@ -113,8 +115,8 @@ class TaxViewModel @Inject constructor(
                         val (paye, usc, prsi) = TaxCalculator.calculateTax(
                             income.amount,
                             selectedFrequency,
-                            tuitionRelief,
-                            rentCredit
+                            tuitionFees,
+                            rentPaid
                         )
 
                         expectedPAYE += paye
@@ -128,16 +130,13 @@ class TaxViewModel @Inject constructor(
                     _expectedUSC.value = expectedUSC
                     _expectedPRSI.value = expectedPRSI
 
-                    Timber.d("Expected Tax: $expectedTotalTax")
+                    Timber.d("Rent Tax Credit: $rentTaxCreditAmount, Tuition Fee Relief: $tuitionFeeReliefAmount")
                 }.collectLatest {
-                    Timber.d("Successfully collected tax data, updating UI")
-                    _isLoading.value = false
+                    Timber.d("Tax data fetched successfully")
                 }
 
             } catch (e: Exception) {
                 Timber.e(e, "Error fetching tax data")
-                _errorMessage.value = "Error fetching tax data: ${e.localizedMessage}"
-                _isLoading.value = false
             }
         }
     }
