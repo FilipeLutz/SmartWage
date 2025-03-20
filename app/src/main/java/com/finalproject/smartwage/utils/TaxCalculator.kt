@@ -93,13 +93,13 @@ object TaxCalculator {
         return maxOf(prsiCharge, 0.0) * 52
     }
 
-    private fun calculateTuitionFeeRelief(tuitionFees: Double): Double {
+    internal fun calculateTuitionFeeRelief(tuitionFees: Double): Double {
         if (tuitionFees <= FULL_TIME_DISREGARD) return 0.0
         val claimableAmount = minOf(tuitionFees, MAX_TUITION_CLAIM) - FULL_TIME_DISREGARD
         return maxOf(0.0, claimableAmount * TUITION_RELIEF_RATE)
     }
 
-    private fun calculateRentTaxCredit(rentPaid: Double, taxLiability: Double): Double {
+    internal fun calculateRentTaxCredit(rentPaid: Double, taxLiability: Double): Double {
         val rentRelief = minOf(rentPaid * RENT_TAX_RELIEF, RENT_CREDIT_2024_2025)
         return minOf(rentRelief, taxLiability) // Cannot exceed tax liability
     }
