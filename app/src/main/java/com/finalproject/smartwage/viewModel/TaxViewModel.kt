@@ -59,6 +59,10 @@ class TaxViewModel @Inject constructor(
     private val _expectedPRSI = MutableStateFlow(0.0)
     val expectedPRSI: StateFlow<Double> = _expectedPRSI.asStateFlow()
 
+    private val _totalTaxBack = MutableStateFlow(0.0)
+
+    private val _totalTaxOwed = MutableStateFlow(0.0)
+
     fun fetchTaxData() {
         viewModelScope.launch {
 
@@ -129,6 +133,28 @@ class TaxViewModel @Inject constructor(
                     _expectedPAYE.value = expectedPAYE
                     _expectedUSC.value = expectedUSC
                     _expectedPRSI.value = expectedPRSI
+
+                    // Calculate Overpaid Tax
+                    val payeDifference = totalPAYE - expectedPAYE
+                    val prsiDifference = totalPRSI - expectedPRSI
+                    val uscDifference = totalUSC - expectedUSC
+
+                    val payeBack = totalPAYE
+
+                    val prsiBack = if (prsiDifference > 0) prsiDifference else 0.0
+
+                    val uscBack = if (uscDifference > 0) uscDifference else 0.0
+
+                    // Total Overpaid Tax
+                    val totalTaxBack = payeBack + prsiBack + uscBack
+                    _totalTaxBack.value = totalTaxBack
+
+                    // Total Tax Owed
+                    val payeOwed = if (payeDifference < 0) -payeDifference else 0.0
+                    val uscOwed = if (uscDifference < 0) -uscDifference else 0.0
+                    val prsiOwed = if (prsiDifference < 0) -prsiDifference else 0.0
+                    val totalTaxOwed = payeOwed + uscOwed + prsiOwed
+                    _totalTaxOwed.value = totalTaxOwed
 
                     Timber.d("Rent Tax Credit: $rentTaxCreditAmount, Tuition Fee Relief: $tuitionFeeReliefAmount")
                 }.collectLatest {
