@@ -88,7 +88,7 @@ fun TaxCreditScreen(
 
                             TaxDataMessage(navController)
                         } else {
-                            
+
                             TaxSummaryCard(
                                 totalIncome, paye, usc, prsi, taxPaid,
                                 expectedPAYE, expectedUSC, expectedPRSI, expectedTax,
