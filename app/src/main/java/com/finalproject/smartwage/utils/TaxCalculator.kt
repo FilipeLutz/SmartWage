@@ -15,14 +15,6 @@ object TaxCalculator {
     private const val RENT_CREDIT_2024_2025 = 1000.0 // Rent tax credit for single person
     private const val RENT_TAX_RELIEF = 0.20 // 20% rent tax relief
 
-    // USC Brackets
-    private val USC_BRACKETS = listOf(
-        12012.0 to 0.005,  // 0.5% on first €12,012
-        15370.0 to 0.02,   // 2% on next €15,370
-        42662.0 to 0.03,   // 3% on next €42,662
-        Double.MAX_VALUE to 0.08  // 8% on anything above
-    )
-
     enum class PaymentFrequency(val divisor: Double) {
         WEEKLY(52.0), FORTNIGHTLY(26.0), MONTHLY(12.0)
     }
@@ -60,19 +52,33 @@ object TaxCalculator {
         return maxOf(payeTax, 0.0)
     }
 
-    private fun calculateUSC(annualIncome: Double): Double {
-        if (annualIncome <= 13000) return 0.0
+    private fun calculateUSC(income: Double): Double {
+        // No USC on income up to €13,000
+        if (income <= 13000) return 0.0
 
         var calculatedUSC = 0.0
-        var remainingIncome = annualIncome
+        var remainingIncome = income
 
-        for ((bracket, rate) in USC_BRACKETS) {
-            if (remainingIncome > 0) {
-                val taxable = minOf(remainingIncome, bracket)
-                calculatedUSC += taxable * rate
-                remainingIncome -= taxable
-            } else break
+        // Apply 0.5% on the first €12,012
+        val firstBracket = minOf(remainingIncome, 12012.0)
+        calculatedUSC += firstBracket * 0.005
+        remainingIncome -= firstBracket
+
+        // Apply 2% on the next €3,358
+        val secondBracket = minOf(remainingIncome, 3358.0)
+        calculatedUSC += secondBracket * 0.02
+        remainingIncome -= secondBracket
+
+        // Apply 3% on the next €16,630
+        val thirdBracket = minOf(remainingIncome, 16630.0)
+        calculatedUSC += thirdBracket * 0.03
+        remainingIncome -= thirdBracket
+
+        // Apply 8% on the rest (if any)
+        if (remainingIncome > 0) {
+            calculatedUSC += remainingIncome * 0.08
         }
+
         return calculatedUSC
     }
 
@@ -113,14 +119,6 @@ object QuickTaxCalculator {
     private const val TAX_RATE_HIGH = 0.40
     private const val TAX_CREDIT = 4000.0
 
-    // USC Brackets
-    private val USC_BRACKETS = listOf(
-        12012.0 to 0.005,    // 0.5% up to 12,012
-        15370.0 to 0.02,     // 2% between 12,013 and 15,370
-        42662.0 to 0.03,     // 3% between 15,371 and 42,662
-        Double.MAX_VALUE to 0.08 // 8% for income above 42,662
-    )
-
     /**
      * Calculates PAYE, USC, and PRSI for **Quick Tax Calculation**.
      */
@@ -143,8 +141,10 @@ object QuickTaxCalculator {
             (TAX_THRESHOLD * TAX_RATE_LOW) + ((income - TAX_THRESHOLD) * TAX_RATE_HIGH)
         }
 
+        // Apply the tax credit only to the PAYE
         payeTax -= TAX_CREDIT
 
+        // Ensure PAYE doesn't go below 0
         return maxOf(payeTax, 0.0)
     }
 
@@ -152,17 +152,30 @@ object QuickTaxCalculator {
      * USC Calculation
      */
     private fun calculateUSC(income: Double): Double {
+        // No USC on income up to €13,000
         if (income <= 13000) return 0.0
 
         var calculatedUSC = 0.0
         var remainingIncome = income
 
-        for ((bracket, rate) in USC_BRACKETS) {
-            if (remainingIncome > 0) {
-                val taxable = minOf(remainingIncome, bracket)
-                calculatedUSC += taxable * rate
-                remainingIncome -= taxable
-            } else break
+        // Apply 0.5% on the first €12,012
+        val firstBracket = minOf(remainingIncome, 12012.0)
+        calculatedUSC += firstBracket * 0.005
+        remainingIncome -= firstBracket
+
+        // Apply 2% on the next €3,358
+        val secondBracket = minOf(remainingIncome, 3358.0)
+        calculatedUSC += secondBracket * 0.02
+        remainingIncome -= secondBracket
+
+        // Apply 3% on the next €16,630
+        val thirdBracket = minOf(remainingIncome, 16630.0)
+        calculatedUSC += thirdBracket * 0.03
+        remainingIncome -= thirdBracket
+
+        // Apply 8% on the rest of the income
+        if (remainingIncome > 0) {
+            calculatedUSC += remainingIncome * 0.08
         }
 
         return calculatedUSC
