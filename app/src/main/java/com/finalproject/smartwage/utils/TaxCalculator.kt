@@ -56,12 +56,12 @@ object TaxCalculator {
         } else {
             (TAX_THRESHOLD * TAX_RATE_LOW) + ((annualIncome - TAX_THRESHOLD) * TAX_RATE_HIGH)
         }
-        payeTax -= TAX_CREDIT  // Apply tax credit
-        return maxOf(payeTax, 0.0) // No negative tax
+        payeTax -= TAX_CREDIT
+        return maxOf(payeTax, 0.0)
     }
 
     private fun calculateUSC(annualIncome: Double): Double {
-        if (annualIncome <= 13000) return 0.0  // No USC if income below 13,000
+        if (annualIncome <= 13000) return 0.0
 
         var calculatedUSC = 0.0
         var remainingIncome = annualIncome
@@ -101,7 +101,7 @@ object TaxCalculator {
 
     internal fun calculateRentTaxCredit(rentPaid: Double, taxLiability: Double): Double {
         val rentRelief = minOf(rentPaid * RENT_TAX_RELIEF, RENT_CREDIT_2024_2025)
-        return minOf(rentRelief, taxLiability) // Cannot exceed tax liability
+        return minOf(rentRelief, taxLiability)
     }
 }
 
@@ -115,10 +115,10 @@ object QuickTaxCalculator {
 
     // USC Brackets
     private val USC_BRACKETS = listOf(
-        12012.0 to 0.005,
-        15370.0 to 0.02,
-        42662.0 to 0.03,
-        Double.MAX_VALUE to 0.08
+        12012.0 to 0.005,    // 0.5% up to 12,012
+        15370.0 to 0.02,     // 2% between 12,013 and 15,370
+        42662.0 to 0.03,     // 3% between 15,371 and 42,662
+        Double.MAX_VALUE to 0.08 // 8% for income above 42,662
     )
 
     /**
@@ -136,6 +136,7 @@ object QuickTaxCalculator {
      * PAYE Calculation
      */
     private fun calculatePAYE(income: Double): Double {
+        // Calculate PAYE tax before applying the credit
         var payeTax = if (income <= TAX_THRESHOLD) {
             income * TAX_RATE_LOW
         } else {
@@ -143,6 +144,7 @@ object QuickTaxCalculator {
         }
 
         payeTax -= TAX_CREDIT
+
         return maxOf(payeTax, 0.0)
     }
 
