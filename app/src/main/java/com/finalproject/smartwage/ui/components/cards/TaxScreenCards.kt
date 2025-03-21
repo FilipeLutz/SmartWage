@@ -1,6 +1,8 @@
 package com.finalproject.smartwage.ui.components.cards
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,14 +17,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
+import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.finalproject.smartwage.ui.theme.DarkBlue
-import com.finalproject.smartwage.ui.theme.Green
 import com.finalproject.smartwage.ui.theme.Red
 
 @Composable
@@ -43,50 +47,196 @@ fun TaxSummaryCard(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = "Income & Tax Breakdown",
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
+        Column(
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = Modifier
+                .padding(16.dp)
+        ) {
+            Row (
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ){
+                Text(
+                    text = "Income Tax Breakdown",
+                    fontSize = 26.sp,
+                )
+            }
+
+            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
             // Income & Taxes
-            Text("Total Income: ${formatCurrency(totalIncome)}")
-            Spacer(modifier = Modifier.height(8.dp))
-            Text("PAYE: ${formatCurrency(paye)} (Expected: ${formatCurrency(expectedPAYE)})")
-            Text("USC: ${formatCurrency(usc)} (Expected: ${formatCurrency(expectedUSC)})")
-            Text("PRSI: ${formatCurrency(prsi)} (Expected: ${formatCurrency(expectedPRSI)})")
-            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-            Text(
-                text = "Total Taxes Paid: ${formatCurrency(taxPaid)} (Expected: ${formatCurrency(expectedTax)})",
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = Bold)
+            Text("Total Income: ${formatCurrency(totalIncome)}",
+                fontSize = 20.sp,
+                fontWeight = Bold
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(2.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                // Taxes Paid
+                Column (
+                    verticalArrangement = Arrangement.spacedBy(5.dp)
+                ) {
+                    Row (
+                        horizontalArrangement = Arrangement.Center
+                    ){
+                        Text("Tax Paid",
+                            fontSize = 18.sp,
+                            fontWeight = SemiBold
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text("PAYE : ${formatCurrency(paye)}", fontSize = 17.sp)
+                    Text("USC : ${formatCurrency(usc)}", fontSize = 17.sp)
+                    Text("PRSI : ${formatCurrency(prsi)}", fontSize = 17.sp)
+                }
+
+                // Expected Tax
+                Column (
+                    verticalArrangement = Arrangement.spacedBy(5.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Row (
+                        horizontalArrangement = Arrangement.Center
+                    ){
+                        Text("Expected",
+                            fontSize = 18.sp,
+                            fontWeight = SemiBold
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(formatCurrency(expectedPAYE), fontSize = 17.sp)
+                    Text(formatCurrency(expectedUSC), fontSize = 17.sp)
+                    Text(formatCurrency(expectedPRSI), fontSize = 17.sp)
+                }
+
+                // Difference between Tax Paid and Expected Tax
+                Column (
+                    verticalArrangement = Arrangement.spacedBy(5.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Row (
+                        horizontalArrangement = Arrangement.Center
+                    ){
+                        Text("Difference",
+                            fontSize = 18.sp,
+                            fontWeight = SemiBold
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(formatCurrency(paye - expectedPAYE), fontSize = 17.sp)
+                    Text(formatCurrency(usc - expectedUSC), fontSize = 17.sp)
+                    Text(formatCurrency(prsi - expectedPRSI), fontSize = 17.sp)
+                }
+            }
+
+            Spacer(modifier = Modifier.height(5.dp))
+
+            Column(
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+
+                Text(
+                    text = "Total Paid : ${formatCurrency(taxPaid)}",
+                    fontSize = 18.sp,
+                    fontWeight = SemiBold
+                )
+                Text(
+                    text = "Expected Total : ${formatCurrency(expectedTax)}",
+                    fontSize = 18.sp,
+                    fontWeight = SemiBold
+                )
+
+                // Calculate the difference and check if it's positive or negative
+                val totalDifference = taxPaid - expectedTax
+                val differenceText = if (totalDifference > 0) {
+                    "Overpaid"
+                } else if (totalDifference < 0) {
+                    "Underpaid"
+                } else {
+                    "No difference"
+                }
+
+                // total overpaid tax or underpaid tax
+                Text(
+                    text = "Total Difference: ${formatCurrency(totalDifference)} ($differenceText)",
+                    fontSize = 18.sp,
+                    fontWeight = SemiBold
+                )
+
+                Spacer(modifier = Modifier.height(2.dp))
+
+                Text(
+                    text = "OBS: NO TAX CREDITS INCLUDED SO FAR",
+                    fontSize = 16.sp,
+                    color = DarkBlue
+                )
+            }
+
+            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
+            // Tax Credits Breakdown section
+            Row (
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "Tax Credits Breakdown",
+                    fontSize = 26.sp,
+                )
+            }
+
+            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
             // Tax Credits
-            Text("Tax Credit: ${formatCurrency(4000.0)}")
+            Text("Personal Tax Credit: ${formatCurrency(4000.0)}",
+                fontSize = 17.sp
+            )
 
             if (rentTaxCredit > 0.0) {
-                Text("Rent Tax Credit: ${formatCurrency(rentTaxCredit)}")
+                Text("Rent Tax Credit: ${formatCurrency(rentTaxCredit)}",
+                    fontSize = 17.sp
+                )
             }
 
             if (tuitionFeeRelief > 0.0) {
-                Text("Tuition Fee Relief: ${formatCurrency(tuitionFeeRelief)}")
+                Text("Tuition Fee Relief: ${formatCurrency(tuitionFeeRelief)}",
+                    fontSize = 17.sp
+                )
             }
 
-            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+            Spacer(modifier = Modifier.height(2.dp))
 
             Text(
                 text = "Total Tax Credits: ${
-                    formatCurrency(4000.0 +
-                            (if (rentTaxCredit > 0.0) rentTaxCredit else 0.0) +
-                            (if (tuitionFeeRelief > 0.0) tuitionFeeRelief else 0.0))
+                    formatCurrency(
+                        4000.0 +
+                                (if (rentTaxCredit > 0.0) rentTaxCredit else 0.0) +
+                                (if (tuitionFeeRelief > 0.0) tuitionFeeRelief else 0.0)
+                    )
                 }",
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = Bold)
+                fontSize = 18.sp,
+                fontWeight = Bold
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
+            Row (
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "Tax Result",
+                    fontSize = 26.sp,
+                )
+            }
+
+            Spacer(modifier = Modifier.height(2.dp))
 
             // Calculate Overpaid/Underpaid Tax
             val totalTaxCredits = 4000.0 + rentTaxCredit + tuitionFeeRelief
@@ -100,16 +250,17 @@ fun TaxSummaryCard(
 
             // Overpaid or Underpaid Tax Message
             val taxMessage = when {
-                overpaidTax > 0 -> "You have overpaid your taxes by ${formatCurrency(overpaidTax)}. You may be eligible for a tax refund."
-                adjustedExpectedTax > taxPaid -> "You have underpaid your taxes. You may owe additional tax."
+                overpaidTax > 0 -> "You have overpaid tax : ${formatCurrency(overpaidTax)}. \nYou may be eligible for a tax refund."
+                adjustedExpectedTax > taxPaid -> "You have underpaid tax : ${formatCurrency(adjustedExpectedTax - taxPaid)}. \nYou may owe additional tax."
                 else -> "Your tax payments align with expected tax calculations."
             }
 
-            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
             Text(
                 text = taxMessage,
-                color = if (overpaidTax > 0) Green else Red,
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = Bold)
+                color = if (overpaidTax > 0) DarkBlue else Red,
+                fontSize = 20.sp,
+                fontWeight = SemiBold,
+                style = TextStyle(lineHeight = 30.sp)
             )
         }
     }
@@ -164,13 +315,23 @@ fun TaxDataMessage(navController: NavController) {
                 text = buildAnnotatedString {
                     append("Please add your ")
 
-                    pushStyle(SpanStyle(color = DarkBlue, textDecoration = TextDecoration.Underline))
+                    pushStyle(
+                        SpanStyle(
+                            color = DarkBlue,
+                            textDecoration = TextDecoration.Underline
+                        )
+                    )
                     append("income")
                     pop()
 
                     append(" and ")
 
-                    pushStyle(SpanStyle(color = DarkBlue, textDecoration = TextDecoration.Underline))
+                    pushStyle(
+                        SpanStyle(
+                            color = DarkBlue,
+                            textDecoration = TextDecoration.Underline
+                        )
+                    )
                     append("expenses")
                     pop()
 
