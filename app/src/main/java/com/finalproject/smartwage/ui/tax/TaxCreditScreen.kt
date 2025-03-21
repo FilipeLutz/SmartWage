@@ -4,8 +4,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.finalproject.smartwage.ui.components.DashboardBottomBar
@@ -51,21 +54,41 @@ fun TaxCreditScreen(
                 .padding(paddingValues)
         ) {
             Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp)
             ) {
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+
+                    Text(
+                        text = "Income Tax & Credits",
+                        fontSize = 35.sp,
+                        fontWeight = Bold,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 10.dp),
+                        .padding(horizontal = 20.dp),
                 ) {
                     item {
                         if (totalIncome == 0.0 && totalExpenses == 0.0) {
-                            // No income or expenses saved yet
+
                             TaxDataMessage(navController)
                         } else {
-                            // Show tax breakdown when data is available
+                            
                             TaxSummaryCard(
                                 totalIncome, paye, usc, prsi, taxPaid,
                                 expectedPAYE, expectedUSC, expectedPRSI, expectedTax,
