@@ -68,7 +68,7 @@ fun TaxCreditScreen(
                 ) {
 
                     Text(
-                        text = "Income Tax & Credits",
+                        text = "Tax Summary",
                         fontSize = 35.sp,
                         fontWeight = Bold,
                         color = MaterialTheme.colorScheme.primary,
