@@ -63,6 +63,8 @@ class DashboardViewModel @Inject constructor(
                 var totalIncomeValue = 0.0
                 var totalTaxPaidValue = 0.0
                 var totalExpectedTaxValue = 0.0
+                var totalExpectedPRSI = 0.0
+                var totalExpectedUSC = 0.0
 
                 // Get rent and tuition fee from expenses
                 val rentPaid = expenses
@@ -101,6 +103,8 @@ class DashboardViewModel @Inject constructor(
                             rentPaid
                         )
                     totalExpectedTaxValue += expectedPAYE + expectedUSC + expectedPRSI
+                    totalExpectedPRSI += expectedPRSI
+                    totalExpectedUSC += expectedUSC
                 }
 
                 // Apply tax credits before comparison
@@ -113,9 +117,16 @@ class DashboardViewModel @Inject constructor(
                 // Compare actual tax vs expected tax
                 val taxDifference = totalTaxPaidValue - totalExpectedTaxValue
                 _taxOwed.value = if (taxDifference < 0) -taxDifference else 0.0
-                _taxBack.value = if (taxDifference > 0) taxDifference else 0.0
 
-                // Store total expenses
+                val payeRefund = incomes.sumOf { it.paye }
+                val prsiPaid = incomes.sumOf { it.prsi }
+                val uscPaid = incomes.sumOf { it.usc }
+
+                val prsiDifference = maxOf(prsiPaid - totalExpectedPRSI, 0.0)
+                val uscDifference = maxOf(uscPaid - totalExpectedUSC, 0.0)
+
+                _taxBack.value = payeRefund + prsiDifference + uscDifference
+
                 _totalExpenses.value = expenses.sumOf { it.amount }
 
             } catch (e: Exception) {
