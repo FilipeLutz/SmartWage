@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -57,7 +58,7 @@ fun TaxResultDialog(
 
                 // Show Total Tax
                 Text(
-                    text = "Tax to Pay: €${String.format("%.2f", totalTax)}",
+                    text = "Tax Due: €${String.format("%.2f", totalTax)}",
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black,
@@ -70,78 +71,101 @@ fun TaxResultDialog(
                 // Updated Tax Explanation
                 Text(
                     text = "Tax Rate Information",
-                    fontSize = 24.sp,
+                    fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.DarkGray,
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
-
                 Column(modifier = Modifier.verticalScroll(rememberScrollState())
                 ) {
                     Text(
-                        text = "• PAYE: 20% on the first €44,000, 40% on any excess income.",
-                        fontSize = 19.sp,
+                        text = "• PAYE (Pay As You Earn)",
+                        fontSize = 18.sp,
                         color = DarkBlue,
                         fontWeight = FontWeight.SemiBold
                     )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "Applied at 20% on the first €44,000 of income, and 40% on any income above it.",
+                        fontSize = 18.sp,
+                        color = DarkBlue,
+                        fontWeight = FontWeight.SemiBold,
+                        style = TextStyle(lineHeight = 23.sp)
+                    )
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
-                        text = "• USC: Calculated based on the following brackets:",
-                        fontSize = 19.sp,
+                        text = "• USC (Universal Social Charge)",
+                        fontSize = 18.sp,
                         color = DarkBlue,
                         fontWeight = FontWeight.SemiBold
                     )
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
                         "   - 0.5% on the first €12,012",
-                        fontSize = 18.sp, color = Color.Black
+                        fontSize = 17.sp, color = Color.Black
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        "   - 2% on the next €15,370",
-                        fontSize = 18.sp, color = Color.Black
+                        "   - 2% on the next €3,358",
+                        fontSize = 17.sp, color = Color.Black
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         "   - 3% on the next €42,662",
-                        fontSize = 18.sp, color = Color.Black
+                        fontSize = 17.sp, color = Color.Black
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        "   - 8% on anything above that",
-                        fontSize = 18.sp, color = Color.Black
+                        "   - 8% on anything above €58,032",
+                        fontSize = 17.sp, color = Color.Black
                     )
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
-                        text = "• PRSI: 4.1% if annual income is above €18,304. No PRSI if income is below this threshold.",
-                        fontSize = 19.sp,
+                        text = "• PRSI \n(Pay Related Social Insurance)",
+                        fontSize = 18.sp,
                         color = DarkBlue,
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold,
+                        style = TextStyle(lineHeight = 23.sp)
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "Charged at 4.1% on incomes above €18,304 annually.",
+                        fontSize = 18.sp,
+                        color = DarkBlue,
+                        fontWeight = FontWeight.SemiBold,
+                        style = TextStyle(lineHeight = 23.sp)
                     )
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
-                        text = "• Tax Credit: A €4,000 reduction is applied to the total PAYE tax owed.",
-                        fontSize = 19.sp,
+                        text = "• STANDARD TAX CREDIT",
+                        fontSize = 18.sp,
                         color = DarkBlue,
                         fontWeight = FontWeight.SemiBold
+                    )
+                    Spacer(modifier = Modifier.height(3.dp))
+                    Text(
+                        text = "Reduces your total income tax liability by €4,000.",
+                        fontSize = 18.sp,
+                        color = DarkBlue,
+                        fontWeight = FontWeight.SemiBold,
+                        style = TextStyle(lineHeight = 25.sp)
                     )
                 }
 
-                Spacer(modifier = Modifier.height(5.dp))
-
                 Text(
-                    text = "• This is a basic tax estimate. For a more accurate calculation, add your actual incomes and expenses in the app.",
-                    fontSize = 19.sp,
+                    text = "• Please note, this is a basic tax estimate. For a more precise calculation, enter your actual income and expenses in the app.",
+                    fontSize = 18.sp,
                     color = Color.Blue,
                     fontWeight = FontWeight.SemiBold
                 )
 
-                Spacer(modifier = Modifier.height(5.dp))
+                Spacer(modifier = Modifier.height(3.dp))
 
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(end = 10.dp, bottom = 5.dp),
                     horizontalArrangement = Arrangement.End
                 ) {
                     Button(
@@ -150,7 +174,7 @@ fun TaxResultDialog(
                             .width(80.dp)
                             .height(50.dp)
                     ) {
-                        Text("Ok", fontSize = 20.sp)
+                        Text("OK", fontSize = 20.sp)
                     }
                 }
             }
