@@ -39,9 +39,7 @@ fun TaxCreditScreen(
     val expectedPRSI by viewModel.expectedPRSI.collectAsState()
 
     LaunchedEffect(userId) {
-        if (userId.isNotEmpty()) {
-            viewModel.fetchTaxData()
-        }
+        viewModel.fetchTaxData()
     }
 
     Scaffold(
