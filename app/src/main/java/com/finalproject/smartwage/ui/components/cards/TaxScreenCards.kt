@@ -282,7 +282,7 @@ fun TaxExplanationCard() {
                 modifier = Modifier.padding(bottom = 8.dp)
             )
 
-            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+            Column {
                 // PAYE
                 Text(
                     text = "1. **PAYE (Pay As You Earn)**",
