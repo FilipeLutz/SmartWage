@@ -64,100 +64,107 @@ fun TaxResultDialog(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(2.dp))
 
-                // Updated Tax Explanation
-                Text(
-                    text = "Tax Rate Information",
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.DarkGray,
-                    modifier = Modifier.fillMaxWidth()
-                )
+                Column (
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .fillMaxWidth(),
+                ){
 
-                Column {
+                    // Updated Tax Explanation
+                    Text(
+                        text = "Tax Rate Information",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.DarkGray,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(15.dp))
+
                     Text(
                         text = "• PAYE (Pay As You Earn)",
-                        fontSize = 18.sp,
+                        fontSize = 20.sp,
                         color = DarkBlue,
                         fontWeight = FontWeight.SemiBold
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "Applied at 20% on the first €44,000 of income, and 40% on any income above it.",
                         fontSize = 18.sp,
-                        color = DarkBlue,
+                        color = Color.DarkGray,
                         fontWeight = FontWeight.SemiBold,
                         style = TextStyle(lineHeight = 23.sp)
                     )
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
                         text = "• USC (Universal Social Charge)",
-                        fontSize = 18.sp,
+                        fontSize = 20.sp,
                         color = DarkBlue,
                         fontWeight = FontWeight.SemiBold
                     )
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
                         "   - 0.5% on the first €12,012",
-                        fontSize = 17.sp, color = Color.Black
+                        fontSize = 18.sp, color = Color.Black
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        "   - 2% on the next €3,358",
-                        fontSize = 17.sp, color = Color.Black
+                        "   - 2% on the next €15,370",
+                        fontSize = 18.sp, color = Color.Black
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         "   - 3% on the next €42,662",
-                        fontSize = 17.sp, color = Color.Black
+                        fontSize = 18.sp, color = Color.Black
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        "   - 8% on anything above €58,032",
-                        fontSize = 17.sp, color = Color.Black
+                        "   - 8% on anything above €70,044",
+                        fontSize = 18.sp, color = Color.Black
                     )
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
-                        text = "• PRSI \n(Pay Related Social Insurance)",
-                        fontSize = 18.sp,
+                        text = "• PRSI \n  (Pay Related Social Insurance)",
+                        fontSize = 20.sp,
                         color = DarkBlue,
                         fontWeight = FontWeight.SemiBold,
                         style = TextStyle(lineHeight = 23.sp)
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(5.dp))
                     Text(
                         text = "Charged at 4.1% on incomes above €18,304 annually.",
                         fontSize = 18.sp,
-                        color = DarkBlue,
+                        color = Color.DarkGray,
                         fontWeight = FontWeight.SemiBold,
                         style = TextStyle(lineHeight = 23.sp)
                     )
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
                         text = "• STANDARD TAX CREDIT",
-                        fontSize = 18.sp,
+                        fontSize = 20.sp,
                         color = DarkBlue,
                         fontWeight = FontWeight.SemiBold
                     )
-                    Spacer(modifier = Modifier.height(3.dp))
+                    Spacer(modifier = Modifier.height(5.dp))
                     Text(
                         text = "Reduces your total income tax liability by €4,000.",
                         fontSize = 18.sp,
-                        color = DarkBlue,
+                        color = Color.DarkGray,
                         fontWeight = FontWeight.SemiBold,
                         style = TextStyle(lineHeight = 25.sp)
                     )
+
+                    Spacer(modifier = Modifier.height(15.dp))
+
+                    Text(
+                        text = "• Please note, this is a basic tax estimate. For a more precise calculation, enter your actual income and expenses in the app.",
+                        fontSize = 18.sp,
+                        color = Color.Blue,
+                        fontWeight = FontWeight.SemiBold
+                    )
                 }
-
-                Text(
-                    text = "• Please note, this is a basic tax estimate. For a more precise calculation, enter your actual income and expenses in the app.",
-                    fontSize = 18.sp,
-                    color = Color.Blue,
-                    fontWeight = FontWeight.SemiBold
-                )
-
-                Spacer(modifier = Modifier.height(3.dp))
 
                 Row(
                     modifier = Modifier
