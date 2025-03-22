@@ -64,17 +64,17 @@ object TaxCalculator {
         calculatedUSC += firstBracket * 0.005
         remainingIncome -= firstBracket
 
-        // Apply 2% on the next €3,358
-        val secondBracket = minOf(remainingIncome, 3358.0)
+        // Apply 2% on the next €15,370
+        val secondBracket = minOf(remainingIncome, 15370.0)
         calculatedUSC += secondBracket * 0.02
         remainingIncome -= secondBracket
 
-        // Apply 3% on the next €16,630
-        val thirdBracket = minOf(remainingIncome, 16630.0)
+        // Apply 3% on the next €42,662
+        val thirdBracket = minOf(remainingIncome, 42662.0)
         calculatedUSC += thirdBracket * 0.03
         remainingIncome -= thirdBracket
 
-        // Apply 8% on the rest (if any)
+        // Apply 8% on the rest of the income above €70,044
         if (remainingIncome > 0) {
             calculatedUSC += remainingIncome * 0.08
         }
@@ -163,17 +163,17 @@ object QuickTaxCalculator {
         calculatedUSC += firstBracket * 0.005
         remainingIncome -= firstBracket
 
-        // Apply 2% on the next €3,358
-        val secondBracket = minOf(remainingIncome, 3358.0)
+        // Apply 2% on the next €15,370
+        val secondBracket = minOf(remainingIncome, 15370.0)
         calculatedUSC += secondBracket * 0.02
         remainingIncome -= secondBracket
 
-        // Apply 3% on the next €16,630
-        val thirdBracket = minOf(remainingIncome, 16630.0)
+        // Apply 3% on the next €42,662
+        val thirdBracket = minOf(remainingIncome, 42662.0)
         calculatedUSC += thirdBracket * 0.03
         remainingIncome -= thirdBracket
 
-        // Apply 8% on the rest of the income
+        // Apply 8% on the rest of the income above €70,044
         if (remainingIncome > 0) {
             calculatedUSC += remainingIncome * 0.08
         }
