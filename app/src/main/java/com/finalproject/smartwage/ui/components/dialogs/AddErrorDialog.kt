@@ -36,13 +36,14 @@ fun AddErrorDialog(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(top = 10.dp)
+                    .padding(horizontal = 20.dp, vertical = 15.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = "All fields should be completed before saving.",
                     color = Black,
-                    fontSize = 25.sp,
+                    fontSize = 20.sp,
                     fontWeight = SemiBold,
                     textAlign = TextAlign.Start
                 )
