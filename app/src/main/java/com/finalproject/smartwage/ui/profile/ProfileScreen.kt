@@ -145,7 +145,7 @@ fun ProfileScreen(
                             )
                         }
 
-                        Spacer(modifier = Modifier.width(88.dp))
+                        Spacer(modifier = Modifier.width(90.dp))
 
                         // Profile Title
                         Text(
@@ -156,7 +156,7 @@ fun ProfileScreen(
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(7.dp))
 
                     // Profile Picture Section
                     Box(
@@ -180,13 +180,13 @@ fun ProfileScreen(
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(4.dp))
 
                     // "Add Photo" Text
                     if (imageUri.value == null) {
                         Text(
                             text = "Add Photo",
-                            fontSize = 20.sp,
+                            fontSize = 16.sp,
                             fontWeight = SemiBold,
                             textDecoration = Underline,
                             color = DarkBlue,
@@ -208,20 +208,20 @@ fun ProfileScreen(
                                 text = "Edit Photo",
                                 textDecoration = Underline,
                                 fontWeight = SemiBold,
-                                fontSize = 20.sp,
+                                fontSize = 16.sp,
                                 color = DarkBlue,
                                 modifier = Modifier
                                     .clickable {
                                         // Open image picker to change the photo
                                         launcher.launch("image/*")
                                     }
-                                    .padding(end = 8.dp)
+                                    .padding(end = 2.dp)
                             )
 
                             // Slash ("/")
                             Text(
                                 text = "/",
-                                fontSize = 20.sp,
+                                fontSize = 16.sp,
                                 fontWeight = SemiBold,
                                 color = DarkGray,
                                 modifier = Modifier.padding(horizontal = 8.dp)
@@ -231,25 +231,25 @@ fun ProfileScreen(
                             Text(
                                 text = "Delete Photo",
                                 color = Color.Red,
-                                fontSize = 20.sp,
+                                fontSize = 16.sp,
                                 fontWeight = SemiBold,
                                 textDecoration = Underline,
                                 modifier = Modifier
                                     .clickable {
                                         imageUri.value = null
                                     }
-                                    .padding(start = 8.dp)
+                                    .padding(start = 2.dp)
                             )
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
 
                     Column(
                         modifier = Modifier
                             .padding(horizontal = 30.dp)
                             .fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                        verticalArrangement = Arrangement.spacedBy(7.dp)
                     ) {
 
                         // Name Field
@@ -328,12 +328,12 @@ fun ProfileScreen(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     Column(
                         modifier = Modifier
                             .fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(15.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         // Save Button to update the profile
