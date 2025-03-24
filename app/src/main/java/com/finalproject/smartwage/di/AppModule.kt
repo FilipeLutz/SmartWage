@@ -89,7 +89,7 @@ object AppModule {
         userDao: UserDao,
         firestoreService: FirestoreService
     ): UserRepository =
-        UserRepository(userDao, firestoreService)
+        UserRepository(userDao, firestoreService, FirebaseAuth.getInstance())
 
     @Provides
     @Singleton
