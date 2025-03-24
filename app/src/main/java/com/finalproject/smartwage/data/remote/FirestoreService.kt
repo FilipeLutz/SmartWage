@@ -15,7 +15,7 @@ import javax.inject.Inject
 class FirestoreService @Inject constructor() {
     private val db = FirebaseFirestore.getInstance()
 
-    // Save User to Firestore
+    // FirestoreService: saveUser function
     suspend fun saveUser(user: User) {
         try {
             db.collection("users").document(user.id).set(user).await()
@@ -25,23 +25,17 @@ class FirestoreService @Inject constructor() {
         }
     }
 
-    // Update User Profile
-    suspend fun updateUser(user: User) {
-        try {
-            db.collection("users").document(user.id).set(user, SetOptions.merge()).await()
-            Timber.d("FirestoreService: User updated successfully: ${user.id}")
-        } catch (e: Exception) {
-            Timber.e(e, "Error updating user in Firestore")
-        }
-    }
-
-    // Get User from Firestore
     suspend fun getUser(userId: String): User? {
         return try {
+            // Fetch the user from Firestore
             val snapshot = db.collection("users").document(userId).get().await()
+
+            // If the document exists, convert it to User object
             snapshot.toObject(User::class.java)
         } catch (e: Exception) {
-            Timber.e(e, "Error fetching user from Firestore")
+            // Log the error to debug Firestore-related issues
+            Timber.e(e, "Error fetching user from Firestore: $userId")
+
             null
         }
     }
