@@ -3,7 +3,6 @@ package com.finalproject.smartwage.data.local.entities
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.firebase.firestore.PropertyName
-import java.util.UUID
 
 @Entity(tableName = "users")
 data class User(
