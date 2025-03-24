@@ -175,7 +175,7 @@ fun DashboardBottomBar(navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(100.dp)
+            .height(75.dp)
             .background(MaterialTheme.colorScheme.primaryContainer)
     ) {
         BottomNavItem.entries.forEach { item ->
@@ -226,7 +226,7 @@ fun DashboardBottomBar(navController: NavController) {
                         painter = painterResource(id = item.iconRes),
                         contentDescription = item.label,
                         modifier = Modifier
-                            .size(50.dp)
+                            .size(40.dp)
                             .padding(6.dp),
                         colorFilter = if (isSelected) {
                             // Apply a color filter for the selected icon
@@ -242,7 +242,7 @@ fun DashboardBottomBar(navController: NavController) {
                     // Text
                     Text(
                         text = item.label,
-                        fontSize = 15.sp,
+                        fontSize = 13.sp,
                         fontWeight = SemiBold,
                         color = if (isSelected) {
                             // Change text color for the selected item
