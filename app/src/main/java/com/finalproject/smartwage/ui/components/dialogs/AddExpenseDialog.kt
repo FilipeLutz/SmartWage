@@ -238,7 +238,7 @@ fun AddExpenseDialog(
                 ) {
                     Button(
                         modifier = Modifier
-                            .width(110.dp)
+                            .width(115.dp)
                             .height(45.dp),
                         onClick = {
                             if (showExpenseForm) {
@@ -259,7 +259,7 @@ fun AddExpenseDialog(
 
                     Button(
                         modifier = Modifier
-                            .size(110.dp, 45.dp),
+                            .size(115.dp, 45.dp),
                         colors = ButtonDefaults.buttonColors(DarkBlue),
                         onClick = {
                             missingFields = mutableListOf<String>().apply {
@@ -305,7 +305,7 @@ fun AddExpenseDialog(
             } else {
                 Button(
                     modifier = Modifier
-                        .width(110.dp)
+                        .width(115.dp)
                         .height(45.dp),
                     onClick = {
                         if (showExpenseForm) {
