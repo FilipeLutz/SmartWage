@@ -3,6 +3,7 @@ package com.finalproject.smartwage.data.remote
 import android.annotation.SuppressLint
 import com.finalproject.smartwage.data.local.entities.Expenses
 import com.finalproject.smartwage.data.local.entities.Income
+import com.finalproject.smartwage.data.local.entities.Settings
 import com.finalproject.smartwage.data.local.entities.Tax
 import com.finalproject.smartwage.data.local.entities.User
 import com.google.firebase.firestore.FirebaseFirestore
@@ -50,9 +51,51 @@ class FirestoreService @Inject constructor() {
         }
     }
 
-    // Generate Unique Firestore IDs
-    fun generateIncomeId(): String = db.collection("incomes").document().id
-    fun generateExpenseId(): String = db.collection("expenses").document().id
+    // Save User Settings to Firestore
+    suspend fun saveUserSettings(userId: String, settings: Settings) {
+        try {
+            db.collection("users").document(userId).collection("settings")
+                .document("user_settings").set(settings).await()
+            Timber.d("FirestoreService: User settings saved successfully for $userId")
+        } catch (e: Exception) {
+            Timber.e(e, "Error saving user settings to Firestore")
+        }
+    }
+
+    // Get User Settings from Firestore
+    suspend fun getUserSettings(userId: String): Settings? {
+        return try {
+            val snapshot = db.collection("users").document(userId).collection("settings")
+                .document("user_settings").get().await()
+
+            snapshot.toObject(Settings::class.java)
+        } catch (e: Exception) {
+            Timber.e(e, "Error fetching user settings from Firestore: $userId")
+            null
+        }
+    }
+
+    // Update User Settings in Firestore
+    suspend fun updateUserSettings(userId: String, settings: Settings) {
+        try {
+            db.collection("users").document(userId).collection("settings")
+                .document("user_settings").set(settings, SetOptions.merge()).await()
+            Timber.d("FirestoreService: User settings updated successfully for $userId")
+        } catch (e: Exception) {
+            Timber.e(e, "Error updating user settings in Firestore")
+        }
+    }
+
+    // Delete User Settings from Firestore
+    suspend fun deleteUserSettings(userId: String) {
+        try {
+            db.collection("users").document(userId).collection("settings")
+                .document("user_settings").delete().await()
+            Timber.d("FirestoreService: User settings deleted successfully for $userId")
+        } catch (e: Exception) {
+            Timber.e(e, "Error deleting user settings from Firestore")
+        }
+    }
 
     // Get incomes for a specific user from Firestore
     suspend fun getUserIncomes(userId: String): List<Income> {
