@@ -4,6 +4,7 @@ androidxWorkRuntimeKtx = "2.8.1"
 bcryptVersion = "0.10.2"
 coilComposeVersion = "2.1.0"
 converterGson = "2.11.0"
+datastorePreferences = "1.1.3"
 facebookLogin = "18.0.2"
 firebaseBom = "33.9.0"
 googleGoogleServices = "4.3.14"
@@ -27,9 +28,11 @@ quantitizer = "1.6.8"
 roomRuntime = "2.6.1"
 timber = "5.0.1"
 workRuntimeKtx = "2.10.0"
+junitVersion = "4.12"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
@@ -68,6 +71,7 @@ play-services-auth-v2070 = { module = "com.google.android.gms:play-services-auth
 quantitizer = { module = "com.github.kojofosu:Quantitizer", version.ref = "quantitizer" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "converterGson" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+junit-junit = { group = "junit", name = "junit", version.ref = "junitVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
