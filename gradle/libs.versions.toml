@@ -2,6 +2,7 @@
 agp = "8.7.3"
 androidxWorkRuntimeKtx = "2.8.1"
 bcryptVersion = "0.10.2"
+coilComposeVersion = "2.1.0"
 converterGson = "2.11.0"
 facebookLogin = "18.0.2"
 firebaseBom = "33.9.0"
@@ -38,6 +39,7 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 androidx-work-runtime-ktx-v281 = { module = "androidx.work:work-runtime-ktx", version.ref = "androidxWorkRuntimeKtx" }
 bcrypt-v0102 = { module = "at.favre.lib:bcrypt", version.ref = "bcryptVersion" }
+coil-kt-coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilComposeVersion" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 facebook-login = { module = "com.facebook.android:facebook-login", version.ref = "facebookLogin" }
 firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx" }
