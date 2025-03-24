@@ -21,13 +21,10 @@ class AuthViewModel @Inject constructor(
     val user: StateFlow<User?> = _user.asStateFlow()
 
     private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
     private val _resetEmailSent = MutableStateFlow<Boolean>(false)
-    val resetEmailSent: StateFlow<Boolean> = _resetEmailSent.asStateFlow()
 
     private val _errorMessage = MutableStateFlow<String?>(null)
-    val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
     private val _emailExists = MutableStateFlow<Boolean?>(null)
     val emailExists: StateFlow<Boolean?> = _emailExists.asStateFlow()
