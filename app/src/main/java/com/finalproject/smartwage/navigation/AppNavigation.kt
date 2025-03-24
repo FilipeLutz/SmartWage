@@ -15,6 +15,7 @@ import com.finalproject.smartwage.ui.profile.ProfileScreen
 import com.finalproject.smartwage.ui.settings.HelpScreen
 import com.finalproject.smartwage.ui.settings.SettingsScreen
 import com.finalproject.smartwage.ui.tax.TaxCreditScreen
+import com.finalproject.smartwage.ui.tutorial.TutorialScreen
 
 @Composable
 fun AppNavigation(navController: NavHostController, isUserLoggedIn: Boolean, userId: String?) {
@@ -42,5 +43,6 @@ fun AppNavigation(navController: NavHostController, isUserLoggedIn: Boolean, use
         composable(Destinations.Profile.route) { ProfileScreen(navController) }
         composable(Destinations.Settings.route) { SettingsScreen(navController) }
         composable(Destinations.Help.route) { HelpScreen(navController) }
+        composable(Destinations.Tutorial.route) { TutorialScreen((navController)) }
     }
 }
