@@ -94,6 +94,7 @@ fun LoginScreen(
                 "Email", fontSize = 20.sp) },
             textStyle = TextStyle(fontSize = 24.sp),
             singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             modifier = Modifier
                 .fillMaxWidth()
                 .scrollable(
