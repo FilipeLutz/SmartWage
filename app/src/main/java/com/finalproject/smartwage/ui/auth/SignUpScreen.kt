@@ -108,6 +108,7 @@ fun SignUpScreen(
             label = { Text("Name *", fontSize = 18.sp) },
             textStyle = TextStyle(fontSize = 24.sp),
             singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             modifier = Modifier
                 .fillMaxWidth()
                 .scrollable(
@@ -125,6 +126,7 @@ fun SignUpScreen(
             label = { Text("Email *", fontSize = 18.sp) },
             textStyle = TextStyle(fontSize = 24.sp),
             singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             modifier = Modifier
                 .fillMaxWidth()
                 .scrollable(
@@ -174,6 +176,7 @@ fun SignUpScreen(
                     )
                 }
             },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             singleLine = true,
             modifier = Modifier
                 .fillMaxWidth()
@@ -203,6 +206,7 @@ fun SignUpScreen(
                     )
                 }
             },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             singleLine = true,
             modifier = Modifier
                 .fillMaxWidth()
