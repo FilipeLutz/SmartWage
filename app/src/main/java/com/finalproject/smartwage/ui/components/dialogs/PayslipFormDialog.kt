@@ -245,7 +245,7 @@ fun PayslipFormDialog(
                     Button(
                         onClick = { onCancel() },
                         modifier = Modifier
-                            .width(110.dp)
+                            .width(115.dp)
                             .height(45.dp),
                         colors = ButtonDefaults.buttonColors(Red)
                     ) {
@@ -334,7 +334,7 @@ fun PayslipFormDialog(
                             onDismiss()
                         },
                         modifier = Modifier
-                            .width(110.dp)
+                            .width(115.dp)
                             .height(45.dp),
                         colors = ButtonDefaults.buttonColors(DarkBlue)
                     ) {
