@@ -71,7 +71,7 @@ fun ErrorMessageDialog(
 
     if (!message.isNullOrEmpty()) {
         LaunchedEffect(message) {
-            delay(2000)
+            delay(3000)
             onDismiss()
         }
     }
