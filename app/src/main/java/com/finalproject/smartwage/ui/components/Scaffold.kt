@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -26,6 +27,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -34,12 +36,15 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.unit.dp
@@ -47,88 +52,110 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import coil.compose.AsyncImage
 import com.finalproject.smartwage.R
 import com.finalproject.smartwage.navigation.Destinations
 import com.finalproject.smartwage.viewModel.AuthViewModel
+import com.finalproject.smartwage.viewModel.ProfileViewModel
+import androidx.compose.runtime.getValue
+import com.finalproject.smartwage.ui.theme.White
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardTopBar(
     navController: NavController,
-    viewModel: AuthViewModel = hiltViewModel()
+    viewModel: AuthViewModel = hiltViewModel(),
+    profileViewModel: ProfileViewModel = hiltViewModel()
 ) {
-
     val menuExpanded = remember { mutableStateOf(false) }
+    val user by profileViewModel.user.collectAsState(initial = null)
+    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
 
     TopAppBar(
         title = {
             Image(
-                painter = painterResource(
-                    id = R.drawable.logo
-                ),
+                painter = painterResource(id = R.drawable.logo),
                 contentDescription = "App Logo",
-                modifier = Modifier
-                    .size(200.dp)
+                modifier = Modifier.size(200.dp)
             )
         },
         actions = {
-            Box(
-                modifier = Modifier
-                    .offset(x = (-8).dp)
-            ) {
-                IconButton(
-                    onClick = { menuExpanded.value = true }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.AccountCircle,
-                        contentDescription = "User Profile",
-                        modifier = Modifier
-                            .size(40.dp),
-                        tint = Color.White,
-                    )
-                }
-
-                DropdownMenu(
-                    expanded = menuExpanded.value,
-                    onDismissRequest = { menuExpanded.value = false },
+            if (currentRoute != Destinations.Profile.route) {
+                Box(
                     modifier = Modifier
-                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                        .offset(x = (-7).dp, y = 2.dp)
                 ) {
-                    // Profile Button
-                    DropdownMenuItem(
-                        text = { Text("Profile", fontSize = 22.sp) },
-                        onClick = {
-                            menuExpanded.value = false
-                            navController.navigate(Destinations.Profile.route)
-                        },
-                        leadingIcon = {
+                    IconButton(
+                        onClick = { menuExpanded.value = true }) {
+                        if (!user?.profilePicture.isNullOrEmpty()) {
+                            // If user has a profile picture, show it
+                            AsyncImage(
+                                model = user?.profilePicture,
+                                contentDescription = "Profile Picture",
+                                modifier = Modifier
+                                    .size(45.dp)
+                                    .clip(CircleShape),
+                                contentScale = ContentScale.Crop
+                            )
+                        } else {
+                            // Default user icon
                             Icon(
-                                imageVector = Icons.Default.Person,
-                                contentDescription = "Profile Icon"
+                                imageVector = Icons.Default.AccountCircle,
+                                contentDescription = "User Profile",
+                                modifier = Modifier
+                                    .size(45.dp),
+                                tint = White,
                             )
                         }
-                    )
+                    }
 
-                    Spacer(modifier = Modifier.size(10.dp))
-
-                    // Logout Button
-                    DropdownMenuItem(
-                        text = { Text("Logout", color = Color.Red, fontSize = 22.sp) },
-                        onClick = {
-                            menuExpanded.value = false
-                            viewModel.logout()
-                            navController.navigate(Destinations.Login.route) {
-                                popUpTo(Destinations.Login.route) { inclusive = true }
+                    DropdownMenu(
+                        expanded = menuExpanded.value,
+                        onDismissRequest = { menuExpanded.value = false },
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.surfaceVariant)
+                    ) {
+                        // Profile Button
+                        DropdownMenuItem(
+                            text = { Text("Profile", fontSize = 22.sp) },
+                            onClick = {
+                                menuExpanded.value = false
+                                navController.navigate(Destinations.Profile.route)
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.Person,
+                                    contentDescription = "Profile Icon"
+                                )
                             }
-                        },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.ExitToApp,
-                                contentDescription = "Logout Icon",
-                                tint = Color.Red
-                            )
-                        }
-                    )
+                        )
+
+                        HorizontalDivider(
+                            color = Color.Gray,
+                            thickness = 1.dp,
+                            modifier = Modifier
+                                .padding(horizontal = 10.dp)
+                        )
+
+                        // Logout Button
+                        DropdownMenuItem(
+                            text = { Text("Logout", color = Color.Red, fontSize = 22.sp) },
+                            onClick = {
+                                menuExpanded.value = false
+                                viewModel.logout()
+                                navController.navigate(Destinations.Login.route) {
+                                    popUpTo(Destinations.Login.route) { inclusive = true }
+                                }
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.ExitToApp,
+                                    contentDescription = "Logout Icon",
+                                    tint = Color.Red
+                                )
+                            }
+                        )
+                    }
                 }
             }
         },
