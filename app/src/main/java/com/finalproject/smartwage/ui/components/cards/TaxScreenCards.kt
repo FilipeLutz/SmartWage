@@ -61,6 +61,7 @@ fun TaxSummaryCard(
                 Text(
                     text = "Income Tax Breakdown",
                     fontSize = 26.sp,
+                    fontWeight = Bold,
                 )
             }
 
@@ -233,7 +234,7 @@ fun TaxSummaryCard(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Tax Result",
+                    text = "Your Tax Result",
                     fontSize = 26.sp,
                 )
             }
@@ -284,7 +285,7 @@ fun TaxExplanationCard() {
                 modifier = Modifier.fillMaxWidth()
             ){
                 Text(
-                    text = "Taxes & Tax Credits",
+                    text = "Taxes & Credits",
                     fontSize = 28.sp,
                     fontWeight = Bold,
                     modifier = Modifier.padding(bottom = 8.dp, top = 8.dp)
