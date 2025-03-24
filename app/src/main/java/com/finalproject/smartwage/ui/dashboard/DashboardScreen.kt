@@ -3,12 +3,33 @@ package com.finalproject.smartwage.ui.dashboard
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
-import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -105,12 +126,12 @@ fun DashboardScreen(
                     ) {
                         Text(
                             "Quick Tax Calculator",
-                            fontSize = 28.sp,
+                            fontSize = 26.sp,
                             fontWeight = FontWeight.Bold
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(5.dp))
 
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -131,7 +152,7 @@ fun DashboardScreen(
                             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                             singleLine = true,
                             modifier = Modifier
-                                .width(180.dp)
+                                .width(190.dp)
                                 .scrollable(
                                     orientation = Orientation.Horizontal,
                                     state = rememberScrollState(),
@@ -166,7 +187,7 @@ fun DashboardScreen(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(15.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
 
                     Row(
                         horizontalArrangement = Arrangement.Start,
@@ -181,7 +202,7 @@ fun DashboardScreen(
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(14.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
 
                     DashboardCards(
                         label = "Income",
@@ -191,17 +212,17 @@ fun DashboardScreen(
                         destination = Destinations.Income.route
                     )
 
-                    Spacer(modifier = Modifier.height(14.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
 
                     DashboardCards(
                         label = "Expenses",
                         value = totalExpenses,
                         iconRes = R.drawable.expense,
                         navController = navController,
-                        destination = Destinations.Expense.route
+                        destination = Destinations.Expense.route,
                     )
 
-                    Spacer(modifier = Modifier.height(14.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
 
                     DashboardCards(
                         label = "Tax Paid",
@@ -211,7 +232,7 @@ fun DashboardScreen(
                         destination = Destinations.TaxCredit.route
                     )
 
-                    Spacer(modifier = Modifier.height(14.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
 
                     // Show Tax Overpayment or Underpayment if applicable, else show a message
                     if (taxOwed > 0.0) {
@@ -232,7 +253,7 @@ fun DashboardScreen(
                         )
                     } else {
                         Text("Any overpayment or underpayment tax will appear here after incomes and expenses have been added.",
-                            fontSize = 22.sp,
+                            fontSize = 20.sp,
                             color = Color.DarkGray,
                             fontWeight = FontWeight.SemiBold,
                             textAlign = TextAlign.Start,
