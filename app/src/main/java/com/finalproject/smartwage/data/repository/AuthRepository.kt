@@ -12,6 +12,8 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
 
 @Suppress("DEPRECATION")
 class AuthRepository @Inject constructor(
@@ -37,7 +39,15 @@ class AuthRepository @Inject constructor(
 
     fun getCurrentUser(): Flow<User?> = callbackFlow {
         val listener = FirebaseAuth.AuthStateListener { auth ->
-            trySend(auth.currentUser?.toUser())
+            val firebaseUser = auth.currentUser
+            if (firebaseUser != null) {
+                launch {
+                    val user = userDao.getUserById(firebaseUser.uid).firstOrNull() ?: firebaseUser.toUser()
+                    trySend(user)
+                }
+            } else {
+                trySend(null)
+            }
         }
         FirebaseAuth.getInstance().addAuthStateListener(listener)
         awaitClose { FirebaseAuth.getInstance().removeAuthStateListener(listener) }
@@ -49,7 +59,6 @@ class AuthRepository @Inject constructor(
             if (result is AuthService.AuthResult.Success) {
                 val user = result.user.toUser()
                 userDao.insertUser(user)
-                firestoreService.saveUser(user)
                 AuthResult.Success(result.user)
             } else {
                 AuthResult.Failure((result as AuthService.AuthResult.Failure).errorMessage)
@@ -62,8 +71,7 @@ class AuthRepository @Inject constructor(
 
     suspend fun signUp(name: String, email: String, password: String, phoneNumber: String): AuthResult {
         return try {
-            val isRegistered = isEmailRegistered(email)
-            if (isRegistered) {
+            if (isEmailRegistered(email)) {
                 return AuthResult.Failure("This email is already registered.")
             }
 
@@ -94,8 +102,18 @@ class AuthRepository @Inject constructor(
     }
 
     suspend fun logout() {
+        val userId = auth.currentUser?.uid ?: return
         authService.logout()
-        userDao.deleteUser(toString())
+        userDao.deleteUser(userId)
+        auth.signOut()
+    }
+
+    suspend fun deleteUser() {
+        val userId = auth.currentUser?.uid ?: return
+        authService.logout()
+        firestoreService.deleteUser(userId)
+        userDao.deleteUser(userId)
+        auth.currentUser?.delete()?.await()
         auth.signOut()
     }
 
