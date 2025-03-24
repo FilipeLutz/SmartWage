@@ -59,6 +59,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.kotlin.stdlib)
     implementation (libs.androidx.work.runtime.ktx)
+    implementation (libs.coil.kt.coil.compose)
 
     // test
     testImplementation(libs.junit)
