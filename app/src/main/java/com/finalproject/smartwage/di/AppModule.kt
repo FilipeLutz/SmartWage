@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.finalproject.smartwage.data.local.SmartWageDatabase
 import com.finalproject.smartwage.data.local.dao.ExpenseDao
 import com.finalproject.smartwage.data.local.dao.IncomeDao
+import com.finalproject.smartwage.data.local.dao.SettingsDao
 import com.finalproject.smartwage.data.local.dao.TaxDao
 import com.finalproject.smartwage.data.local.dao.UserDao
 import com.finalproject.smartwage.data.remote.AuthService
@@ -72,6 +73,9 @@ object AppModule {
     @Provides
     @Singleton
     fun provideTaxDao(db: SmartWageDatabase): TaxDao = db.taxDao()
+
+    @Provides
+    fun provideSettingsDao(db: SmartWageDatabase): SettingsDao = db.settingsDao()
 
     /** Provide Repositories */
     @Provides
