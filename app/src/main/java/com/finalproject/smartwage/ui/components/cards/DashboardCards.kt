@@ -3,7 +3,6 @@ package com.finalproject.smartwage.ui.components.cards
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,9 +16,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -41,14 +38,8 @@ fun DashboardCards(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(
-                onClick = {navController.navigate(destination)},
-                interactionSource = remember { MutableInteractionSource() },
-                indication = ripple(
-                    bounded = false,
-                    radius = 0.dp
-                )
-            )
+            .height(100.dp)
+            .clickable(onClick = {navController.navigate(destination)})
             .padding(horizontal = 16.dp),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(PurpleGrey80),
