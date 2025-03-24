@@ -92,14 +92,14 @@ fun SignUpScreen(
         Image(
             painter = painterResource(id = R.drawable.homelogo),
             contentDescription = "Home Logo",
-            Modifier.size(250.dp)
+            Modifier.size(230.dp)
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         Text("Create an Account", fontSize = 26.sp, fontWeight = FontWeight.SemiBold)
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         // Name Field
         OutlinedTextField(
