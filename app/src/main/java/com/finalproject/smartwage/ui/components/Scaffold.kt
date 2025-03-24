@@ -34,9 +34,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -55,10 +55,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import coil.compose.AsyncImage
 import com.finalproject.smartwage.R
 import com.finalproject.smartwage.navigation.Destinations
+import com.finalproject.smartwage.ui.theme.White
 import com.finalproject.smartwage.viewModel.AuthViewModel
 import com.finalproject.smartwage.viewModel.ProfileViewModel
-import androidx.compose.runtime.getValue
-import com.finalproject.smartwage.ui.theme.White
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -188,11 +187,8 @@ fun DashboardBottomBar(navController: NavController) {
                     .weight(1f)
                     .fillMaxHeight()
                     .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = ripple(
-                            bounded = false,
-                            radius = 0.dp
-                        )
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
                     ) {
                         // Navigate to the selected item
                         navController.navigate(item.route) {
