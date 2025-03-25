@@ -86,14 +86,13 @@ class FirestoreService @Inject constructor() {
         }
     }
 
-    // Delete User Settings from Firestore
-    suspend fun deleteUserSettings(userId: String) {
+    // Delete Profile Picture from Firestore
+    suspend fun deleteProfilePicture(userId: String) {
         try {
-            db.collection("users").document(userId).collection("settings")
-                .document("user_settings").delete().await()
-            Timber.d("FirestoreService: User settings deleted successfully for $userId")
+            db.collection("users").document(userId).update("profilePicture", null).await()
+            Timber.d("FirestoreService: Profile picture deleted successfully for $userId")
         } catch (e: Exception) {
-            Timber.e(e, "Error deleting user settings from Firestore")
+            Timber.e(e, "Error deleting profile picture from Firestore")
         }
     }
 
@@ -212,104 +211,6 @@ class FirestoreService @Inject constructor() {
         } catch (e: Exception) {
             Timber.e(e, "Error fetching expenses from Firestore")
             emptyList()
-        }
-    }
-
-    // Update Expense in Firestore
-    suspend fun updateExpenses(expenses: Expenses) {
-        try {
-            db.collection("expenses").document(expenses.id).set(expenses, SetOptions.merge()).await()
-        } catch (e: Exception) {
-            Timber.e(e, "Error updating expense in Firestore")
-        }
-    }
-
-    // Delete Expense from Firestore
-    suspend fun deleteExpenses(expenseId: String, string: String) {
-        try {
-            db.collection("expenses").document(expenseId).delete().await()
-        } catch (e: Exception) {
-            Timber.e(e, "Error deleting expense from Firestore")
-        }
-    }
-
-    // Save Tax Record to Firestore
-    suspend fun saveTax(tax: Tax) {
-        try {
-            db.collection("taxes").document(tax.id).set(tax).await()
-            Timber.d("FirestoreService: Tax saved successfully: ${tax.id}")
-        } catch (e: Exception) {
-            Timber.e(e, "Error saving tax record to Firestore")
-        }
-    }
-
-    // Get User's Tax Information
-    suspend fun getUserTax(userId: String): List<Tax> {
-        return try {
-            db.collection("taxes")
-                .whereEqualTo("userId", userId)
-                .get()
-                .await()
-                .toObjects(Tax::class.java)
-        } catch (e: Exception) {
-            Timber.e(e, "Error fetching taxes from Firestore")
-            emptyList()
-        }
-    }
-
-    // Delete All User Data (when deleting an account)
-    suspend fun deleteUserData(userId: String) {
-        try {
-            db.collection("users").document(userId).delete().await()
-
-            db.collection("incomes")
-                .whereEqualTo("userId", userId)
-                .get()
-                .await()
-                .documents.forEach { it.reference.delete() }
-
-            db.collection("expenses")
-                .whereEqualTo("userId", userId)
-                .get()
-                .await()
-                .documents.forEach { it.reference.delete() }
-
-            db.collection("taxes")
-                .whereEqualTo("userId", userId)
-                .get()
-                .await()
-                .documents.forEach { it.reference.delete() }
-
-            Timber.d("FirestoreService: Deleted all data for user $userId")
-        } catch (e: Exception) {
-            Timber.e(e, "Error deleting user data from Firestore")
-        }
-    }
-
-    // Calculate Tax Based on User's Income
-    suspend fun calculateTax(userId: String): Double {
-        try {
-            val incomes = getUserIncomes(userId) // Get user's incomes
-            val totalIncome = incomes.sumOf { it.amount } // Sum of all incomes
-
-            val taxCredit = 4000.0
-            val lowerTaxThreshold = 44000.0
-            val lowerTaxRate = 0.20
-            val higherTaxRate = 0.40
-
-            val taxOwed = if (totalIncome <= lowerTaxThreshold) {
-                totalIncome * lowerTaxRate  // 20% on income up to €44,000
-            } else {
-                val lowerTax = lowerTaxThreshold * lowerTaxRate  // 20% on €44,000
-                val higherTax = (totalIncome - lowerTaxThreshold) * higherTaxRate  // 40% on remainder
-                lowerTax + higherTax
-            }
-
-            val finalTax = taxOwed - taxCredit
-            return if (finalTax > 0) finalTax else 0.0
-        } catch (e: Exception) {
-            Timber.e(e, "Error calculating tax for user $userId")
-            return 0.0
         }
     }
 }
