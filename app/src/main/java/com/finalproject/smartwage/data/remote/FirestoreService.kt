@@ -28,15 +28,14 @@ class FirestoreService @Inject constructor() {
 
     suspend fun getUser(userId: String): User? {
         return try {
-            // Fetch the user from Firestore
             val snapshot = db.collection("users").document(userId).get().await()
-
-            // If the document exists, convert it to User object
-            snapshot.toObject(User::class.java)
+            snapshot.toObject(User::class.java)?.let { user ->
+                user.copy(
+                    profilePicture = user.profilePicture?.takeIf { it.isNotEmpty() }
+                )
+            }
         } catch (e: Exception) {
-            // Log the error to debug Firestore-related issues
             Timber.e(e, "Error fetching user from Firestore: $userId")
-
             null
         }
     }
@@ -83,6 +82,19 @@ class FirestoreService @Inject constructor() {
             Timber.d("FirestoreService: User settings updated successfully for $userId")
         } catch (e: Exception) {
             Timber.e(e, "Error updating user settings in Firestore")
+        }
+    }
+
+    // Save Profile Picture to Firestore
+    suspend fun saveProfilePicture(userId: String, profilePicture: String) {
+        try {
+            Timber.d("Saving to Firestore: $profilePicture")
+            db.collection("users").document(userId)
+                .update("profilePicture", profilePicture)
+                .await()
+        } catch (e: Exception) {
+            Timber.e(e, "Firestore save error")
+            throw e
         }
     }
 
