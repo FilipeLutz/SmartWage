@@ -35,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -67,100 +68,109 @@ fun DashboardTopBar(
     profileViewModel: ProfileViewModel = hiltViewModel()
 ) {
     val menuExpanded = remember { mutableStateOf(false) }
-    val user by profileViewModel.user.collectAsState(initial = null)
-    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+    val imageUri by profileViewModel.imageUri.collectAsState()
+
+    LaunchedEffect(imageUri) {
+        println("TopBar Image URI: $imageUri")
+    }
 
     TopAppBar(
         title = {
             Image(
                 painter = painterResource(id = R.drawable.logo),
                 contentDescription = "App Logo",
-                modifier = Modifier.size(200.dp)
+                modifier = Modifier
+                    .size(200.dp)
+                    .clickable(
+                        onClick = {
+                            navController.navigate(route = "dashboard/{userId}")
+                        },
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    )
             )
         },
         actions = {
-            if (currentRoute != Destinations.Profile.route) {
-                Box(
+            Box(
+                modifier = Modifier
+                    .offset(x = (-7).dp, y = 2.dp)
+            ) {
+                IconButton(
+                    onClick = { menuExpanded.value = true }) {
+                    if (imageUri != null) {
+                        // If user has a profile picture, show it
+                        AsyncImage(
+                            model = imageUri,
+                            contentDescription = "Profile Picture",
+                            modifier = Modifier
+                                .size(45.dp)
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        // Default user icon
+                        Icon(
+                            imageVector = Icons.Default.AccountCircle,
+                            contentDescription = "User Profile",
+                            modifier = Modifier
+                                .size(45.dp),
+                            tint = White,
+                        )
+                    }
+                }
+
+                DropdownMenu(
+                    expanded = menuExpanded.value,
+                    onDismissRequest = { menuExpanded.value = false },
                     modifier = Modifier
-                        .offset(x = (-7).dp, y = 2.dp)
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
                 ) {
-                    IconButton(
-                        onClick = { menuExpanded.value = true }) {
-                        if (!user?.profilePicture.isNullOrEmpty()) {
-                            // If user has a profile picture, show it
-                            AsyncImage(
-                                model = user?.profilePicture,
-                                contentDescription = "Profile Picture",
-                                modifier = Modifier
-                                    .size(45.dp)
-                                    .clip(CircleShape),
-                                contentScale = ContentScale.Crop
-                            )
-                        } else {
-                            // Default user icon
+                    // Profile Button
+                    DropdownMenuItem(
+                        text = { Text("Profile", fontSize = 22.sp) },
+                        onClick = {
+                            menuExpanded.value = false
+                            navController.navigate(Destinations.Profile.route)
+                        },
+                        leadingIcon = {
                             Icon(
-                                imageVector = Icons.Default.AccountCircle,
-                                contentDescription = "User Profile",
-                                modifier = Modifier
-                                    .size(45.dp),
-                                tint = White,
+                                imageVector = Icons.Default.Person,
+                                contentDescription = "Profile Icon"
                             )
                         }
-                    }
+                    )
 
-                    DropdownMenu(
-                        expanded = menuExpanded.value,
-                        onDismissRequest = { menuExpanded.value = false },
+                    HorizontalDivider(
+                        color = Color.Gray,
+                        thickness = 1.dp,
                         modifier = Modifier
-                            .background(MaterialTheme.colorScheme.surfaceVariant)
-                    ) {
-                        // Profile Button
-                        DropdownMenuItem(
-                            text = { Text("Profile", fontSize = 22.sp) },
-                            onClick = {
-                                menuExpanded.value = false
-                                navController.navigate(Destinations.Profile.route)
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = Icons.Default.Person,
-                                    contentDescription = "Profile Icon"
-                                )
-                            }
-                        )
+                            .padding(horizontal = 10.dp)
+                    )
 
-                        HorizontalDivider(
-                            color = Color.Gray,
-                            thickness = 1.dp,
-                            modifier = Modifier
-                                .padding(horizontal = 10.dp)
-                        )
-
-                        // Logout Button
-                        DropdownMenuItem(
-                            text = { Text("Logout", color = Color.Red, fontSize = 22.sp) },
-                            onClick = {
-                                menuExpanded.value = false
-                                viewModel.logout()
-                                navController.navigate(Destinations.Login.route) {
-                                    popUpTo(Destinations.Login.route) { inclusive = true }
-                                }
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = Icons.Default.ExitToApp,
-                                    contentDescription = "Logout Icon",
-                                    tint = Color.Red
-                                )
+                    // Logout Button
+                    DropdownMenuItem(
+                        text = { Text("Logout", color = Color.Red, fontSize = 22.sp) },
+                        onClick = {
+                            menuExpanded.value = false
+                            viewModel.logout()
+                            navController.navigate(Destinations.Login.route) {
+                                popUpTo(Destinations.Login.route) { inclusive = true }
                             }
-                        )
-                    }
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.ExitToApp,
+                                contentDescription = "Logout Icon",
+                                tint = Color.Red
+                            )
+                        }
+                    )
                 }
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
-            titleContentColor = Color.White,
+            titleContentColor = White,
         )
     )
 }
