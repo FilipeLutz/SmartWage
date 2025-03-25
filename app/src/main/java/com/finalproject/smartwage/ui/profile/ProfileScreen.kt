@@ -1,6 +1,10 @@
 package com.finalproject.smartwage.ui.profile
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Environment
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -26,7 +30,6 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -35,6 +38,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,7 +50,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.DarkGray
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
@@ -54,47 +58,119 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration.Companion.Underline
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.finalproject.smartwage.R
 import com.finalproject.smartwage.navigation.Destinations
 import com.finalproject.smartwage.ui.components.DashboardBottomBar
 import com.finalproject.smartwage.ui.components.DashboardTopBar
 import com.finalproject.smartwage.ui.components.dialogs.DeleteAccountDialog
 import com.finalproject.smartwage.ui.components.dialogs.ErrorMessageDialog
 import com.finalproject.smartwage.ui.components.dialogs.MessageType
+import com.finalproject.smartwage.ui.components.dialogs.PhotoDialog
 import com.finalproject.smartwage.ui.theme.DarkBlue
 import com.finalproject.smartwage.ui.theme.White
 import com.finalproject.smartwage.viewModel.ProfileViewModel
 import kotlinx.coroutines.launch
-import androidx.core.net.toUri
+import java.io.File
+import java.io.IOException
 
 @Composable
 fun ProfileScreen(
     navController: NavController,
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
-
-    val userState by viewModel.user.collectAsState(initial = null)
-    val imageUri = remember { mutableStateOf<Uri?>(null) }
+    val userState by viewModel.user.collectAsState()
+    var imageUriState by remember { mutableStateOf<Uri?>(null) }
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     var showDeleteConfirmation by remember { mutableStateOf(false) }
     var message by remember { mutableStateOf<String?>(null) }
     var messageType by remember { mutableStateOf<MessageType>(MessageType.TEXT) }
-    val initialName = userState?.name
-    val initialPhoneNumber = userState?.phoneNumber
+    var showImageDialog by remember { mutableStateOf(false) }
+    var currentPhotoUri by remember { mutableStateOf<Uri?>(null) }
+    val context = LocalContext.current
+    val hasProfilePicture = imageUriState != null
+
+    val initialName = userState?.name ?: ""
+    val initialPhoneNumber = userState?.phoneNumber ?: ""
 
     fun showMessage(newMessage: String, type: MessageType) {
         message = newMessage
         messageType = type
     }
 
-    val launcher =
-        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            imageUri.value = uri
+    LaunchedEffect(userState) {
+        userState?.profilePicture?.let { uriString ->
+            imageUriState = uriString.toUri()
         }
+    }
+
+    val pickImageLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            imageUriState = it
+            viewModel.updateProfilePicture(it)
+        }
+    }
+
+    fun createImageFile(): Uri? {
+        return try {
+            val storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            val file = File.createTempFile(
+                "JPEG_${System.currentTimeMillis()}_",
+                ".jpg",
+                storageDir
+            )
+            FileProvider.getUriForFile(
+                context,
+                "${context.packageName}.fileprovider",
+                file
+            )
+        } catch (_: IOException) {
+            null
+        }
+    }
+
+    val takePictureLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.TakePicture()
+    ) { success ->
+        if (success) {
+            currentPhotoUri?.let { uri ->
+                imageUriState = uri
+                viewModel.updateProfilePicture(uri)
+            }
+        }
+    }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            currentPhotoUri?.let { uri ->
+                takePictureLauncher.launch(uri)
+            }
+        } else {
+            Toast.makeText(context, "Camera permission denied", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun takePicture() {
+        currentPhotoUri = createImageFile()
+        currentPhotoUri?.let { uri ->
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                takePictureLauncher.launch(uri)
+            } else {
+                permissionLauncher.launch(Manifest.permission.CAMERA)
+            }
+        } ?: run {
+            Toast.makeText(context, "Error creating image file", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     Scaffold(
         topBar = { DashboardTopBar(navController) },
@@ -110,49 +186,29 @@ fun ProfileScreen(
                 var name by remember { mutableStateOf(currentUser.name) }
                 var phoneNumber by remember { mutableStateOf(currentUser.phoneNumber) }
 
-                val isSaveButtonEnabled = name != initialName || phoneNumber != initialPhoneNumber
+                val isSaveButtonEnabled =
+                    name != initialName || phoneNumber != initialPhoneNumber || imageUriState?.toString() != currentUser.profilePicture
 
                 Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
-                        .fillMaxSize()
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    // Top bar with back button and profile title
                     Row(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 10.dp),
-                        horizontalArrangement = Arrangement.Start,
-                        verticalAlignment = Alignment.CenterVertically
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
                     ) {
-                        // Back Button
-                        IconButton(
-                            onClick = {
-                                navController.popBackStack()
-                            },
-                            modifier = Modifier
-                                .padding(start = 16.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.back),
-                                contentDescription = "Back",
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier
-                                    .size(28.dp)
-                            )
-                        }
 
-                        Spacer(modifier = Modifier.width(90.dp))
-
-                        // Profile Title
                         Text(
-                            text = "Profile",
+                            text = "User Profile",
                             fontSize = 35.sp,
                             fontWeight = Bold,
-                            color = MaterialTheme.colorScheme.primary
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.padding(16.dp)
                         )
                     }
 
@@ -166,24 +222,26 @@ fun ProfileScreen(
                             .background(MaterialTheme.colorScheme.secondary),
                         contentAlignment = Alignment.Center
                     ) {
-                        imageUri.value?.let { uri ->
+                        if (hasProfilePicture && imageUriState != null) {
                             AsyncImage(
-                                model = uri,
+                                model = imageUriState,
                                 contentDescription = "Profile Picture",
-                                modifier = Modifier.fillMaxSize()
+                                modifier = Modifier.fillMaxSize(),
                             )
-                        } ?: Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = "Default Profile Icon",
-                            tint = White,
-                            modifier = Modifier.size(120.dp)
-                        )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Default.Person,
+                                contentDescription = "Default Profile Icon",
+                                tint = White,
+                                modifier = Modifier.size(120.dp)
+                            )
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(4.dp))
 
                     // "Add Photo" Text
-                    if (imageUri.value == null) {
+                    if (!hasProfilePicture) {
                         Text(
                             text = "Add Photo",
                             fontSize = 16.sp,
@@ -192,7 +250,7 @@ fun ProfileScreen(
                             color = DarkBlue,
                             modifier = Modifier
                                 .clickable {
-                                    launcher.launch("image/*")
+                                    showImageDialog = true
                                 }
                                 .padding(top = 8.dp)
                         )
@@ -212,8 +270,7 @@ fun ProfileScreen(
                                 color = DarkBlue,
                                 modifier = Modifier
                                     .clickable {
-                                        // Open image picker to change the photo
-                                        launcher.launch("image/*")
+                                        showImageDialog = true
                                     }
                                     .padding(end = 2.dp)
                             )
@@ -236,20 +293,21 @@ fun ProfileScreen(
                                 textDecoration = Underline,
                                 modifier = Modifier
                                     .clickable {
-                                        imageUri.value = null
+                                        viewModel.deleteProfilePicture()
+                                        imageUriState = null
                                     }
                                     .padding(start = 2.dp)
                             )
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(15.dp))
 
                     Column(
                         modifier = Modifier
                             .padding(horizontal = 30.dp)
                             .fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(7.dp)
+                        verticalArrangement = Arrangement.spacedBy(5.dp)
                     ) {
 
                         // Name Field
@@ -301,34 +359,35 @@ fun ProfileScreen(
                                     enabled = true
                                 )
                         )
+                    }
 
-                        // Update Password Button
-                        Row(
-                            horizontalArrangement = Arrangement.End,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        ) {
-                            TextButton(
-                                onClick = {
-                                    viewModel.sendPasswordResetEmail(currentUser.email)
-                                    showMessage(
-                                        "A password reset email has been sent to your email address!",
-                                        MessageType.TEXT
-                                    )
-                                }
-                            ) {
-                                Text(
-                                    "Update Password",
-                                    fontSize = 20.sp,
-                                    textDecoration = Underline,
-                                    color = DarkBlue,
-                                    fontWeight = Bold
+                    // Update Password Button
+                    Row(
+                        horizontalArrangement = Arrangement.End,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(end = 20.dp)
+                    ) {
+                        TextButton(
+                            onClick = {
+                                viewModel.sendPasswordResetEmail(currentUser.email)
+                                showMessage(
+                                    "A password reset email has been sent to your email address!",
+                                    MessageType.TEXT
                                 )
                             }
+                        ) {
+                            Text(
+                                "Update Password",
+                                fontSize = 18.sp,
+                                textDecoration = Underline,
+                                color = DarkBlue,
+                                fontWeight = Bold
+                            )
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(6.dp))
 
                     Column(
                         modifier = Modifier
@@ -342,9 +401,9 @@ fun ProfileScreen(
                                 val updatedUser = currentUser.copy(
                                     name = name,
                                     phoneNumber = phoneNumber,
-                                    profilePicture = imageUri.value?.toString() ?: currentUser.profilePicture
+                                    profilePicture = imageUriState?.toString() ?: currentUser.profilePicture
                                 )
-                                viewModel.updateUser(updatedUser.name, updatedUser.phoneNumber, updatedUser.profilePicture?.toUri())
+                                viewModel.updateUser(updatedUser)
                                 showMessage("Profile updated successfully.", MessageType.TEXT)
                                 coroutineScope.launch {
                                     snackbarHostState.showSnackbar("Profile Updated")
@@ -390,7 +449,16 @@ fun ProfileScreen(
                 DeleteAccountDialog(
                     onDismiss = { showDeleteConfirmation = false },
                     onConfirm = {
-                        viewModel.deleteUserAccount()
+                        viewModel.deleteUserAccount(
+                            onSuccess = {
+                                navController.navigate(Destinations.Login.route) {
+                                    popUpTo(0)
+                                }
+                            },
+                            onFailure = {
+                                showMessage("Failed to delete account. Please try again.", MessageType.ERROR)
+                            }
+                        )
                         navController.navigate(Destinations.Login.route) {
                             popUpTo(0)
                         }
@@ -404,6 +472,20 @@ fun ProfileScreen(
                     message = it,
                     messageType = messageType,
                     onDismiss = { message = null }
+                )
+            }
+
+            if (showImageDialog) {
+                PhotoDialog(
+                    onDismiss = { showImageDialog = false },
+                    onCameraClick = {
+                        showImageDialog = false
+                        takePicture()
+                    },
+                    onGalleryClick = {
+                        showImageDialog = false
+                        pickImageLauncher.launch("image/*")
+                    }
                 )
             }
         }
