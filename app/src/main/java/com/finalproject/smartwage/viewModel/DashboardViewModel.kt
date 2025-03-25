@@ -36,8 +36,10 @@ class DashboardViewModel @Inject constructor(
     val taxBack: StateFlow<Double> = _taxBack
 
     private val _rentTaxCredit = MutableStateFlow(0.0)
+    val rentTaxCredit: StateFlow<Double> = _rentTaxCredit
 
     private val _tuitionFeeRelief = MutableStateFlow(0.0)
+    val tuitionFeeRelief: StateFlow<Double> = _tuitionFeeRelief
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
@@ -48,9 +50,6 @@ class DashboardViewModel @Inject constructor(
     private val userId: String
         get() = auth.currentUser?.uid ?: ""
 
-    /**
-     * Load user data (Income, Expenses, and Tax calculations)
-     */
     fun loadUserData() {
         viewModelScope.launch {
             _isLoading.value = true
@@ -60,80 +59,76 @@ class DashboardViewModel @Inject constructor(
                 val incomes = incomeRepo.getUserIncomes(userId).first()
                 val expenses = expenseRepo.getUserExpenses(userId).first()
 
-                var totalIncomeValue = 0.0
-                var totalTaxPaidValue = 0.0
-                var totalExpectedTaxValue = 0.0
-                var totalExpectedPRSI = 0.0
-                var totalExpectedUSC = 0.0
+                val userIncomes = incomes.filter { it.userId == userId }
+                val userExpenses = expenses.filter { it.userId == userId }
 
-                // Get rent and tuition fee from expenses
-                val rentPaid = expenses
+                // Calculate tax paid
+                val totalPAYE = userIncomes.sumOf { it.paye }
+                val totalUSC = userIncomes.sumOf { it.usc }
+                val totalPRSI = userIncomes.sumOf { it.prsi }
+                val totalTaxPaid = totalPAYE + totalUSC + totalPRSI
+                val totalIncome = userIncomes.sumOf { it.amount }
+
+                // Calculate expenses
+                val rentPaid = userExpenses
                     .filter { it.category == "RENT TAX CREDIT" }
                     .sumOf { it.amount }
 
-                val tuitionFees = expenses
+                val tuitionFees = userExpenses
                     .filter { it.category == "TUITION FEE RELIEF" }
                     .sumOf { it.amount }
 
-                // Calculate tax credit and relief amounts
-                val rentTaxCreditAmount = TaxCalculator.calculateRentTaxCredit(rentPaid, totalTaxPaidValue)
-                val tuitionFeeReliefAmount = TaxCalculator.calculateTuitionFeeRelief(tuitionFees)
+                // Calculate tax credits
+                val rentTaxCredit = TaxCalculator.calculateRentTaxCredit(rentPaid, totalIncome)
+                val tuitionRelief = TaxCalculator.calculateTuitionFeeRelief(tuitionFees)
+                val personalTaxCredit = 4000.0
+                val totalCredits = personalTaxCredit + rentTaxCredit + tuitionRelief
 
-                // Update state with tax credits
-                _rentTaxCredit.value = rentTaxCreditAmount
-                _tuitionFeeRelief.value = tuitionFeeReliefAmount
+                // Calculate tax
+                var expectedPAYE = 0.0
+                var expectedUSC = 0.0
+                var expectedPRSI = 0.0
 
-                for (income in incomes) {
-                    totalIncomeValue += income.amount
-                    totalTaxPaidValue += income.paye + income.usc + income.prsi
-
-                    // Determine payment frequency
-                    val selectedFrequency = when (income.frequency) {
+                userIncomes.forEach { income ->
+                    val frequency = when (income.frequency) {
                         "Weekly" -> TaxCalculator.PaymentFrequency.WEEKLY
                         "Fortnightly" -> TaxCalculator.PaymentFrequency.FORTNIGHTLY
                         else -> TaxCalculator.PaymentFrequency.MONTHLY
                     }
 
-                    // Calculate expected tax based on user expenses
-                    val (expectedPAYE, expectedUSC, expectedPRSI) =
-                        TaxCalculator.calculateTax(
-                            income.amount,
-                            selectedFrequency,
-                            tuitionFees,
-                            rentPaid
-                        )
-                    totalExpectedTaxValue += expectedPAYE + expectedUSC + expectedPRSI
-                    totalExpectedPRSI += expectedPRSI
-                    totalExpectedUSC += expectedUSC
+                    val (paye, usc, prsi) = TaxCalculator.calculateTax(
+                        income.amount,
+                        frequency,
+                        tuitionFees,
+                        rentPaid
+                    )
+                    expectedPAYE += paye
+                    expectedUSC += usc
+                    expectedPRSI += prsi
                 }
 
-                // Apply tax credits before comparison
-                totalExpectedTaxValue -= (rentTaxCreditAmount + tuitionFeeReliefAmount)
-                totalExpectedTaxValue = maxOf(totalExpectedTaxValue, 0.0)
+                // Get tax credits
+                val creditPerPayment = totalCredits / 52
+                val adjustedExpectedPAYE = maxOf(0.0, expectedPAYE - creditPerPayment)
+                val adjustedExpectedTax = adjustedExpectedPAYE + expectedUSC + expectedPRSI
 
-                _totalIncome.value = totalIncomeValue
-                _taxPaid.value = totalTaxPaidValue
+                // Calculate final tax position
+                val netTaxPosition = totalTaxPaid - adjustedExpectedTax
 
-                // Compare actual tax vs expected tax
-                val taxDifference = totalTaxPaidValue - totalExpectedTaxValue
-                _taxOwed.value = if (taxDifference < 0) -taxDifference else 0.0
+                // Update values
+                _totalIncome.value = totalIncome
+                _totalExpenses.value = userExpenses.sumOf { it.amount }
+                _taxPaid.value = totalTaxPaid
+                _rentTaxCredit.value = rentTaxCredit
+                _tuitionFeeRelief.value = tuitionRelief
 
-                val prsiPaid = incomes.sumOf { it.prsi }
-                val uscPaid = incomes.sumOf { it.usc }
-
-                val totalTaxCredits = 4000.0 + rentTaxCreditAmount + tuitionFeeReliefAmount
-
-                val adjustedExpectedTax = maxOf(0.0, totalExpectedTaxValue - totalTaxCredits)
-
-                val prsiOverpaid = maxOf(totalExpectedPRSI - prsiPaid, 0.0)
-                val uscOverpaid = maxOf(totalExpectedUSC - uscPaid, 0.0)
-                val payeOverpaid = maxOf(totalTaxPaidValue - adjustedExpectedTax, 0.0)
-
-                val overpaidTax = payeOverpaid + prsiOverpaid + uscOverpaid
-
-                _taxBack.value = overpaidTax
-
-                _totalExpenses.value = expenses.sumOf { it.amount }
+                if (netTaxPosition > 0) {
+                    _taxBack.value = netTaxPosition
+                    _taxOwed.value = 0.0
+                } else {
+                    _taxBack.value = 0.0
+                    _taxOwed.value = -netTaxPosition
+                }
 
             } catch (e: Exception) {
                 _errorMessage.value = "Failed to load data: ${e.message}"
