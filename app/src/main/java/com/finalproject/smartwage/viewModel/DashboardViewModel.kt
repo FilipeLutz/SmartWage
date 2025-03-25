@@ -118,14 +118,20 @@ class DashboardViewModel @Inject constructor(
                 val taxDifference = totalTaxPaidValue - totalExpectedTaxValue
                 _taxOwed.value = if (taxDifference < 0) -taxDifference else 0.0
 
-                val payeRefund = incomes.sumOf { it.paye }
                 val prsiPaid = incomes.sumOf { it.prsi }
                 val uscPaid = incomes.sumOf { it.usc }
 
-                val prsiDifference = maxOf(prsiPaid - totalExpectedPRSI, 0.0)
-                val uscDifference = maxOf(uscPaid - totalExpectedUSC, 0.0)
+                val totalTaxCredits = 4000.0 + rentTaxCreditAmount + tuitionFeeReliefAmount
 
-                _taxBack.value = payeRefund + prsiDifference + uscDifference
+                val adjustedExpectedTax = maxOf(0.0, totalExpectedTaxValue - totalTaxCredits)
+
+                val prsiOverpaid = maxOf(totalExpectedPRSI - prsiPaid, 0.0)
+                val uscOverpaid = maxOf(totalExpectedUSC - uscPaid, 0.0)
+                val payeOverpaid = maxOf(totalTaxPaidValue - adjustedExpectedTax, 0.0)
+
+                val overpaidTax = payeOverpaid + prsiOverpaid + uscOverpaid
+
+                _taxBack.value = overpaidTax
 
                 _totalExpenses.value = expenses.sumOf { it.amount }
 
