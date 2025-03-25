@@ -60,7 +60,9 @@ object AppModule {
     /** Provide DAO Interfaces */
     @Provides
     @Singleton
-    fun provideUserDao(db: SmartWageDatabase): UserDao = db.userDao()
+    fun provideUserDao(db: SmartWageDatabase): UserDao {
+        return db.userDao()
+    }
 
     @Provides
     @Singleton
