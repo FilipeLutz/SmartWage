@@ -158,8 +158,10 @@ class FirestoreService @Inject constructor() {
     // Save Expense to Firestore
     suspend fun saveExpenses(expenses: Expenses) {
         try {
-            db.collection("expenses").document(expenses.id).set(expenses).await()
-            Timber.d("Expense saved successfully: $expenses")
+            db.collection("expenses")
+                .document(expenses.id)
+                .set(expenses)
+                .await()
         } catch (e: Exception) {
             Timber.e(e, "Error saving expense to Firestore")
         }
@@ -222,13 +224,13 @@ class FirestoreService @Inject constructor() {
     // Get Expenses for a Specific User
     suspend fun getUserExpenses(userId: String): List<Expenses> {
         return try {
-            val expenses = db.collection("expenses")
+            val snapshot = db.collection("expenses")
                 .whereEqualTo("userId", userId)
                 .get()
                 .await()
-                .toObjects(Expenses::class.java)
 
-            Timber.d("Fetched expenses from Firestore: $expenses") // Log results
+            val expenses = snapshot.toObjects(Expenses::class.java)
+            Timber.d("Fetched ${expenses.size} expenses from Firestore")
             expenses
         } catch (e: Exception) {
             Timber.e(e, "Error fetching expenses from Firestore")
