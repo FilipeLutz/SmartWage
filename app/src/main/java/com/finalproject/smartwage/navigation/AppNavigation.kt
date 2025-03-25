@@ -18,7 +18,12 @@ import com.finalproject.smartwage.ui.tax.TaxCreditScreen
 import com.finalproject.smartwage.ui.tutorial.TutorialScreen
 
 @Composable
-fun AppNavigation(navController: NavHostController, isUserLoggedIn: Boolean, userId: String?) {
+fun AppNavigation(
+    navController: NavHostController,
+    isUserLoggedIn: Boolean,
+    userId: String?,
+    onCameraClick: () -> Unit
+) {
     NavHost(
         navController = navController,
         startDestination =
