@@ -235,7 +235,7 @@ fun DashboardScreen(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     // Show Tax Overpayment or Underpayment if applicable, else show a message
-                    if (taxOwed > 0.0) {
+                    if (taxOwed > 0) {
                         DashboardCards(
                             label = "Tax Underpayment",
                             value = taxOwed,
@@ -243,7 +243,7 @@ fun DashboardScreen(
                             navController = navController,
                             destination = Destinations.TaxCredit.route
                         )
-                    } else if (taxBack > 0.0) {
+                    } else if (taxBack > 0) {
                         DashboardCards(
                             label = "Tax Overpayment",
                             value = taxBack,
