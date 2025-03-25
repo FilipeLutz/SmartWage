@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.finalproject.smartwage.data.local.entities.User
 import com.finalproject.smartwage.data.repository.AuthRepository
+import com.finalproject.smartwage.data.repository.UserRepository
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +16,9 @@ import javax.inject.Inject
 @Suppress("DEPRECATION")
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val userRepo: UserRepository,
+    private val auth: FirebaseAuth
 ) : ViewModel() {
 
     private val _user = MutableStateFlow<User?>(null)
@@ -29,6 +33,17 @@ class AuthViewModel @Inject constructor(
     private val _emailExists = MutableStateFlow<Boolean?>(null)
     val emailExists: StateFlow<Boolean?> = _emailExists.asStateFlow()
 
+    init {
+        loadUser()
+    }
+
+    private fun loadUser() {
+        viewModelScope.launch {
+            val currentUser = userRepo.getCurrentUserWithSync()
+            _user.value = currentUser
+        }
+    }
+
     fun sendPasswordResetEmail(email: String) {
         viewModelScope.launch {
             val result = authRepository.sendPasswordResetEmail(email)
@@ -40,28 +55,15 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    private fun getCurrentUser() {
-        viewModelScope.launch {
-            authRepository.getCurrentUser().collect { user ->
-                _user.value = user
-            }
-        }
-    }
-
     fun login(email: String, password: String, onResult: (Boolean) -> Unit) {
         viewModelScope.launch {
-            _isLoading.value = true
-            _errorMessage.value = null
-
             val result = authRepository.login(email, password)
             if (result is AuthRepository.AuthResult.Success) {
+                loadUser()
                 onResult(true)
             } else {
-                _errorMessage.value = (result as AuthRepository.AuthResult.Failure).errorMessage
                 onResult(false)
             }
-
-            _isLoading.value = false
         }
     }
 
@@ -87,12 +89,23 @@ class AuthViewModel @Inject constructor(
 
             val result = authRepository.signUp(name, email, password, phoneNumber)
             if (result is AuthRepository.AuthResult.Success) {
+                // Immediately save user to Room after signup
+                auth.currentUser?.uid?.let { userId ->
+                    val newUser = User(
+                        id = userId,
+                        name = name,
+                        email = email,
+                        phoneNumber = phoneNumber,
+                        profilePicture = null
+                    )
+                    userRepo.saveUserToRoom(newUser)
+                    _user.value = newUser
+                }
                 onResult(true)
             } else {
                 _errorMessage.value = (result as AuthRepository.AuthResult.Failure).errorMessage
                 onResult(false)
             }
-
             _isLoading.value = false
         }
     }
@@ -107,9 +120,6 @@ class AuthViewModel @Inject constructor(
     }
 
     fun logout() {
-        viewModelScope.launch {
-            authRepository.logout()
-            _user.value = null
-        }
+        auth.signOut()
     }
 }
