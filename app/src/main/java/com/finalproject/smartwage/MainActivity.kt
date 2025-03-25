@@ -21,7 +21,8 @@ class MainActivity : ComponentActivity() {
             AppNavigation(
                 navController,
                 isUserLoggedIn,
-                userId = auth.currentUser?.uid
+                userId = auth.currentUser?.uid,
+                onCameraClick = {},
             )
         }
     }
