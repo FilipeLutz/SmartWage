@@ -6,14 +6,9 @@ import com.finalproject.smartwage.data.remote.AuthService
 import com.finalproject.smartwage.data.remote.FirestoreService
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.launch
 
 @Suppress("DEPRECATION")
 class AuthRepository @Inject constructor(
@@ -35,22 +30,6 @@ class AuthRepository @Inject constructor(
             Timber.e(e, "Failed to send reset email")
             false
         }
-    }
-
-    fun getCurrentUser(): Flow<User?> = callbackFlow {
-        val listener = FirebaseAuth.AuthStateListener { auth ->
-            val firebaseUser = auth.currentUser
-            if (firebaseUser != null) {
-                launch {
-                    val user = userDao.getUserById(firebaseUser.uid).firstOrNull() ?: firebaseUser.toUser()
-                    trySend(user)
-                }
-            } else {
-                trySend(null)
-            }
-        }
-        FirebaseAuth.getInstance().addAuthStateListener(listener)
-        awaitClose { FirebaseAuth.getInstance().removeAuthStateListener(listener) }
     }
 
     suspend fun login(email: String, password: String): AuthResult {
@@ -99,22 +78,6 @@ class AuthRepository @Inject constructor(
             Timber.e(e, "Error checking email registration")
             false
         }
-    }
-
-    suspend fun logout() {
-        val userId = auth.currentUser?.uid ?: return
-        authService.logout()
-        userDao.deleteUser(userId)
-        auth.signOut()
-    }
-
-    suspend fun deleteUser() {
-        val userId = auth.currentUser?.uid ?: return
-        authService.logout()
-        firestoreService.deleteUser(userId)
-        userDao.deleteUser(userId)
-        auth.currentUser?.delete()?.await()
-        auth.signOut()
     }
 
     private fun FirebaseUser.toUser(name: String = "", phoneNumber: String = ""): User {
