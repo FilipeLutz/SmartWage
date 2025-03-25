@@ -175,6 +175,16 @@ class FirestoreService @Inject constructor() {
         }
     }
 
+    // Delete Expense from Firestore
+    suspend fun deleteExpenses(expenseId: String, userId: String) {
+        try {
+            db.collection("expenses").document(expenseId).delete().await()
+            Timber.d("Expense deleted successfully: $expenseId")
+        } catch (e: Exception) {
+            Timber.e(e, "Error deleting expense from Firestore")
+        }
+    }
+
     // Tuition Fee Relief
     suspend fun getTuitionFeeRelief(userId: String): Double {
         return try {
