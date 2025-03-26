@@ -27,6 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.finalproject.smartwage.ui.theme.PurpleGrey80
+import java.text.NumberFormat
+import java.util.Locale
 
 @SuppressLint("DefaultLocale")
 @Composable
@@ -37,6 +39,13 @@ fun DashboardCards(
     navController: NavController,
     destination: String,
 ) {
+
+    val numberFormat = NumberFormat.getNumberInstance(Locale.UK).apply {
+        minimumFractionDigits = 2
+        maximumFractionDigits = 2
+    }
+    val formattedValue = numberFormat.format(value)
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -68,7 +77,7 @@ fun DashboardCards(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "€${String.format("%.2f", value)}",
+                    text = "€$formattedValue",
                     fontSize = 25.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
