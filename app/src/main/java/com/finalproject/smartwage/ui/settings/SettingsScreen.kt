@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
+import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
@@ -296,9 +297,22 @@ fun SettingItem(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(icon, contentDescription = title, modifier = Modifier.size(26.dp), tint = iconColor)
+            Icon(
+                icon,
+                contentDescription = title,
+                tint = iconColor,
+                modifier = Modifier
+                    .size(26.dp),
+                )
+
             Spacer(modifier = Modifier.width(10.dp))
-            Text(title, fontSize = 20.sp, color = titleColor)
+
+            Text(
+                title,
+                fontSize = 20.sp,
+                fontWeight = SemiBold,
+                color = titleColor
+            )
         }
         content()
     }
