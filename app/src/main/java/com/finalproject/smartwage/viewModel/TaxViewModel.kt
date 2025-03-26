@@ -71,7 +71,7 @@ class TaxViewModel @Inject constructor(
             try {
                 combine(
                     incomeRepo.getUserIncomes(userId),
-                    expenseRepo.getUserExpenses(userId)
+                    expenseRepo.getUserExpenses()
                 ) { incomes, expenses ->
 
                     val userIncomes = incomes.filter { it.userId == userId }
