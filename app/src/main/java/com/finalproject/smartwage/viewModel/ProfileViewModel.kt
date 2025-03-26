@@ -1,6 +1,7 @@
 package com.finalproject.smartwage.viewModel
 
 import android.net.Uri
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.finalproject.smartwage.data.local.entities.User
@@ -9,12 +10,10 @@ import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
-import androidx.core.net.toUri
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.asStateFlow
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
@@ -34,11 +33,15 @@ class ProfileViewModel @Inject constructor(
     private val _hasProfilePicture = MutableStateFlow(false)
 
     init {
+
         loadUserProfile()
+
         viewModelScope.launch {
-            userRepo.cleanupInvalidProfilePictures()
-            delay(300)
-            loadUserProfile()
+            user.collect { user ->
+                user?.profilePicture?.let { uriString ->
+                    _imageUri.value = uriString.toUri()
+                } ?: run { _imageUri.value = null }
+            }
         }
     }
 
@@ -119,6 +122,7 @@ class ProfileViewModel @Inject constructor(
     fun deleteProfilePicture() {
         viewModelScope.launch {
             try {
+                _imageUri.value = null
                 userRepo.deleteProfilePicture()
                 _user.value?.let { currentUser ->
                     val updatedUser = currentUser.copy(profilePicture = null)
