@@ -15,11 +15,14 @@ import com.finalproject.smartwage.data.local.entities.User
 import com.finalproject.smartwage.data.local.entities.Income
 import com.finalproject.smartwage.data.local.entities.Settings
 
+// SmartWage Database
 @Database(
+    // Entities
     entities = [User::class, Income::class, Expenses::class, Tax::class, Settings::class],
     version = 1,
     exportSchema = false
 )
+// Abstract class for SmartWage Database
 abstract class SmartWageDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun incomeDao(): IncomeDao
@@ -28,9 +31,10 @@ abstract class SmartWageDatabase : RoomDatabase() {
     abstract fun settingsDao(): SettingsDao
 
     companion object {
+        // Database instance
         @Volatile
         private var INSTANCE: SmartWageDatabase? = null
-
+        // Get instance of SmartWage Database
         fun getInstance(context: Context): SmartWageDatabase {
             return INSTANCE ?: synchronized(this) {
                 INSTANCE ?: Room.databaseBuilder(

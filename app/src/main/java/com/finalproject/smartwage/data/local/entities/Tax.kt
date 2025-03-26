@@ -5,8 +5,11 @@ import androidx.room.PrimaryKey
 import com.google.firebase.firestore.PropertyName
 import java.util.*
 
+// Tax Entity
 @Entity(tableName = "tax")
+// Data class for Tax
 data class Tax(
+    // Primary key
     @PrimaryKey @get:PropertyName("id") @set:PropertyName("id") var id: String = UUID.randomUUID().toString(),
     @get:PropertyName("userId") @set:PropertyName("userId") var userId: String = "",
     @get:PropertyName("totalTax") @set:PropertyName("totalIncome") var totalTax: Double = 0.0,

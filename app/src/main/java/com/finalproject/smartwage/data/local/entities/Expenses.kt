@@ -5,8 +5,11 @@ import androidx.room.PrimaryKey
 import com.google.firebase.firestore.PropertyName
 import java.util.*
 
+// Expenses Entity
 @Entity(tableName = "expenses")
+// Data class for Expenses
 data class Expenses(
+    // Primary key
     @PrimaryKey @get:PropertyName("id") @set:PropertyName("id") var id: String = UUID.randomUUID().toString(),
     @get:PropertyName("userId") @set:PropertyName("userId") var userId: String = "",
     @get:PropertyName("category") @set:PropertyName("category") var category: String = "",

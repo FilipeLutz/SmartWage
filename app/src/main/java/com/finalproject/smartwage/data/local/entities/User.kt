@@ -4,8 +4,11 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.firebase.firestore.PropertyName
 
+// User Entity
 @Entity(tableName = "users")
+// Data class for User
 data class User(
+    // Primary key
     @PrimaryKey @get:PropertyName("id") @set:PropertyName("id") var id: String = "",
     @get:PropertyName("name") @set:PropertyName("name") var name: String = "",
     @get:PropertyName("email") @set:PropertyName("email") var email: String = "",

@@ -5,8 +5,11 @@ import androidx.room.PrimaryKey
 import com.google.firebase.firestore.PropertyName
 import java.util.*
 
+// Income Entity
 @Entity(tableName = "income")
+// Data class for Income
 data class Income(
+    // Primary key
     @PrimaryKey @get:PropertyName("id") @set:PropertyName("id") var id: String = UUID.randomUUID().toString(),
     @get:PropertyName("userId") @set:PropertyName("userId") var userId: String = "",
     @get:PropertyName("source") @set:PropertyName("source") var source: String = "",
