@@ -274,7 +274,8 @@ fun DashboardScreen(
     if (showTaxDialog) {
         TaxResultDialog(
             calculatedTax = calculatedTax,
-            onDismiss = { showTaxDialog = false }
+            onDismiss = { showTaxDialog = false },
+            navController = navController
         )
     }
 }
