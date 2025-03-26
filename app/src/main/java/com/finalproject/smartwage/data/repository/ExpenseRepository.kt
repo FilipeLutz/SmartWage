@@ -34,7 +34,7 @@ class ExpenseRepository @Inject constructor(
         }
     }
 
-    fun getUserExpenses(userId: String): Flow<List<Expenses>> {
+    fun getUserExpenses(): Flow<List<Expenses>> {
         val currentUser = auth.currentUser
         return if (currentUser != null) {
             flow {
@@ -54,7 +54,7 @@ class ExpenseRepository @Inject constructor(
     suspend fun deleteExpense(expenseId: String) {
         withContext(Dispatchers.IO) {
             try {
-                firestoreService.deleteExpenses(expenseId, auth.currentUser?.uid ?: "")
+                firestoreService.deleteExpenses(expenseId)
                 incomeDao.deleteExpenses(expenseId)
             } catch (e: Exception) {
                 Timber.e(e, "Error deleting expense")
