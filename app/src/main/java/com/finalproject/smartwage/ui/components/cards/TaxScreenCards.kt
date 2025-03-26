@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.finalproject.smartwage.ui.theme.DarkBlue
 import com.finalproject.smartwage.ui.theme.Red
+import java.util.Locale
 
 @Composable
 fun TaxSummaryCard(
@@ -576,5 +577,6 @@ fun TaxDataMessage(navController: NavController) {
 }
 
 fun formatCurrency(amount: Double): String {
-    return "€${"%.2f".format(amount)}"
+    val formatted = String.format(Locale.UK, "%,.2f", amount)
+    return "€$formatted"
 }
