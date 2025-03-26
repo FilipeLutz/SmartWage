@@ -24,6 +24,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.finalproject.smartwage.ui.theme.DarkBlue
+import java.text.NumberFormat
+import java.util.Locale
 
 @SuppressLint("DefaultLocale")
 @Composable
@@ -31,6 +33,12 @@ fun TaxResultDialog(
     calculatedTax: Triple<Double, Double, Double>?,
     onDismiss: () -> Unit
 ) {
+
+    val numberFormat = NumberFormat.getNumberInstance(Locale.UK).apply {
+        minimumFractionDigits = 2
+        maximumFractionDigits = 2
+    }
+
     val calculatedPAYE = calculatedTax?.first ?: 0.0
     val calculatedUSC = calculatedTax?.second ?: 0.0
     val calculatedPRSI = calculatedTax?.third ?: 0.0
@@ -56,7 +64,7 @@ fun TaxResultDialog(
 
                 // Show Total Tax
                 Text(
-                    text = "Tax Due: €${String.format("%.2f", totalTax)}",
+                    text = "Tax Due: €${numberFormat.format(totalTax)}",
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black,
