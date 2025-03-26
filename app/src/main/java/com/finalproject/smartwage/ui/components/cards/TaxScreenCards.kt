@@ -286,7 +286,7 @@ fun TaxExplanationCard() {
                 modifier = Modifier.fillMaxWidth()
             ){
                 Text(
-                    text = "Taxes & Credits",
+                    text = "Tax Rate Information",
                     fontSize = 28.sp,
                     fontWeight = Bold,
                     modifier = Modifier.padding(bottom = 8.dp, top = 8.dp)
