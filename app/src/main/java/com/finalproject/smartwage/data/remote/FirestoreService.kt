@@ -55,11 +55,13 @@ class FirestoreService @Inject constructor() {
     // Save User Settings to Firestore
     suspend fun saveUserSettings(userId: String, settings: Settings) {
         try {
-            db.collection("users").document(userId).collection("settings")
-                .document("user_settings").set(settings).await()
-            Timber.d("FirestoreService: User settings saved successfully for $userId")
+            db.collection("users").document(userId)
+                .collection("settings")
+                .document("notification_settings")
+                .set(settings)
+                .await()
         } catch (e: Exception) {
-            Timber.e(e, "Error saving user settings to Firestore")
+            throw e
         }
     }
 
@@ -73,17 +75,6 @@ class FirestoreService @Inject constructor() {
         } catch (e: Exception) {
             Timber.e(e, "Error fetching user settings from Firestore: $userId")
             null
-        }
-    }
-
-    // Update User Settings in Firestore
-    suspend fun updateUserSettings(userId: String, settings: Settings) {
-        try {
-            db.collection("users").document(userId).collection("settings")
-                .document("user_settings").set(settings, SetOptions.merge()).await()
-            Timber.d("FirestoreService: User settings updated successfully for $userId")
-        } catch (e: Exception) {
-            Timber.e(e, "Error updating user settings in Firestore")
         }
     }
 
