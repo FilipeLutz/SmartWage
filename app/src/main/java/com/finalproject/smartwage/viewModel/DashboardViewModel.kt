@@ -57,7 +57,7 @@ class DashboardViewModel @Inject constructor(
 
             try {
                 val incomes = incomeRepo.getUserIncomes(userId).first()
-                val expenses = expenseRepo.getUserExpenses(userId).first()
+                val expenses = expenseRepo.getUserExpenses().first()
 
                 val userIncomes = incomes.filter { it.userId == userId }
                 val userExpenses = expenses.filter { it.userId == userId }
