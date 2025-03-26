@@ -1,5 +1,7 @@
 package com.finalproject.smartwage.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -12,17 +14,17 @@ import com.finalproject.smartwage.ui.dashboard.DashboardScreen
 import com.finalproject.smartwage.ui.expense.ExpenseScreen
 import com.finalproject.smartwage.ui.income.IncomeTaxScreen
 import com.finalproject.smartwage.ui.profile.ProfileScreen
-import com.finalproject.smartwage.ui.settings.HelpScreen
+import com.finalproject.smartwage.ui.settings.AboutAppScreen
 import com.finalproject.smartwage.ui.settings.SettingsScreen
 import com.finalproject.smartwage.ui.tax.TaxCreditScreen
 import com.finalproject.smartwage.ui.tutorial.TutorialScreen
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNavigation(
     navController: NavHostController,
     isUserLoggedIn: Boolean,
-    userId: String?,
-    onCameraClick: () -> Unit
+    userId: String?
 ) {
     NavHost(
         navController = navController,
@@ -47,7 +49,7 @@ fun AppNavigation(
         composable(Destinations.TaxCredit.route) { TaxCreditScreen(navController) }
         composable(Destinations.Profile.route) { ProfileScreen(navController) }
         composable(Destinations.Settings.route) { SettingsScreen(navController) }
-        composable(Destinations.Help.route) { HelpScreen(navController) }
+        composable(Destinations.AboutApp.route) { AboutAppScreen(navController) }
         composable(Destinations.Tutorial.route) { TutorialScreen((navController)) }
     }
 }
