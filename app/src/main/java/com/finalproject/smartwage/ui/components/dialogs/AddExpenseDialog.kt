@@ -282,7 +282,7 @@ fun AddExpenseDialog(
 
                                 if (expenseAmount > 0) {
                                     val newExpense = Expenses(
-                                        id = UUID.randomUUID().toString(),
+                                        id = expenseToEdit?.id ?: UUID.randomUUID().toString(),
                                         category = expenseCategory,
                                         amount = expenseAmount,
                                         description = description,
