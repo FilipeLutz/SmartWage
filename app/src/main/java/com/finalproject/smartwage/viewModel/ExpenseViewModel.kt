@@ -23,9 +23,6 @@ class ExpenseViewModel @Inject constructor(
     private val _userExpenses = MutableStateFlow<List<Expenses>>(emptyList())
     val userExpenses: StateFlow<List<Expenses>> = _userExpenses.asStateFlow()
 
-    private val userId: String
-        get() = auth.currentUser?.uid ?: ""
-
     init {
         loadExpenses()
     }
@@ -34,7 +31,7 @@ class ExpenseViewModel @Inject constructor(
         val currentUser = auth.currentUser
         if (currentUser != null) {
             viewModelScope.launch {
-                expenseRepo.getUserExpenses(userId).collect { expenses ->
+                expenseRepo.getUserExpenses().collect { expenses ->
                     _userExpenses.value = expenses.sortedByDescending { it.date }
                 }
             }
