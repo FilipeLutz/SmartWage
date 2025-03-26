@@ -13,7 +13,7 @@ sealed class Destinations(val route: String) {
     object TaxCredit : Destinations("taxcredit")
     object Profile : Destinations("profile")
     object Settings : Destinations("settings")
-    object Help : Destinations("help")
+    object AboutApp : Destinations("AboutApp")
     object Tutorial : Destinations("tutorial")
 }
 
