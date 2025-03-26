@@ -29,6 +29,7 @@ import com.finalproject.smartwage.viewModel.ExpenseViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.text.NumberFormat
 
 @SuppressLint("DefaultLocale")
 @Composable
@@ -37,6 +38,13 @@ fun ExpenseItem(
     viewModel: ExpenseViewModel,
     onEdit: (Expenses) -> Unit
 ) {
+
+    val numberFormat = NumberFormat.getNumberInstance(Locale.UK).apply {
+        minimumFractionDigits = 2
+        maximumFractionDigits = 2
+    }
+    val formattedAmount = numberFormat.format(expenses.amount)
+
     // Expense Item Card
     Card(
         modifier = Modifier
@@ -65,7 +73,7 @@ fun ExpenseItem(
                 )
                 // Expense Amount
                 Text(
-                    "Amount Paid: ${String.format("%.2f", expenses.amount)}",
+                    "Amount Paid: €$formattedAmount",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.SemiBold
                 )
