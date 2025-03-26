@@ -71,14 +71,14 @@ fun DashboardCards(
             Column {
                 Text(
                     text = label,
-                    fontSize = 28.sp,
+                    fontSize = 26.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = "€$formattedValue",
-                    fontSize = 25.sp,
+                    fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
                 )
