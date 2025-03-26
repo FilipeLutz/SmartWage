@@ -12,11 +12,13 @@ import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
 
+// Firestore Service
 @SuppressLint("TimberArgCount")
 class FirestoreService @Inject constructor() {
+    // Firebase Firestore Instance
     private val db = FirebaseFirestore.getInstance()
 
-    // FirestoreService: saveUser function
+    // Save User to Firestore
     suspend fun saveUser(user: User) {
         try {
             db.collection("users").document(user.id).set(user).await()
@@ -25,7 +27,7 @@ class FirestoreService @Inject constructor() {
             Timber.e(e, "Error saving user to Firestore")
         }
     }
-
+    // Get User from Firestore
     suspend fun getUser(userId: String): User? {
         return try {
             val snapshot = db.collection("users").document(userId).get().await()
@@ -108,7 +110,7 @@ class FirestoreService @Inject constructor() {
         }
     }
 
-    // Get incomes for a specific user from Firestore
+    // Get user incomes from Firestore
     suspend fun getUserIncomes(userId: String): List<Income> {
         return try {
             db.collection("incomes")
@@ -167,7 +169,7 @@ class FirestoreService @Inject constructor() {
         }
     }
 
-    // Get Expenses for a Specific User
+    // Get user Expenses from Firestore
     suspend fun getUserExpenses(userId: String): List<Expenses> {
         return try {
             val snapshot = db.collection("expenses")
@@ -185,7 +187,7 @@ class FirestoreService @Inject constructor() {
     }
 
     // Delete Expense from Firestore
-    suspend fun deleteExpenses(expenseId: String, userId: String) {
+    suspend fun deleteExpenses(expenseId: String) {
         try {
             db.collection("expenses").document(expenseId).delete().await()
             Timber.d("Expense deleted successfully: $expenseId")
