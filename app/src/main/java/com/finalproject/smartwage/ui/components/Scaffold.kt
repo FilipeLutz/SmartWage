@@ -123,7 +123,8 @@ fun DashboardTopBar(
                     expanded = menuExpanded.value,
                     onDismissRequest = { menuExpanded.value = false },
                     modifier = Modifier
-                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                        .background(MaterialTheme.colorScheme.surfaceVariant
+                        )
                 ) {
                     // Profile Button
                     DropdownMenuItem(
@@ -149,7 +150,7 @@ fun DashboardTopBar(
 
                     // Logout Button
                     DropdownMenuItem(
-                        text = { Text("Logout", color = Color.Red, fontSize = 22.sp) },
+                        text = { Text("Log Out", color = Color.Red, fontSize = 22.sp) },
                         onClick = {
                             menuExpanded.value = false
                             viewModel.logout()
