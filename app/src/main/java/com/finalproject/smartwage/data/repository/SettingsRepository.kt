@@ -3,6 +3,7 @@ package com.finalproject.smartwage.data.repository
 import com.finalproject.smartwage.data.local.dao.SettingsDao
 import com.finalproject.smartwage.data.local.entities.Settings
 import com.finalproject.smartwage.data.remote.FirestoreService
+import timber.log.Timber
 import javax.inject.Inject
 
 class SettingsRepository @Inject constructor(
@@ -17,13 +18,10 @@ class SettingsRepository @Inject constructor(
 
     // Save settings to Firestore and Room
     suspend fun saveUserSettings(userId: String, settings: Settings) {
-        firestoreService.saveUserSettings(userId, settings)
-        settingsDao.saveSettings(settings)
-    }
-
-    // Update settings in Firestore and Room
-    suspend fun updateUserSettings(userId: String, settings: Settings) {
-        firestoreService.updateUserSettings(userId, settings)
-        settingsDao.updateSettings(settings)
+        try {
+            firestoreService.saveUserSettings(userId, settings)
+        } catch (e: Exception) {
+            Timber.e(e, "Error saving user settings to Firestore")
+        }
     }
 }
