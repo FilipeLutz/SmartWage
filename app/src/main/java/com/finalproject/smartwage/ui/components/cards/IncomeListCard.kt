@@ -30,6 +30,7 @@ import com.finalproject.smartwage.viewModel.IncomeViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.text.NumberFormat
 
 @SuppressLint("DefaultLocale")
 @Composable
@@ -40,6 +41,14 @@ fun IncomeListCard(
 ) {
     val totalTax = income.paye + income.usc + income.prsi
     val netPay = income.amount - totalTax
+
+    val numberFormat = NumberFormat.getNumberInstance(Locale.UK).apply {
+        minimumFractionDigits = 2
+        maximumFractionDigits = 2
+    }
+    val formattedGrossPay = numberFormat.format(income.amount)
+    val formattedTotalTax = numberFormat.format(totalTax)
+    val formattedNetPay = numberFormat.format(netPay)
 
     Card(
         modifier = Modifier
@@ -67,19 +76,19 @@ fun IncomeListCard(
                     color = Black
                 )
                 Text(
-                    "Gross Pay: ${String.format("%.2f", income.amount)}",
+                    "Gross Pay: €$formattedGrossPay",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Black
                 )
                 Text(
-                    "Total Tax: ${String.format("%.2f", totalTax)}",
+                    "Total Tax: €$formattedTotalTax",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Black
                 )
                 Text(
-                    "Net Pay: ${String.format("%.2f", netPay)}",
+                    "Net Pay: €$formattedNetPay",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Black
