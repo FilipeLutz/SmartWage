@@ -7,10 +7,12 @@ import android.os.Environment
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,6 +33,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
@@ -72,6 +75,7 @@ import com.finalproject.smartwage.ui.components.dialogs.ErrorMessageDialog
 import com.finalproject.smartwage.ui.components.dialogs.MessageType
 import com.finalproject.smartwage.ui.components.dialogs.PhotoDialog
 import com.finalproject.smartwage.ui.theme.DarkBlue
+import com.finalproject.smartwage.ui.theme.Red
 import com.finalproject.smartwage.ui.theme.White
 import com.finalproject.smartwage.viewModel.ProfileViewModel
 import kotlinx.coroutines.launch
@@ -424,19 +428,27 @@ fun ProfileScreen(
                         }
 
                         // Delete Account Button
-                        Button(
+                        OutlinedButton(
                             onClick = {
                                 showDeleteConfirmation = true
                             },
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+                            border = BorderStroke(
+                                width = 2.dp,
+                                color = Red
+                            ),
                             modifier = Modifier
                                 .width(250.dp)
                                 .height(50.dp)
+                                .background(White)
+                                .clickable(
+                                    indication = null,
+                                    interactionSource = remember { MutableInteractionSource() }
+                                ) {}
                         ) {
                             Text(
                                 "DELETE ACCOUNT",
-                                color = White,
-                                fontSize = 18.sp,
+                                color = Red,
+                                fontSize = 22.sp,
                                 fontWeight = Bold
                             )
                         }
