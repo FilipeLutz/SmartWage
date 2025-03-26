@@ -167,6 +167,33 @@ class FirestoreService @Inject constructor() {
         }
     }
 
+    // Get Expenses for a Specific User
+    suspend fun getUserExpenses(userId: String): List<Expenses> {
+        return try {
+            val snapshot = db.collection("expenses")
+                .whereEqualTo("userId", userId)
+                .get()
+                .await()
+
+            val expenses = snapshot.toObjects(Expenses::class.java)
+            Timber.d("Fetched ${expenses.size} expenses from Firestore")
+            expenses
+        } catch (e: Exception) {
+            Timber.e(e, "Error fetching expenses from Firestore")
+            emptyList()
+        }
+    }
+
+    // Delete Expense from Firestore
+    suspend fun deleteExpenses(expenseId: String, userId: String) {
+        try {
+            db.collection("expenses").document(expenseId).delete().await()
+            Timber.d("Expense deleted successfully: $expenseId")
+        } catch (e: Exception) {
+            Timber.e(e, "Error deleting expense from Firestore")
+        }
+    }
+
     // Rent Tax Credit
     suspend fun getRentTaxCredit(userId: String): Double {
         return try {
@@ -189,16 +216,6 @@ class FirestoreService @Inject constructor() {
         }
     }
 
-    // Delete Expense from Firestore
-    suspend fun deleteExpenses(expenseId: String, userId: String) {
-        try {
-            db.collection("expenses").document(expenseId).delete().await()
-            Timber.d("Expense deleted successfully: $expenseId")
-        } catch (e: Exception) {
-            Timber.e(e, "Error deleting expense from Firestore")
-        }
-    }
-
     // Tuition Fee Relief
     suspend fun getTuitionFeeRelief(userId: String): Double {
         return try {
@@ -218,23 +235,6 @@ class FirestoreService @Inject constructor() {
         } catch (e: Exception) {
             Timber.e(e, "Error fetching tuition fee relief")
             0.0
-        }
-    }
-
-    // Get Expenses for a Specific User
-    suspend fun getUserExpenses(userId: String): List<Expenses> {
-        return try {
-            val snapshot = db.collection("expenses")
-                .whereEqualTo("userId", userId)
-                .get()
-                .await()
-
-            val expenses = snapshot.toObjects(Expenses::class.java)
-            Timber.d("Fetched ${expenses.size} expenses from Firestore")
-            expenses
-        } catch (e: Exception) {
-            Timber.e(e, "Error fetching expenses from Firestore")
-            emptyList()
         }
     }
 }
