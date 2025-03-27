@@ -60,6 +60,8 @@ dependencies {
     implementation(libs.kotlin.stdlib)
     implementation (libs.androidx.work.runtime.ktx)
     implementation (libs.coil.kt.coil.compose)
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.ui)
 
     // test
     testImplementation(libs.junit)
