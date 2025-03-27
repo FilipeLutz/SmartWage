@@ -22,7 +22,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -94,15 +94,16 @@ fun AboutAppScreen(navController: NavController) {
                         )
                     }
 
-                    Spacer(modifier = Modifier.width(30.dp))
-
                     // Screen Title
                     Text(
                         text = "App Information",
                         fontSize = 35.sp,
                         fontWeight = Bold,
                         color = MaterialTheme.colorScheme.primary,
-                        textAlign = TextAlign.Center
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 50.dp)
+                            .wrapContentWidth(Alignment.CenterHorizontally)
                     )
                 }
 
