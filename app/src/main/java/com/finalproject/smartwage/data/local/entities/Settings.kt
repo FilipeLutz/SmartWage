@@ -8,7 +8,8 @@ import androidx.room.PrimaryKey
 // Data class for Settings
 data class Settings(
     // Primary key
-    @PrimaryKey val userId: String,
+    @PrimaryKey
+    val userId: String,
     val notificationsEnabled: Boolean = true,
     val selectedLanguage: String = "en",
     val darkModeEnabled: Boolean = false
