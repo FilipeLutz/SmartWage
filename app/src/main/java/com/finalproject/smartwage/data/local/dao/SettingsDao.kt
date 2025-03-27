@@ -13,9 +13,9 @@ interface SettingsDao {
     @Query("SELECT * FROM settings WHERE userId = :userId LIMIT 1")
     suspend fun getSettings(userId: String): Settings?
     // Save user settings
-    @Insert
+    @Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun saveSettings(settings: Settings)
     // Update user settings
-    @Update
+    @Update(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun updateSettings(settings: Settings)
 }
