@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -116,13 +115,14 @@ fun SettingsScreen(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.End
                         ){
-                            Image(
-                                painter = painterResource(id = R.drawable.english),
-                                contentDescription = "Language Flag",
-                                modifier = Modifier.size(35.dp)
+                            Text(
+                                text = "EN",
+                                fontSize = 20.sp,
+                                fontWeight = SemiBold,
+                                color = DarkBlue
                             )
 
-                            Spacer(modifier = Modifier.width(6.dp))
+                            Spacer(modifier = Modifier.width(10.dp))
                         }
                     }
 
