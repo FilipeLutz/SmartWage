@@ -205,7 +205,7 @@ fun DashboardScreen(
                     Spacer(modifier = Modifier.height(10.dp))
 
                     DashboardCards(
-                        label = "Total Income Amount",
+                        label = "Total Income",
                         value = totalIncome,
                         iconRes = R.drawable.income,
                         navController = navController,
