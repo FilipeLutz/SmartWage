@@ -131,6 +131,14 @@ fun ExpenseScreen(navController: NavController) {
                             textAlign = TextAlign.Center,
                             modifier = Modifier.padding(16.dp)
                         )
+
+                        Text(
+                            text = "Some expenses are eligible to tax relief.",
+                            fontSize = 20.sp,
+                            fontWeight = SemiBold,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(16.dp)
+                        )
                     }
                 } else {
                     // Show expenses
