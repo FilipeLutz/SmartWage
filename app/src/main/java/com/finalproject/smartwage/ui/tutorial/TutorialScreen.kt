@@ -123,15 +123,22 @@ fun TutorialScreen(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                // Add Search Bar
+                // Search Tutorial Bar
                 OutlinedTextField(
                     value = searchQuery,
                     onValueChange = { searchQuery = it },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 22.dp, vertical = 10.dp),
-                    label = { Text("Search Tutorial", fontSize = 18.sp) },
-                    textStyle = TextStyle(fontSize = 22.sp),
+                    label = {
+                        Text(
+                            "Search Tutorial",
+                            fontSize = 18.sp
+                        )
+                    },
+                    textStyle = TextStyle(
+                        fontSize = 22.sp
+                    ),
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Search,
