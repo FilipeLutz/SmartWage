@@ -36,7 +36,7 @@ fun DeleteAccountDialog(
         },
         text = {
             Text(
-                "Are you sure you want to delete your account? \nIt cannot be undone.",
+                "Are you sure you want to delete your account?",
                 fontSize = 21.sp,
                 fontWeight = SemiBold,
                 style = TextStyle(lineHeight = 22.sp)
