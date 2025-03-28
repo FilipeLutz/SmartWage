@@ -216,7 +216,7 @@ fun ProfileScreen(
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(7.dp))
+                    Spacer(modifier = Modifier.height(5.dp))
 
                     // Profile Picture Section
                     Box(
@@ -305,7 +305,7 @@ fun ProfileScreen(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(15.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
 
                     Column(
                         modifier = Modifier
@@ -420,7 +420,7 @@ fun ProfileScreen(
                                 .height(50.dp)
                         ) {
                             Text(
-                                "SAVE UPDATES",
+                                "SAVE CHANGES",
                                 color = White,
                                 fontSize = 22.sp,
                                 fontWeight = Bold
@@ -439,7 +439,6 @@ fun ProfileScreen(
                             modifier = Modifier
                                 .width(250.dp)
                                 .height(50.dp)
-                                .background(White)
                                 .clickable(
                                     indication = null,
                                     interactionSource = remember { MutableInteractionSource() }
