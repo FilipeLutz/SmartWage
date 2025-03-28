@@ -56,6 +56,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import coil.compose.AsyncImage
 import com.finalproject.smartwage.R
 import com.finalproject.smartwage.navigation.Destinations
+import com.finalproject.smartwage.ui.theme.LightGrey
 import com.finalproject.smartwage.ui.theme.White
 import com.finalproject.smartwage.viewModel.AuthViewModel
 import com.finalproject.smartwage.viewModel.ProfileViewModel
@@ -96,7 +97,8 @@ fun DashboardTopBar(
                     .offset(x = (-7).dp, y = 2.dp)
             ) {
                 IconButton(
-                    onClick = { menuExpanded.value = true }) {
+                    onClick = ({ menuExpanded.value = true })
+                ) {
                     if (imageUri != null) {
                         // If user has a profile picture, show it
                         AsyncImage(
@@ -123,8 +125,7 @@ fun DashboardTopBar(
                     expanded = menuExpanded.value,
                     onDismissRequest = { menuExpanded.value = false },
                     modifier = Modifier
-                        .background(MaterialTheme.colorScheme.surfaceVariant
-                        )
+                        .background(LightGrey)
                 ) {
                     // Profile Button
                     DropdownMenuItem(
