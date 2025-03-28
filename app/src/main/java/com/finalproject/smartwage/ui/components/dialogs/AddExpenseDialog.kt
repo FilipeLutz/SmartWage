@@ -3,6 +3,7 @@ package com.finalproject.smartwage.ui.components.dialogs
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,6 +36,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.text.TextStyle
@@ -156,9 +158,9 @@ fun AddExpenseDialog(
                     OutlinedTextField(
                         value = expenseCategory.uppercase(Locale.getDefault()),
                         onValueChange = {},
-                        textStyle = TextStyle(fontSize = 20.sp),
+                        textStyle = TextStyle(fontSize = 22.sp),
                         readOnly = true,
-                        label = { Text("Category", fontSize = 18.sp) },
+                        label = { Text("Category", fontSize = 17.sp) },
                         modifier = Modifier.fillMaxWidth()
                     )
 
@@ -170,12 +172,16 @@ fun AddExpenseDialog(
                                 expenseDate = newValue
                             }
                         },
-                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                        label = { Text("Date  (dd-MM-yyyy)", fontSize = 18.sp) },
-                        textStyle = TextStyle(fontSize = 20.sp),
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text),
+                        label = { Text("Payment Date (dd-MM-yyyy)", fontSize = 15.sp) },
+                        textStyle = TextStyle(fontSize = 22.sp),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { showDatePicker = true },
+                            .clickable (
+                                indication = null,
+                                interactionSource = remember { MutableInteractionSource() },
+                                onClick = { showDatePicker = true }
+                            ),
                         trailingIcon = {
                             IconButton(onClick = { showDatePicker = true }) {
                                 Icon(
@@ -185,6 +191,11 @@ fun AddExpenseDialog(
                                     modifier = Modifier
                                         .size(40.dp)
                                         .padding(end = 5.dp)
+                                        .clickable(
+                                            indication = null,
+                                            interactionSource = remember { MutableInteractionSource() },
+                                            onClick = { showDatePicker = true }
+                                        )
                                 )
                             }
                         }
@@ -199,8 +210,16 @@ fun AddExpenseDialog(
                             }
                         },
                         singleLine = true,
-                        label = { Text("Amount (€)", fontSize = 18.sp) },
-                        textStyle = TextStyle(fontSize = 20.sp),
+                        label = {
+                            Text(
+                                text = if (expenseCategory == "RENT TAX CREDIT")
+                                    "Annual Rent Paid (€)"
+                                else
+                                    "Tuition Fee Paid (€)",
+                                fontSize = 17.sp
+                            )
+                        },
+                        textStyle = TextStyle(fontSize = 22.sp),
                         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -216,7 +235,7 @@ fun AddExpenseDialog(
                         value = description,
                         onValueChange = { description = it },
                         singleLine = true,
-                        label = { Text("Description (Optional)", fontSize = 18.sp) },
+                        label = { Text("Description (Optional)", fontSize = 17.sp) },
                         textStyle = TextStyle(fontSize = 22.sp),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -232,6 +251,7 @@ fun AddExpenseDialog(
         confirmButton = {
             if (showExpenseForm) {
                 Row(
+                    verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -303,24 +323,31 @@ fun AddExpenseDialog(
                     }
                 }
             } else {
-                Button(
+                Row (
+                    horizontalArrangement = Arrangement.Center,
                     modifier = Modifier
-                        .width(115.dp)
-                        .height(45.dp),
-                    onClick = {
-                        if (showExpenseForm) {
-                            showExpenseForm = false
-                        } else {
-                            onDismiss()
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(Red)
-                ) {
-                    Text("CANCEL",
-                        fontSize = 15.sp,
-                        fontWeight = Bold,
-                        textAlign = TextAlign.Center
-                    )
+                        .fillMaxWidth()
+                ){
+                    Button(
+                        modifier = Modifier
+                            .width(115.dp)
+                            .height(45.dp),
+                        onClick = {
+                            if (showExpenseForm) {
+                                showExpenseForm = false
+                            } else {
+                                onDismiss()
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(Red)
+                    ) {
+                        Text(
+                            "CANCEL",
+                            fontSize = 15.sp,
+                            fontWeight = Bold,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
             }
         },
