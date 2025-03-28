@@ -4,6 +4,7 @@ package com.finalproject.smartwage.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -15,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -30,7 +30,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -56,6 +56,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import coil.compose.AsyncImage
 import com.finalproject.smartwage.R
 import com.finalproject.smartwage.navigation.Destinations
+import com.finalproject.smartwage.ui.theme.Black
+import com.finalproject.smartwage.ui.theme.DarkBlue
 import com.finalproject.smartwage.ui.theme.LightGrey
 import com.finalproject.smartwage.ui.theme.White
 import com.finalproject.smartwage.viewModel.AuthViewModel
@@ -92,10 +94,7 @@ fun DashboardTopBar(
             )
         },
         actions = {
-            Box(
-                modifier = Modifier
-                    .offset(x = (-7).dp, y = 2.dp)
-            ) {
+            Box {
                 IconButton(
                     onClick = ({ menuExpanded.value = true })
                 ) {
@@ -126,10 +125,14 @@ fun DashboardTopBar(
                     onDismissRequest = { menuExpanded.value = false },
                     modifier = Modifier
                         .background(LightGrey)
+                        .border(
+                            width = 2.dp,
+                            color = colorScheme.primary
+                        )
                 ) {
                     // Profile Button
                     DropdownMenuItem(
-                        text = { Text("Profile", fontSize = 22.sp) },
+                        text = { Text("Profile", fontSize = 22.sp, color = DarkBlue) },
                         onClick = {
                             menuExpanded.value = false
                             navController.navigate(Destinations.Profile.route)
@@ -137,13 +140,14 @@ fun DashboardTopBar(
                         leadingIcon = {
                             Icon(
                                 imageVector = Icons.Default.Person,
-                                contentDescription = "Profile Icon"
+                                contentDescription = "Profile Icon",
+                                tint = DarkBlue
                             )
                         }
                     )
 
                     HorizontalDivider(
-                        color = Color.Gray,
+                        color = Black,
                         thickness = 1.dp,
                         modifier = Modifier
                             .padding(horizontal = 10.dp)
@@ -171,7 +175,7 @@ fun DashboardTopBar(
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary,
+            containerColor = colorScheme.primary,
             titleContentColor = White,
         )
     )
@@ -187,7 +191,7 @@ fun DashboardBottomBar(navController: NavController) {
         modifier = Modifier
             .fillMaxWidth()
             .height(75.dp)
-            .background(MaterialTheme.colorScheme.primaryContainer)
+            .background(colorScheme.primaryContainer)
     ) {
         BottomNavItem.entries.forEach { item ->
             // Check if the current item is selected
@@ -214,7 +218,7 @@ fun DashboardBottomBar(navController: NavController) {
                     .background(
                         if (isSelected) {
                             // Background color for the selected item
-                            MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                            colorScheme.primary.copy(alpha = 0.2f)
                         } else {
                             // Transparent background for unselected items
                             Color.Transparent
@@ -238,10 +242,10 @@ fun DashboardBottomBar(navController: NavController) {
                             .padding(6.dp),
                         colorFilter = if (isSelected) {
                             // Apply a color filter for the selected icon
-                            ColorFilter.tint(MaterialTheme.colorScheme.primary)
+                            ColorFilter.tint(colorScheme.primary)
                         } else {
                             // Apply a color filter for the unselected icon
-                            ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant)
+                            ColorFilter.tint(colorScheme.onSurfaceVariant)
                         }
                     )
 
@@ -254,10 +258,10 @@ fun DashboardBottomBar(navController: NavController) {
                         fontWeight = SemiBold,
                         color = if (isSelected) {
                             // Change text color for the selected item
-                            MaterialTheme.colorScheme.primary
+                            colorScheme.primary
                         } else {
                             // Default text color for unselected items
-                            MaterialTheme.colorScheme.onSurfaceVariant
+                            colorScheme.onSurfaceVariant
                         }
                     )
                 }
