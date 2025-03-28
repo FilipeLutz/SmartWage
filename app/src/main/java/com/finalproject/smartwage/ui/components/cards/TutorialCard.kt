@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,6 +32,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
+import androidx.compose.ui.text.style.TextDecoration.Companion.Underline
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
@@ -54,7 +56,12 @@ fun TutorialCard(video: TutorialVideo, onCardClick: () -> Unit) {
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1f)
-                .clickable(onClick = onCardClick),
+                .clickable(onClick = onCardClick)
+                .border(
+                    width = 1.dp,
+                    color = DarkBlue,
+                    shape = RoundedCornerShape(8.dp)
+                ),
             shape = RoundedCornerShape(8.dp),
             elevation = CardDefaults.cardElevation(4.dp)
         ) {
@@ -107,6 +114,7 @@ fun TutorialCard(video: TutorialVideo, onCardClick: () -> Unit) {
             color = DarkBlue,
             fontSize = 16.sp,
             fontWeight = Bold,
+            textDecoration = Underline,
             modifier = Modifier
                 .padding(top = 8.dp)
                 .fillMaxWidth()
