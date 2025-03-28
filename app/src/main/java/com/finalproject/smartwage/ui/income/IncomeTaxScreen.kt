@@ -1,7 +1,16 @@
 package com.finalproject.smartwage.ui.income
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -34,8 +43,8 @@ import com.finalproject.smartwage.ui.components.DashboardTopBar
 import com.finalproject.smartwage.ui.components.cards.IncomeListCard
 import com.finalproject.smartwage.ui.components.dialogs.PayslipFormDialog
 import com.finalproject.smartwage.ui.theme.DarkBlue
-import com.finalproject.smartwage.viewModel.IncomeViewModel
 import com.finalproject.smartwage.viewModel.ExpenseViewModel
+import com.finalproject.smartwage.viewModel.IncomeViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
@@ -119,7 +128,7 @@ fun IncomeTaxScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Click on the \"+\" button to start adding your incomes.",
+                            text = "Click on the \"+\" button to start adding your income.",
                             fontSize = 25.sp,
                             fontWeight = SemiBold,
                             textAlign = TextAlign.Center,
