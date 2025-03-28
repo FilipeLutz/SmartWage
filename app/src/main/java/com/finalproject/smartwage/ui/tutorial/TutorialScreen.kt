@@ -17,16 +17,26 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,8 +50,21 @@ import com.finalproject.smartwage.ui.components.cards.TutorialCard
 fun TutorialScreen(navController: NavController) {
 
     val videoList = listOf(
+        TutorialVideo("editprofile.mp4", "Edit Profile"),
         TutorialVideo("deleteaccount.mp4", "Delete Account"),
+        TutorialVideo("addexpenses.mp4", "Add Expenses"),
+        TutorialVideo("editexpenses.mp4", "Edit Expenses"),
+        TutorialVideo("addincome.mp4", "Add Income"),
+        TutorialVideo("editincome", "Edit Income"),
     )
+
+    var searchQuery by remember { mutableStateOf("") }
+
+    // Filter videos based on search
+    val filteredVideos = videoList.filter { video ->
+        video.title.contains(searchQuery, ignoreCase = true) ||
+                video.fileName.contains(searchQuery, ignoreCase = true)
+    }
 
     Scaffold(
         topBar = { DashboardTopBar(navController) },
@@ -100,16 +123,44 @@ fun TutorialScreen(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(10.dp))
 
+                // Add Search Bar
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 22.dp, vertical = 10.dp),
+                    label = { Text("Search Tutorial", fontSize = 18.sp) },
+                    textStyle = TextStyle(fontSize = 22.sp),
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Search",
+                            Modifier.size(24.dp)
+                        )
+                    },
+                    singleLine = true,
+                    shape = RoundedCornerShape(12.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                    )
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                HorizontalDivider()
+
                 // Display video cards in a grid
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
                     contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                    horizontalArrangement = Arrangement.spacedBy(2.dp),
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    items(videoList.size) { index ->
-                        val video = videoList[index]
+                    items(filteredVideos.size) { index ->
+                        val video = filteredVideos[index]
                         TutorialCard(
                             video = video,
                             onCardClick = {
