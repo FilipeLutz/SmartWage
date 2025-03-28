@@ -147,12 +147,12 @@ fun DashboardScreen(
                                     incomeInput = newValue
                                 }
                             },
-                            label = { Text("Enter Income (€)", fontSize = 18.sp) },
+                            label = { Text("Enter Income €", fontSize = 18.sp) },
                             textStyle = TextStyle(fontSize = 24.sp),
                             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                             singleLine = true,
                             modifier = Modifier
-                                .width(190.dp)
+                                .width(195.dp)
                                 .scrollable(
                                     orientation = Orientation.Horizontal,
                                     state = rememberScrollState(),
