@@ -28,7 +28,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,13 +41,13 @@ import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.finalproject.smartwage.R
 import com.finalproject.smartwage.navigation.Destinations
 import com.finalproject.smartwage.ui.components.DashboardBottomBar
 import com.finalproject.smartwage.ui.components.DashboardTopBar
+import com.finalproject.smartwage.ui.components.dialogs.RevenueDialog
 import com.finalproject.smartwage.ui.theme.DarkBlue
 import com.finalproject.smartwage.ui.theme.Red
 import com.finalproject.smartwage.ui.theme.White
@@ -60,6 +62,7 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
 
+    var showRevenueDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     // Observe settings
@@ -100,7 +103,8 @@ fun SettingsScreen(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                Column(modifier = Modifier.fillMaxSize()) {
+                Column(modifier = Modifier.fillMaxSize()
+                ) {
 
                     HorizontalDivider()
 
@@ -207,12 +211,7 @@ fun SettingsScreen(
                     SettingItem(
                         title = "Revenue IE",
                         icon = painterResource(id = R.drawable.faq),
-                        onClick = {
-                            val intent = Intent(Intent.ACTION_VIEW).apply {
-                                data = "https://www.revenue.ie/en/home.aspx".toUri()
-                            }
-                            context.startActivity(intent)
-                        },
+                        onClick = { showRevenueDialog = true },
                         titleColor = DarkBlue,
                         iconColor = DarkBlue
                     ) {
@@ -265,6 +264,11 @@ fun SettingsScreen(
                         )
                     }
                     HorizontalDivider()
+                }
+                if (showRevenueDialog) {
+                    RevenueDialog(
+                        onDismiss = { showRevenueDialog = false },
+                    )
                 }
             }
         }
