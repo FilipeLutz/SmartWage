@@ -3,6 +3,7 @@ package com.finalproject.smartwage.ui.components.dialogs
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -119,15 +120,25 @@ fun PayslipFormDialog(
                             incomeDate = newValue
                         }
                     },
-                    label = { Text("Date  (dd-MM-yyyy)", fontSize = 17.sp) },
+                    label = {
+                        Text(
+                            "Payment Date (dd-MM-yyyy)",
+                            fontSize = 15.sp,
+                        )
+                    },
                     textStyle = TextStyle(fontSize = 22.sp),
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { showDatePicker = true },
+                        .clickable (
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() },
+                            onClick = { showDatePicker = true }
+                        ),
                     trailingIcon = {
                         IconButton(
-                            onClick = { showDatePicker = true }) {
+                            onClick = ({ showDatePicker = true })
+                        ) {
                             Icon(
                                 imageVector = Icons.Default.DateRange,
                                 contentDescription = "Select Date",
@@ -135,6 +146,11 @@ fun PayslipFormDialog(
                                 modifier = Modifier
                                     .size(45.dp)
                                     .padding(end = 5.dp)
+                                    .clickable(
+                                        indication = null,
+                                        interactionSource = remember { MutableInteractionSource() },
+                                        onClick = { showDatePicker = true }
+                                    )
                             )
                         }
                     }
@@ -157,7 +173,7 @@ fun PayslipFormDialog(
                             incomeAmount = newValue
                         }
                     },
-                    label = { Text("Income Amount (€)", fontSize = 17.sp) },
+                    label = { Text("Gross Pay (€)", fontSize = 17.sp) },
                     textStyle = TextStyle(fontSize = 22.sp),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
