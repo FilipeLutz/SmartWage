@@ -16,7 +16,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonDefaults.buttonColors
+import androidx.compose.material3.ButtonDefaults.buttonElevation
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -147,7 +148,7 @@ fun DashboardScreen(
                                     incomeInput = newValue
                                 }
                             },
-                            label = { Text("Enter Income €", fontSize = 18.sp) },
+                            label = { Text("Enter Income €", fontSize = 19.sp) },
                             textStyle = TextStyle(fontSize = 24.sp),
                             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                             singleLine = true,
@@ -172,7 +173,8 @@ fun DashboardScreen(
                                     showTaxDialog = false
                                 }
                             },
-                            colors = ButtonDefaults.buttonColors(containerColor = DarkBlue),
+                            colors = buttonColors(containerColor = DarkBlue),
+                            elevation = buttonElevation(defaultElevation = 8.dp),
                             modifier = Modifier
                                 .width(150.dp)
                                 .height(60.dp)
