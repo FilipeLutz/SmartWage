@@ -3,7 +3,10 @@ package com.finalproject.smartwage.ui.components.dialogs
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -14,6 +17,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
+import androidx.compose.ui.text.style.TextDecoration.Companion.Underline
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import com.finalproject.smartwage.ui.theme.DarkBlue
@@ -37,37 +42,46 @@ fun RevenueDialog(
             ){
                 Text(
                     text = "Open Revenue Website",
-                    fontSize = 24.sp,
+                    fontSize = 22.sp,
                     fontWeight = Bold
                 )
             }
         },
         text = {
-            Text(
-                text = "You are about to leave the app and visit the Revenue.ie",
-                fontSize = 20.sp,
-                fontWeight = SemiBold,
-                style = TextStyle(lineHeight = 30.sp)
-            )
+            Row (
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp)
+            ){
+                Text(
+                    text = "You are about to leave the app and visit the Revenue.ie",
+                    fontSize = 19.sp,
+                    fontWeight = SemiBold,
+                    style = TextStyle(lineHeight = 30.sp)
+                )
+            }
         },
         confirmButton = {
             Row (
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier.fillMaxWidth()
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp)
             ){
 
                 TextButton(
-                    onClick = {
-                        onDismiss()
-                    }
+                    onClick = { onDismiss() }
                 ) {
                     Text(
                         text = "CANCEL",
-                        fontSize = 20.sp,
+                        fontSize = 18.sp,
                         fontWeight = SemiBold,
-                        color = Red
+                        color = Red,
+                        textDecoration = Underline
                     )
                 }
+
+                Spacer(modifier = Modifier.width(20.dp))
 
                 TextButton(
                     onClick = {
@@ -78,13 +92,14 @@ fun RevenueDialog(
                     }
                 ) {
                     Text(
-                        text = "OK",
-                        fontSize = 20.sp,
+                        text = "CONTINUE",
+                        fontSize = 18.sp,
                         fontWeight = SemiBold,
-                        color = DarkBlue
+                        color = DarkBlue,
+                        textDecoration = Underline
                     )
                 }
             }
-        },
+        }
     )
 }
