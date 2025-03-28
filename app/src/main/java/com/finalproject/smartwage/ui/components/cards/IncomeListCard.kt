@@ -27,10 +27,10 @@ import com.finalproject.smartwage.ui.theme.Black
 import com.finalproject.smartwage.ui.theme.DarkBlue
 import com.finalproject.smartwage.ui.theme.LightPurple
 import com.finalproject.smartwage.viewModel.IncomeViewModel
+import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import java.text.NumberFormat
 
 @SuppressLint("DefaultLocale")
 @Composable
@@ -60,13 +60,13 @@ fun IncomeListCard(
     ) {
         Row(
             modifier = Modifier
-                .padding(10.dp)
+                .padding(5.dp)
                 .fillMaxWidth()
         ) {
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(10.dp),
+                    .padding(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
@@ -94,7 +94,7 @@ fun IncomeListCard(
                     color = Black
                 )
                 Text(
-                    "Date: ${SimpleDateFormat("dd-MM-yyyy", Locale.UK).format(Date(income.date))}",
+                    "Payment Date: ${SimpleDateFormat("dd-MM-yyyy", Locale.UK).format(Date(income.date))}",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Black
