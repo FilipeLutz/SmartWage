@@ -55,7 +55,7 @@ fun TutorialScreen(navController: NavController) {
         TutorialVideo("addincome.mp4", "Add/Edit Income"),
         TutorialVideo("deleteincome.mp4", "Delete Income"),
         TutorialVideo("addexpenses.mp4", "Add/Edit Expenses"),
-        TutorialVideo("deletexpenses.mp4", "Delete Expenses"),
+        TutorialVideo("deleteexpenses.mp4", "Delete Expenses"),
         TutorialVideo("taxsummary.mp4", "Tax Summary"),
         TutorialVideo("notifications.mp4", "App Notifications"),
         TutorialVideo("gotorevenue.mp4", "Go to Revenue"),
