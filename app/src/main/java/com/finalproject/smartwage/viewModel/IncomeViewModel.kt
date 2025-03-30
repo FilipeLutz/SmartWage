@@ -34,7 +34,7 @@ class IncomeViewModel @Inject constructor(
         val currentUser = auth.currentUser
         if (currentUser != null) {
             viewModelScope.launch {
-                incomeRepo.getUserIncomes(userId).collect { incomes ->
+                incomeRepo.getUserIncomes().collect { incomes ->
                     _userIncomes.value = incomes.sortedByDescending { it.date }
                 }
             }
