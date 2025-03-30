@@ -2,6 +2,8 @@ package com.finalproject.smartwage.ui.tutorial
 
 import androidx.annotation.OptIn
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -88,12 +90,23 @@ fun FullVideoScreen(videoName: String?, onBack: () -> Unit) {
                     .padding(16.dp)
                     .size(30.dp)
                     .background(White, shape = CircleShape)
+                    .clickable(
+                        onClick = onBack,
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    )
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.close),
                     contentDescription = "Back",
                     tint = DarkBlue,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier
+                        .size(20.dp)
+                        .clickable(
+                            onClick = onBack,
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() }
+                        )
                 )
             }
         }
