@@ -1,8 +1,10 @@
 package com.finalproject.smartwage.ui.auth
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -172,7 +174,15 @@ fun SignUpScreen(
                     Image(
                         painter = icon,
                         contentDescription = "Toggle password visibility",
-                        Modifier.padding(end = 12.dp)
+                        Modifier
+                            .padding(end = 12.dp)
+                            .clickable(
+                                onClick = {
+                                    isPasswordVisible = !isPasswordVisible
+                                },
+                                indication = null,
+                                interactionSource = remember { MutableInteractionSource() }
+                            )
                     )
                 }
             },
@@ -183,7 +193,15 @@ fun SignUpScreen(
                 .scrollable(
                     orientation = Orientation.Horizontal,
                     state = rememberScrollState(),
-                    enabled = true)
+                    enabled = true
+                )
+                .clickable(
+                    onClick = {
+                        isPasswordVisible = !isPasswordVisible
+                    },
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                )
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -202,7 +220,15 @@ fun SignUpScreen(
                     Image(
                         painter = icon,
                         contentDescription = "Toggle password visibility",
-                        Modifier.padding(end = 12.dp)
+                        Modifier
+                            .padding(end = 12.dp)
+                            .clickable(
+                                onClick = {
+                                    isConfirmPasswordVisible = !isConfirmPasswordVisible
+                                },
+                                indication = null,
+                                interactionSource = remember { MutableInteractionSource() }
+                            )
                     )
                 }
             },
@@ -213,7 +239,15 @@ fun SignUpScreen(
                 .scrollable(
                     orientation = Orientation.Horizontal,
                     state = rememberScrollState(),
-                    enabled = true)
+                    enabled = true
+                )
+                .clickable(
+                    onClick = {
+                        isConfirmPasswordVisible = !isConfirmPasswordVisible
+                    },
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                )
         )
 
         Spacer(modifier = Modifier.height(25.dp))
@@ -278,8 +312,25 @@ fun SignUpScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Already have an account?", fontSize = 20.sp)
-            TextButton(onClick = { navController.navigate(Destinations.Login.route) }) {
-                Text("LOGIN", fontSize = 22.sp, color = DarkBlue)
+            TextButton(
+                onClick = { navController.navigate(Destinations.Login.route) },
+                Modifier.clickable(
+                    onClick = {},
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                )
+            ) {
+                Text(
+                    "LOGIN",
+                    fontSize = 22.sp,
+                    color = DarkBlue,
+                    modifier = Modifier
+                        .clickable(
+                            onClick = { navController.navigate(Destinations.Login.route) },
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() }
+                        )
+                )
             }
         }
 
