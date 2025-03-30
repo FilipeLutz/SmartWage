@@ -70,7 +70,7 @@ class TaxViewModel @Inject constructor(
 
             try {
                 combine(
-                    incomeRepo.getUserIncomes(userId),
+                    incomeRepo.getUserIncomes(),
                     expenseRepo.getUserExpenses()
                 ) { incomes, expenses ->
 
