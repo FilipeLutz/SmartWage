@@ -3,7 +3,6 @@ package com.finalproject.smartwage.ui.settings
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -54,7 +53,6 @@ import com.finalproject.smartwage.ui.theme.White
 import com.finalproject.smartwage.viewModel.AuthViewModel
 import com.finalproject.smartwage.viewModel.SettingsViewModel
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SettingsScreen(
     navController: NavController,
@@ -322,11 +320,16 @@ fun SettingItem(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 private fun openNotificationSettings(context: Context) {
-    val intent = Intent(android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-        putExtra("android.provider.extra.APP_PACKAGE", context.packageName)
-        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        Intent(android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+            putExtra("android.provider.extra.APP_PACKAGE", context.packageName)
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+    } else {
+        Intent(android.provider.Settings.ACTION_SETTINGS).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
     }
     context.startActivity(intent)
 }
