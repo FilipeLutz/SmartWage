@@ -11,17 +11,22 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @Suppress("DEPRECATION")
+// Class to handle authentication and user management
 class AuthRepository @Inject constructor(
+    // Injecting the required dependencies
     private val authService: AuthService,
     private val firestoreService: FirestoreService,
     private val userDao: UserDao,
     private val auth: FirebaseAuth
 ) {
+    // Sealed class to represent the result of authentication operations
     sealed class AuthResult {
+        // Success and failure states
         data class Success(val user: FirebaseUser) : AuthResult()
         data class Failure(val errorMessage: String) : AuthResult()
     }
 
+    // Function to send a password reset email
     suspend fun sendPasswordResetEmail(email: String): Boolean {
         return try {
             auth.sendPasswordResetEmail(email).await()
@@ -32,6 +37,7 @@ class AuthRepository @Inject constructor(
         }
     }
 
+    // Function to login a user
     suspend fun login(email: String, password: String): AuthResult {
         return try {
             val result = authService.login(email, password)
@@ -48,6 +54,7 @@ class AuthRepository @Inject constructor(
         }
     }
 
+    // Function to signup a new user
     suspend fun signUp(name: String, email: String, password: String, phoneNumber: String): AuthResult {
         return try {
             if (isEmailRegistered(email)) {
@@ -69,6 +76,7 @@ class AuthRepository @Inject constructor(
         }
     }
 
+    // Function to check if email is already registered
     suspend fun isEmailRegistered(email: String): Boolean {
         return try {
             val result = auth.fetchSignInMethodsForEmail(email.lowercase()).await()
@@ -80,6 +88,7 @@ class AuthRepository @Inject constructor(
         }
     }
 
+    // Private function to get the current user
     private fun FirebaseUser.toUser(name: String = "", phoneNumber: String = ""): User {
         return User(
             id = uid,
