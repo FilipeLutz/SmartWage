@@ -91,6 +91,7 @@ fun ExpenseInfoDialog(
                         indication = null
                     ) {
                         onLinkClick(context)
+                        onDismiss()
                     }
             )
         },
