@@ -19,6 +19,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -92,7 +93,7 @@ fun ExpenseItem(
                     Icon(
                         imageVector = Icons.Filled.Info,
                         contentDescription = "Check Info",
-                        tint = DarkBlue,
+                        tint = colorScheme.primary,
                         modifier = Modifier
                             .clickable(
                                 onClick = { showExpenseInfoDialog = true },
