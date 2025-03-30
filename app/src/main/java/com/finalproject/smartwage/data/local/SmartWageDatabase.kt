@@ -10,20 +10,27 @@ import com.finalproject.smartwage.data.local.dao.SettingsDao
 import com.finalproject.smartwage.data.local.dao.TaxDao
 import com.finalproject.smartwage.data.local.dao.UserDao
 import com.finalproject.smartwage.data.local.entities.Expenses
-import com.finalproject.smartwage.data.local.entities.Tax
-import com.finalproject.smartwage.data.local.entities.User
 import com.finalproject.smartwage.data.local.entities.Income
 import com.finalproject.smartwage.data.local.entities.Settings
+import com.finalproject.smartwage.data.local.entities.Tax
+import com.finalproject.smartwage.data.local.entities.User
 
 // SmartWage Database
 @Database(
     // Entities
-    entities = [User::class, Income::class, Expenses::class, Tax::class, Settings::class],
+    entities = [
+        User::class,
+        Income::class,
+        Expenses::class,
+        Tax::class,
+        Settings::class
+    ],
     version = 1,
     exportSchema = false
 )
 // Abstract class for SmartWage Database
 abstract class SmartWageDatabase : RoomDatabase() {
+    // Abstract methods for DAOs
     abstract fun userDao(): UserDao
     abstract fun incomeDao(): IncomeDao
     abstract fun expenseDao(): ExpenseDao
