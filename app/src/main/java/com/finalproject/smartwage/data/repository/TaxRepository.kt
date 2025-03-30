@@ -7,11 +7,14 @@ import kotlinx.coroutines.flow.flow
 import timber.log.Timber
 import javax.inject.Inject
 
+// Class to handle tax-related data operations
 class TaxRepository @Inject constructor(
+    // Dependency injection for TaxDao and FirestoreService
     private val taxDao: TaxDao,
     private val firestoreService: FirestoreService
 ) {
 
+    // Function to get the tax credit for a user
     fun getRentTaxCredit(userId: String): Flow<Double> = flow {
         try {
             val firestoreData = firestoreService.getRentTaxCredit(userId)
@@ -29,6 +32,7 @@ class TaxRepository @Inject constructor(
         }
     }
 
+    // Function to get the tuition fee relief for a user
     fun getTuitionFeeRelief(userId: String): Flow<Double> = flow {
         try {
             val firestoreData = firestoreService.getTuitionFeeRelief(userId)
