@@ -24,29 +24,31 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
+// This file is responsible for providing dependencies using Hilt.
 @Module
+// This annotation tells Hilt that this is a module
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    /** Provide Firebase Authentication */
+    // Provides the Firebase Auth instance
     @Provides
     @Singleton
     fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
 
-    /** Provide Firestore Service */
+    // Provides the Firestore Service instance
     @Provides
     @Singleton
     fun provideFirestoreService(): FirebaseFirestore {
         return FirebaseFirestore.getInstance()
     }
 
-    /** Provide AuthService */
+    // Provides the Auth Service instance
     @Provides
     @Singleton
     fun provideAuthService(firebaseAuth: FirebaseAuth): AuthService =
         AuthService(firebaseAuth)
 
-    /** Provide Room Database */
+    // Provides Room Database instance
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): SmartWageDatabase =
@@ -57,29 +59,33 @@ object AppModule {
         ).fallbackToDestructiveMigration()
             .build()
 
-    /** Provide DAO Interfaces */
+    // Provides Dao instances
     @Provides
     @Singleton
     fun provideUserDao(db: SmartWageDatabase): UserDao {
         return db.userDao()
     }
 
+    // Provides Income Dao
     @Provides
     @Singleton
     fun provideIncomeDao(db: SmartWageDatabase): IncomeDao = db.incomeDao()
 
+    // Provides Expense Dao
     @Provides
     @Singleton
     fun provideExpenseDao(db: SmartWageDatabase): ExpenseDao = db.expenseDao()
 
+    // Provides Tax Dao
     @Provides
     @Singleton
     fun provideTaxDao(db: SmartWageDatabase): TaxDao = db.taxDao()
 
+    // Provides Settings Dao
     @Provides
     fun provideSettingsDao(db: SmartWageDatabase): SettingsDao = db.settingsDao()
 
-    /** Provide Repositories */
+    // Provides AuthRepository instance
     @Provides
     @Singleton
     fun provideAuthRepository(
@@ -89,6 +95,7 @@ object AppModule {
     ): AuthRepository =
         AuthRepository(authService, firestoreService, userDao, FirebaseAuth.getInstance())
 
+    // Provides UserRepository instance
     @Provides
     @Singleton
     fun provideUserRepository(
@@ -97,6 +104,7 @@ object AppModule {
     ): UserRepository =
         UserRepository(userDao, firestoreService, FirebaseAuth.getInstance())
 
+    // Provides IncomeRepository instance
     @Provides
     @Singleton
     fun provideIncomeRepository(
@@ -106,6 +114,7 @@ object AppModule {
     ): IncomeRepository =
         IncomeRepository(incomeDao, firestoreService, FirebaseAuth.getInstance(), context)
 
+    // Provides ExpenseRepository instance
     @Provides
     @Singleton
     fun provideExpenseRepository(
@@ -114,11 +123,13 @@ object AppModule {
     ): ExpenseRepository =
         ExpenseRepository(expenseDao, firestoreService, FirebaseAuth.getInstance())
 
+    // Provides TaxRepository instance
     @Provides
     @Singleton
     fun provideTaxRepository(taxDao: TaxDao, firestoreService: FirestoreService): TaxRepository =
         TaxRepository(taxDao, firestoreService)
 
+    // Provides Context instance
     @Provides
     fun provideContext(@ApplicationContext context: Context): Context = context
 }
