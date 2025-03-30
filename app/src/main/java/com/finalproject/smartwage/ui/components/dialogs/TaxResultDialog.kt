@@ -20,8 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration.Companion.Underline
@@ -29,7 +28,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
+import com.finalproject.smartwage.ui.theme.Black
+import com.finalproject.smartwage.ui.theme.Blue
 import com.finalproject.smartwage.ui.theme.DarkBlue
+import com.finalproject.smartwage.ui.theme.White
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -56,7 +58,7 @@ fun TaxResultDialog(
     ) {
         Card(
             shape = RoundedCornerShape(15.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
+            colors = CardDefaults.cardColors(containerColor = White),
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
             modifier = Modifier
                 .fillMaxWidth()
@@ -67,14 +69,24 @@ fun TaxResultDialog(
                     .fillMaxWidth()
                     .padding(12.dp)
             ) {
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
-                // Show Total Tax
+                // Tax Result Text
                 Text(
-                    text = "Tax Due: €${numberFormat.format(totalTax)}",
+                    text = "Tax Liability:",
                     fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black,
+                    fontWeight = Bold,
+                    color = Black,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                // Tax Result Value
+                Text(
+                    text = "€${numberFormat.format(totalTax)}",
+                    fontSize = 26.sp,
+                    color = Black,
+                    fontWeight = SemiBold,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -111,7 +123,7 @@ fun TaxResultDialog(
                     Text(
                         text = "Please note, this is a simple tax estimate. For a more precise calculation, enter your actual income and expenses in the app.",
                         fontSize = 18.sp,
-                        color = Color.Blue,
+                        color = Blue,
                         fontWeight = SemiBold
                     )
                 }
