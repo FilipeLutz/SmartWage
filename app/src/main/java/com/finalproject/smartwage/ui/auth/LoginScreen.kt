@@ -5,7 +5,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Arrangement.Center
+import androidx.compose.foundation.layout.Arrangement.End
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,7 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -28,13 +29,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.KeyboardType.Companion.Email
+import androidx.compose.ui.text.input.KeyboardType.Companion.Password
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
@@ -52,11 +55,14 @@ import com.finalproject.smartwage.utils.isValidEmail
 import com.finalproject.smartwage.utils.validatePassword
 import com.finalproject.smartwage.viewModel.AuthViewModel
 
+// This is a login screen for the SmartWage app.
 @Composable
 fun LoginScreen(
+    // This function is responsible for displaying the login screen UI and handling user interactions.
     navController: NavController,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
+    // State variables to hold user input and UI state
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
@@ -73,16 +79,21 @@ fun LoginScreen(
         }
     }
 
+    // Main UI Layout
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxSize()
+        horizontalAlignment = CenterHorizontally,
+        verticalArrangement = Center,
+        modifier = Modifier
+            .fillMaxSize()
     ) {
-        // Logo
+        // Logo Image
         Image(
-            painter = painterResource(id = R.drawable.homelogo),
+            painter = painterResource(
+                id = R.drawable.homelogo
+            ),
             contentDescription = "Home Logo",
-            modifier = Modifier.size(250.dp)
+            modifier = Modifier
+                .size(250.dp)
         )
 
         Spacer(modifier = Modifier.height(30.dp))
@@ -91,19 +102,26 @@ fun LoginScreen(
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text(
-                "Email", fontSize = 20.sp) },
-            textStyle = TextStyle(fontSize = 24.sp),
+            label = {
+                Text(
+                    "Email", fontSize = 20.sp
+                )
+            },
+            textStyle = TextStyle(
+                fontSize = 24.sp
+            ),
             singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = Email
+            ),
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(horizontal = 25.dp)
                 .scrollable(
                     orientation = Orientation.Horizontal,
                     state = rememberScrollState(),
                     enabled = true
                 )
-                .padding(horizontal = 25.dp)
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -112,16 +130,27 @@ fun LoginScreen(
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Password", fontSize = 20.sp) },
-            textStyle = TextStyle(fontSize = 24.sp),
+            label = {
+                Text(
+                    "Password",
+                    fontSize = 20.sp
+                )
+            },
+            textStyle = TextStyle(
+                fontSize = 24.sp
+            ),
             singleLine = true,
-            visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            visualTransformation =
+                // Toggle password visibility
+                if (isPasswordVisible) VisualTransformation.None
+                else PasswordVisualTransformation(),
             trailingIcon = {
                 IconButton(
+                    // This icon button is used to toggle the visibility of the password
                     onClick = { isPasswordVisible = !isPasswordVisible }) {
                     val icon = if (isPasswordVisible) painterResource(id = R.drawable.view)
                     else painterResource(id = R.drawable.hidden)
-
+                    // Display the icon based on the password visibility state
                     Image(
                         painter = icon,
                         contentDescription = "Toggle password visibility",
@@ -135,7 +164,9 @@ fun LoginScreen(
                     )
                 }
             },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = Password
+            ),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 25.dp)
@@ -154,10 +185,12 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Forgot Password
+        // Forgot Password TextButton
         Row(
-            horizontalArrangement = Arrangement.End,
-            modifier = Modifier.fillMaxWidth().padding(end = 20.dp)
+            horizontalArrangement = End,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(end = 20.dp)
         ) {
             TextButton(
                 modifier = Modifier
@@ -209,12 +242,15 @@ fun LoginScreen(
                 }
 
                 /*
+
                 // Ceck if email is registered
                 viewModel.isEmailRegistered(email) { isRegistered ->
                     if (!isRegistered) {
                         showMessage("Email is not registered", MessageType.ERROR)
                         return@isEmailRegistered
                     }
+                }
+
                 */
 
                 // Validate password
@@ -224,7 +260,7 @@ fun LoginScreen(
                 }
 
                 // If email and password are valid, proceed with login
-                //isLoading = true
+                isLoading = true
                 message = null
 
                 viewModel.login(email, password) { success ->
@@ -239,7 +275,7 @@ fun LoginScreen(
                     }
                 }
             },
-            colors = ButtonDefaults.buttonColors(containerColor = DarkBlue),
+            colors = buttonColors(containerColor = DarkBlue),
             modifier = Modifier
                 .width(300.dp)
                 .height(50.dp)
@@ -258,16 +294,18 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        // Sign up row
+        // Sign up row with clickable TextButton
         Row(
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
+            horizontalArrangement = Center,
+            verticalAlignment = CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
         ) {
             Text(
                 "Don't have an account?",
                 fontSize = 20.sp,
-                fontWeight = SemiBold)
+                fontWeight = SemiBold
+            )
 
             TextButton(
                 modifier = Modifier
