@@ -90,9 +90,12 @@ fun ExpenseInfoDialog(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null
                     ) {
-                        onLinkClick(context)
-                        onDismiss()
-                    }
+                        text.getStringAnnotations(0, text.length)
+                            .firstOrNull()?.let { annotation ->
+                                onLinkClick(context)
+                                onDismiss()
+                            }
+                }
             )
         },
         confirmButton = {
