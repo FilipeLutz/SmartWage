@@ -95,7 +95,11 @@ fun PayslipFormDialog(
             ) {
                 Spacer(modifier = Modifier.height(10.dp))
 
-                Text("Add Payslip Details",
+                // if editing, show Edit Payslip Details else Add Payslip Details
+                Text(
+                    text =
+                        if (incomeToEdit != null) "Edit Payslip Details"
+                            else "Add Payslip Details",
                     fontSize = 28.sp,
                     fontWeight = Bold
                 )
