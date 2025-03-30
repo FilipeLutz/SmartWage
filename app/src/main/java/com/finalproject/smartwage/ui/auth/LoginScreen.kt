@@ -1,10 +1,10 @@
-@file:Suppress("DEPRECATION")
-
 package com.finalproject.smartwage.ui.auth
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,7 +32,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontWeight.Companion.Bold
+import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -100,7 +101,8 @@ fun LoginScreen(
                 .scrollable(
                     orientation = Orientation.Horizontal,
                     state = rememberScrollState(),
-                    enabled = true)
+                    enabled = true
+                )
                 .padding(horizontal = 25.dp)
         )
 
@@ -115,25 +117,39 @@ fun LoginScreen(
             singleLine = true,
             visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
-                IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
+                IconButton(
+                    onClick = { isPasswordVisible = !isPasswordVisible }) {
                     val icon = if (isPasswordVisible) painterResource(id = R.drawable.view)
                     else painterResource(id = R.drawable.hidden)
 
                     Image(
                         painter = icon,
                         contentDescription = "Toggle password visibility",
-                        modifier = Modifier.padding(end = 12.dp)
+                        modifier = Modifier
+                            .padding(end = 12.dp)
+                            .clickable(
+                                onClick = { isPasswordVisible = !isPasswordVisible },
+                                indication = null,
+                                interactionSource = remember { MutableInteractionSource() }
+                            )
                     )
                 }
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(horizontal = 25.dp)
                 .scrollable(
                     orientation = Orientation.Horizontal,
                     state = rememberScrollState(),
-                    enabled = true)
-                .padding(horizontal = 25.dp)
+                    enabled = true
+                )
+                .clickable(
+                    onClick = { isPasswordVisible = !isPasswordVisible },
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                )
+
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -144,6 +160,12 @@ fun LoginScreen(
             modifier = Modifier.fillMaxWidth().padding(end = 20.dp)
         ) {
             TextButton(
+                modifier = Modifier
+                    .clickable(
+                        onClick = {},
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ),
                 onClick = {
                     if (!isValidEmail(email)) {
                         showMessage("Please enter a valid email", MessageType.ERROR)
@@ -157,7 +179,20 @@ fun LoginScreen(
                     "Forgot password?",
                     fontSize = 18.sp,
                     color = DarkBlue,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = Bold,
+                    modifier = Modifier
+                        .clickable(
+                            onClick = {
+                                if (!isValidEmail(email)) {
+                                    showMessage("Please enter a valid email", MessageType.ERROR)
+                                } else {
+                                    viewModel.sendPasswordResetEmail(email)
+                                    showMessage("Password reset email sent!", MessageType.TEXT)
+                                }
+                            },
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() }
+                        )
                 )
             }
         }
@@ -205,15 +240,21 @@ fun LoginScreen(
                 }
             },
             colors = ButtonDefaults.buttonColors(containerColor = DarkBlue),
-            modifier = Modifier.width(300.dp).height(50.dp)
+            modifier = Modifier
+                .width(300.dp)
+                .height(50.dp)
+                .clickable(
+                    onClick = {},
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                )
         ) {
-            Text("LOGIN", fontSize = 22.sp, fontWeight = FontWeight.Bold)
+            Text(
+                "LOGIN",
+                fontSize = 22.sp,
+                fontWeight = Bold
+            )
         }
-
-//        Show Loading Dialog
-//        if (isLoading) {
-//            LoadingDialog(isLoading = true)
-//        }
 
         Spacer(modifier = Modifier.height(30.dp))
 
@@ -223,9 +264,32 @@ fun LoginScreen(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Don't have an account?", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
-            TextButton(onClick = { navController.navigate(Destinations.SignUp.route) }) {
-                Text("SIGN UP", fontSize = 22.sp, color = DarkBlue, fontWeight = FontWeight.Bold)
+            Text(
+                "Don't have an account?",
+                fontSize = 20.sp,
+                fontWeight = SemiBold)
+
+            TextButton(
+                modifier = Modifier
+                    .clickable(
+                        onClick = {},
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ),
+                onClick = { navController.navigate(Destinations.SignUp.route) }
+            ) {
+                Text(
+                    "SIGN UP",
+                    fontSize = 22.sp,
+                    color = DarkBlue,
+                    fontWeight = Bold,
+                    modifier = Modifier
+                        .clickable(
+                            onClick = { navController.navigate(Destinations.SignUp.route) },
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() }
+                        )
+                )
             }
         }
     }
