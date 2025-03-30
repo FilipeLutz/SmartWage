@@ -89,6 +89,7 @@ fun RevenueDialog(
                             data = "https://www.revenue.ie/en/home.aspx".toUri()
                         }
                         context.startActivity(intent)
+                        onDismiss()
                     }
                 ) {
                     Text(
