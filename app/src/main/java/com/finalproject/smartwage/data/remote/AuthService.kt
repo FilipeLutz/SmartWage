@@ -4,9 +4,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
 import kotlinx.coroutines.tasks.await
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
-import timber.log.Timber
 
 //  Class for handling user authentication
 @Singleton
@@ -16,7 +16,9 @@ class AuthService @Inject constructor(
 ) {
     //  Sealed class for handling authentication results
     sealed class AuthResult {
+        // Success result with user information
         data class Success(val user: FirebaseUser) : AuthResult()
+        // Failure result with error message
         data class Failure(val errorMessage: String) : AuthResult()
     }
     //  Function for signing up a user
