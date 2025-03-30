@@ -65,6 +65,8 @@ dependencies {
 
     // test
     testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
 
     // Firebase Authentication & Firestore
     implementation (platform(libs.firebase.bom))
