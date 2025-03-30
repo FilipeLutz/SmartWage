@@ -12,7 +12,7 @@ import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
 
-// Firestore Service
+// Firestore Database Service
 @SuppressLint("TimberArgCount")
 class FirestoreService @Inject constructor() {
     // Firebase Firestore Instance
