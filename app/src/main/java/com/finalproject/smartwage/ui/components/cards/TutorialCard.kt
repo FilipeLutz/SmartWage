@@ -17,19 +17,20 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.Icons.Default
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CardDefaults.cardElevation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.Center
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.LightGray
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.ContentScale.Companion.Crop
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.style.TextDecoration.Companion.Underline
@@ -41,45 +42,62 @@ import com.finalproject.smartwage.ui.theme.DarkBlue
 import com.finalproject.smartwage.ui.theme.White
 import com.finalproject.smartwage.ui.tutorial.TutorialVideo
 
+// This Composable function displays a card with a video thumbnail and a play icon.
 @Composable
-fun TutorialCard(video: TutorialVideo, onCardClick: () -> Unit) {
+fun TutorialCard(
+    // Parameters
+    video: TutorialVideo,
+    onCardClick: () -> Unit
+) {
+    // Get the current context
     val context = LocalContext.current
 
+    // Column to hold the card and title
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = CenterHorizontally
     ) {
         // Card with video thumbnail and play icon overlay
         Card(
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1f)
-                .clickable(onClick = onCardClick)
+                .clickable(
+                    onClick = onCardClick
+                )
                 .border(
                     width = 1.dp,
                     color = DarkBlue,
                     shape = RoundedCornerShape(8.dp)
                 ),
             shape = RoundedCornerShape(8.dp),
-            elevation = CardDefaults.cardElevation(4.dp)
+            elevation = cardElevation(4.dp)
         ) {
-            Box(modifier = Modifier.fillMaxSize()) {
+            // Box to hold the thumbnail and play icon
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
                 // Load thumbnail
                 val thumbnailBitmap = remember(video.fileName) {
+                    // Load the video thumbnail using MediaMetadataRetriever
                     loadVideoThumbnail(context, video.fileName)
                 }
 
                 // Thumbnail or placeholder
                 if (thumbnailBitmap != null) {
+                    // Display the thumbnail
                     Image(
                         bitmap = thumbnailBitmap.asImageBitmap(),
                         contentDescription = "Video thumbnail",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
+                        contentScale = Crop,
+                        modifier = Modifier
+                            .fillMaxSize()
                     )
                 } else {
+                    // Placeholder if thumbnail loading fails
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -90,19 +108,23 @@ fun TutorialCard(video: TutorialVideo, onCardClick: () -> Unit) {
                 // Play icon overlay
                 Box(
                     modifier = Modifier
-                        .align(Alignment.Center)
+                        .align(Center)
                         .size(48.dp)
                         .background(
-                            color = Black.copy(alpha = 0.6f),
+                            color = Black.copy(
+                                alpha = 0.6f
+                            ),
                             shape = CircleShape
                         ),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Center
                 ) {
+                    // Play icon
                     Icon(
-                        imageVector = Icons.Default.PlayArrow,
+                        imageVector = Default.PlayArrow,
                         contentDescription = "Play",
                         tint = White,
-                        modifier = Modifier.size(32.dp)
+                        modifier = Modifier
+                            .size(32.dp)
                     )
                 }
             }
@@ -118,23 +140,31 @@ fun TutorialCard(video: TutorialVideo, onCardClick: () -> Unit) {
             modifier = Modifier
                 .padding(top = 8.dp)
                 .fillMaxWidth()
-                .wrapContentWidth(Alignment.CenterHorizontally)
+                .wrapContentWidth(CenterHorizontally)
         )
     }
 }
 
-// Load video thumbnail from resources
-private fun loadVideoThumbnail(context: Context, fileName: String): Bitmap? {
+// Function to load video thumbnail using MediaMetadataRetriever
+private fun loadVideoThumbnail(
+    // Parameters
+    context: Context,
+    fileName: String
+): Bitmap? {
+    // Try to load the video thumbnail
     return try {
+        // Create URI for the video resource
         val resourceName = fileName.removeSuffix(".mp4")
+        // Get the URI for the video resource
         val uri = "android.resource://${context.packageName}/raw/$resourceName".toUri()
-
+        // Create MediaMetadataRetriever instance
         MediaMetadataRetriever().run {
             setDataSource(context, uri)
             val bitmap = frameAtTime
             release()
             bitmap
         }
+        // Handle exceptions
     } catch (_: Exception) {
         null
     }
