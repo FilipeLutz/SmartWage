@@ -1,6 +1,7 @@
 package com.finalproject.smartwage.data.repository
 
 import android.net.Uri
+import androidx.core.net.toUri
 import com.finalproject.smartwage.data.local.dao.UserDao
 import com.finalproject.smartwage.data.local.entities.User
 import com.finalproject.smartwage.data.remote.FirestoreService
@@ -12,16 +13,17 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
-import androidx.core.net.toUri
 
 @Singleton
+// Repository for user data
 class UserRepository @Inject constructor(
+    // Dependency injection for UserDao, FirestoreService and FirebaseAuth
     private val userDao: UserDao,
     private val firestoreService: FirestoreService,
     private val auth: FirebaseAuth
 ) {
 
-    // Get current user
+    // Get current user from Firestore or Room
     suspend fun getCurrentUserWithSync(): User? {
         val firebaseUser = auth.currentUser ?: return null.also {
             Timber.d("No current user")
@@ -77,25 +79,13 @@ class UserRepository @Inject constructor(
         }
     }
 
+    // Check if the URI is valid
     fun isUriValid(uriString: String): Boolean {
         return try {
             val uri = uriString.toUri()
             uri != Uri.EMPTY && uri.toString().isNotEmpty()
         } catch (_: Exception) {
             false
-        }
-    }
-
-    suspend fun cleanupInvalidProfilePictures() {
-        val userId = auth.currentUser?.uid ?: return
-        val user = getCurrentUserWithSync()
-
-        user?.profilePicture?.takeUnless { isUriValid(it) }?.let {
-            // If we have an invalid URI, clear it from both databases
-            firestoreService.saveProfilePicture(userId, "")
-            userDao.getUserById(userId).firstOrNull()?.let { existingUser ->
-                userDao.insertUser(existingUser.copy(profilePicture = ""))
-            }
         }
     }
 
