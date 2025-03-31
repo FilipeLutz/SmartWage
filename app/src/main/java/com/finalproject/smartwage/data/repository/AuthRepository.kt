@@ -10,8 +10,20 @@ import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
 
+/**
+ * AuthRepository is a class that handles authentication and user management.
+ * It provides methods for user login, signup, password reset,
+ * and checking if an email is already registered.
+ * It uses Firebase Authentication and Firestore for user data storage.
+ *
+ * @constructor Injects the required dependencies.
+ * @param authService The AuthService for authentication operations.
+ * @param firestoreService The FirestoreService for Firestore operations.
+ * @param userDao The UserDao for local database operations.
+ * @param auth The FirebaseAuth instance for authentication.
+ */
+
 @Suppress("DEPRECATION")
-// Class to handle authentication and user management
 class AuthRepository @Inject constructor(
     // Injecting the required dependencies
     private val authService: AuthService,
