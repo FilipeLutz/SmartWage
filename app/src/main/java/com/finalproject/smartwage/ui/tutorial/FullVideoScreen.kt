@@ -4,7 +4,7 @@ import androidx.annotation.OptIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Arrangement.Start
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,40 +33,66 @@ import com.finalproject.smartwage.R
 import com.finalproject.smartwage.ui.theme.DarkBlue
 import com.finalproject.smartwage.ui.theme.White
 
+/**
+ * FullVideoScreen is a Composable function that displays a full-screen video player using ExoPlayer.
+ * It takes a video name and a callback function to handle the back navigation.
+ *
+ * @param videoName The name of the video file to be played (without the .mp4 extension).
+ * @param onBack A lambda function to be called when the back button is pressed.
+ */
+
 @OptIn(UnstableApi::class)
 @Composable
-fun FullVideoScreen(videoName: String?, onBack: () -> Unit) {
-
+fun FullVideoScreen(
+    // Parameter to receive the video name
+    videoName: String?,
+    onBack: () -> Unit
+) {
+    // Get the current context
     val context = LocalContext.current
-
+    // Prepare the ExoPlayer instance
     val player = remember {
+        // ExoPlayer is a powerful media player library for Android
         ExoPlayer.Builder(context)
             .build()
+            // Set the player to be in full-screen mode
             .apply {
                 playWhenReady = true
                 repeatMode = Player.REPEAT_MODE_OFF
             }
     }
-
+    // Use DisposableEffect to manage the lifecycle of the player
     DisposableEffect(videoName) {
+        // Release the player when the Composable is disposed
         if (videoName != null) {
+            // Set the media item to be played
             val resourceName = videoName.removeSuffix(".mp4")
+            // Create a URI for the video resource
             val uri = "android.resource://${context.packageName}/raw/$resourceName".toUri()
-
+            // Prepare the player with the media item
             player.setMediaItem(MediaItem.fromUri(uri))
+            // Prepare the player for playback
             player.prepare()
+            // Start playing the video
             player.play()
         }
 
         onDispose {
+            // Release the player when the Composable is disposed
             player.release()
         }
     }
-
-    Box(modifier = Modifier.fillMaxSize()) {
+    // Box to hold the video player and back button
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        // AndroidView to display the ExoPlayer's PlayerView
         AndroidView(
             factory = { context ->
+                // Create a PlayerView to display the video
                 PlayerView(context).apply {
+                    // Set the player to the PlayerView
                     this.player = player
                     useController = true
                     setShowNextButton(false)
@@ -74,28 +100,36 @@ fun FullVideoScreen(videoName: String?, onBack: () -> Unit) {
                     resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
                 }
             },
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
         )
 
         Row(
-            horizontalArrangement = Arrangement.Start,
+            horizontalArrangement = Start,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 10.dp, top = 5.dp)
+                .padding(
+                    start = 10.dp,
+                    top = 5.dp
+                )
         ) {
-            // Back button
+            // IconButton to handle back navigation
             IconButton(
                 onClick = onBack,
                 modifier = Modifier
                     .padding(16.dp)
                     .size(30.dp)
-                    .background(White, shape = CircleShape)
+                    .background(
+                        White,
+                        shape = CircleShape
+                    )
                     .clickable(
                         onClick = onBack,
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() }
                     )
             ) {
+                // Icon for back navigation
                 Icon(
                     painter = painterResource(id = R.drawable.close),
                     contentDescription = "Back",
