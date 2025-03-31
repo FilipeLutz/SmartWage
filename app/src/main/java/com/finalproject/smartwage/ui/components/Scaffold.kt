@@ -1,5 +1,3 @@
-@file:Suppress("DEPRECATION")
-
 package com.finalproject.smartwage.ui.components
 
 import androidx.compose.foundation.Image
@@ -7,7 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Arrangement.Center
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,9 +18,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.Icons.Default
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -33,19 +30,22 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.Color.Companion.Black
+import androidx.compose.ui.graphics.Color.Companion.Red
+import androidx.compose.ui.graphics.Color.Companion.White
+import androidx.compose.ui.graphics.ColorFilter.Companion.tint
+import androidx.compose.ui.layout.ContentScale.Companion.Crop
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.unit.dp
@@ -56,16 +56,23 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import coil.compose.AsyncImage
 import com.finalproject.smartwage.R
 import com.finalproject.smartwage.navigation.Destinations
-import com.finalproject.smartwage.ui.theme.Black
 import com.finalproject.smartwage.ui.theme.DarkBlue
 import com.finalproject.smartwage.ui.theme.LightGrey
-import com.finalproject.smartwage.ui.theme.White
 import com.finalproject.smartwage.viewModel.AuthViewModel
 import com.finalproject.smartwage.viewModel.ProfileViewModel
+
+/**
+ * A custom Scaffold that includes a top bar and bottom bar for the dashboard screen.
+ *
+ * @param navController The NavController for navigation.
+ * @param viewModel The AuthViewModel for handling authentication-related actions.
+ * @param profileViewModel The ProfileViewModel for handling profile-related actions.
+ */
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardTopBar(
+    // Parameters
     navController: NavController,
     viewModel: AuthViewModel = hiltViewModel(),
     profileViewModel: ProfileViewModel = hiltViewModel()
@@ -73,12 +80,15 @@ fun DashboardTopBar(
     val menuExpanded = remember { mutableStateOf(false) }
     val imageUri by profileViewModel.imageUri.collectAsState()
 
+    // Observe the imageUri state from the ProfileViewModel
     LaunchedEffect(imageUri) {
         println("TopBar Image URI: $imageUri")
     }
 
+    // TopAppBar with a logo and user profile icon
     TopAppBar(
         title = {
+            // Logo that navigates to the dashboard
             Image(
                 painter = painterResource(id = R.drawable.logo),
                 contentDescription = "App Logo",
@@ -94,24 +104,29 @@ fun DashboardTopBar(
             )
         },
         actions = {
+            // User profile icon with dropdown menu
             Box {
+                // IconButton for user profile
                 IconButton(
-                    onClick = ({ menuExpanded.value = true })
+                    onClick = {
+                        menuExpanded.value = true
+                    }
                 ) {
+                    // If user has a profile picture, show it
                     if (imageUri != null) {
-                        // If user has a profile picture, show it
+                        // Load the image using AsyncImage
                         AsyncImage(
                             model = imageUri,
                             contentDescription = "Profile Picture",
                             modifier = Modifier
                                 .size(45.dp)
                                 .clip(CircleShape),
-                            contentScale = ContentScale.Crop
+                            contentScale = Crop
                         )
                     } else {
                         // Default user icon
                         Icon(
-                            imageVector = Icons.Default.AccountCircle,
+                            imageVector = Default.AccountCircle,
                             contentDescription = "User Profile",
                             modifier = Modifier
                                 .size(45.dp),
@@ -120,6 +135,7 @@ fun DashboardTopBar(
                     }
                 }
 
+                // Dropdown menu for profile options
                 DropdownMenu(
                     expanded = menuExpanded.value,
                     onDismissRequest = { menuExpanded.value = false },
@@ -130,74 +146,105 @@ fun DashboardTopBar(
                             color = colorScheme.primary
                         )
                 ) {
-                    // Profile Button
+                    // DropdownMenuItem for Profile with navigation and icon
                     DropdownMenuItem(
-                        text = { Text("Profile", fontSize = 22.sp, color = DarkBlue) },
+                        text = {
+                            Text(
+                                "Profile",
+                                fontSize = 22.sp,
+                                color = DarkBlue
+                            )
+                        },
                         onClick = {
                             menuExpanded.value = false
                             navController.navigate(Destinations.Profile.route)
                         },
                         leadingIcon = {
+                            // Icon for Profile
                             Icon(
-                                imageVector = Icons.Default.Person,
+                                imageVector = Default.Person,
                                 contentDescription = "Profile Icon",
                                 tint = DarkBlue
                             )
                         }
                     )
 
+                    // Divider between menu items
                     HorizontalDivider(
                         color = Black,
                         thickness = 1.dp,
                         modifier = Modifier
-                            .padding(horizontal = 10.dp)
+                            .padding(
+                                horizontal = 10.dp
+                            )
                     )
 
-                    // Logout Button
+                    // DropdownMenuItem for Log Out with navigation and icon
                     DropdownMenuItem(
-                        text = { Text("Log Out", color = Color.Red, fontSize = 22.sp) },
+                        text = {
+                            Text(
+                                "Log Out",
+                                color = Red,
+                                fontSize = 22.sp
+                            )
+                        },
                         onClick = {
                             menuExpanded.value = false
+                            // Log out the user
                             viewModel.logout()
-                            navController.navigate(Destinations.Login.route) {
+                            // Navigate to the login screen
+                            navController.navigate(
+                                Destinations.Login.route
+                            ) {
+                                // Clear the back stack to prevent going back to the dashboard
                                 popUpTo(Destinations.Login.route) { inclusive = true }
                             }
                         },
                         leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.ExitToApp,
-                                contentDescription = "Logout Icon",
-                                tint = Color.Red
+                            // Icon for Log Out
+                            Image(
+                                painter = painterResource(id = R.drawable.logout),
+                                contentDescription = "Log Out Icon",
+                                colorFilter = tint(Red),
+                                modifier = Modifier
+                                    .size(24.dp)
                             )
                         }
                     )
                 }
             }
         },
-        colors = TopAppBarDefaults.topAppBarColors(
+        colors = topAppBarColors(
             containerColor = colorScheme.primary,
             titleContentColor = White,
         )
     )
 }
 
+/**
+ * A Bottom Navigation Bar.
+ *
+ * @param navController The NavController for navigation.
+ */
 @Composable
 fun DashboardBottomBar(navController: NavController) {
     // Get the current route from the NavController
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry.value?.destination?.route
 
+    // Row layout for the bottom navigation bar
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(75.dp)
             .background(colorScheme.primaryContainer)
     ) {
+        // Iterate through each BottomNavItem
         BottomNavItem.entries.forEach { item ->
             // Check if the current item is selected
             val isSelected = currentRoute == item.route
 
-            // Custom clickable wrapper for the icon and text
+            // Box layout for each item
             Box(
                 modifier = Modifier
                     .weight(1f)
@@ -226,14 +273,15 @@ fun DashboardBottomBar(navController: NavController) {
                         shape = RoundedCornerShape(10.dp)
                     )
             ) {
+                // Column layout for the Text and Icon
                 Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = CenterHorizontally,
+                    verticalArrangement = Center,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(6.dp)
                 ) {
-                    // Icon
+                    // Icon for each item
                     Image(
                         painter = painterResource(id = item.iconRes),
                         contentDescription = item.label,
@@ -242,16 +290,16 @@ fun DashboardBottomBar(navController: NavController) {
                             .padding(6.dp),
                         colorFilter = if (isSelected) {
                             // Apply a color filter for the selected icon
-                            ColorFilter.tint(colorScheme.primary)
+                            tint(colorScheme.primary)
                         } else {
                             // Apply a color filter for the unselected icon
-                            ColorFilter.tint(colorScheme.onSurfaceVariant)
+                            tint(colorScheme.onSurfaceVariant)
                         }
                     )
 
                     Spacer(modifier = Modifier.height(4.dp))
 
-                    // Text
+                    // Text label
                     Text(
                         text = item.label,
                         fontSize = 13.sp,
@@ -270,9 +318,37 @@ fun DashboardBottomBar(navController: NavController) {
     }
 }
 
-enum class BottomNavItem(val route: String, val iconRes: Int, val label: String) {
-    Dashboard(route = "dashboard/{userId}", R.drawable.home, "Dashboard"),
-    Income(route = "income", R.drawable.income, "Income"),
-    Expense(route = "expense", R.drawable.expense, "Expenses"),
-    Settings(route = "settings", R.drawable.setting, "Settings")
+/**
+ * A sealed class representing the different bottom navigation items.
+ *
+ * @param route The route for the navigation item.
+ * @param iconRes The resource ID for the icon.
+ * @param label The label for the navigation item.
+ */
+
+enum class BottomNavItem(
+    val route: String,
+    val iconRes: Int,
+    val label: String
+) {
+    Dashboard(
+        route = "dashboard/{userId}",
+        R.drawable.home,
+        "Dashboard"
+    ),
+    Income(
+        route = "income",
+        R.drawable.income,
+        "Income"
+    ),
+    Expense(
+        route = "expense",
+        R.drawable.expense,
+        "Expenses"
+    ),
+    Settings(
+        route = "settings",
+        R.drawable.setting,
+        "Settings"
+    )
 }
