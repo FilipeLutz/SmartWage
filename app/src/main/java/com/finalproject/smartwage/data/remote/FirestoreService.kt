@@ -12,7 +12,14 @@ import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
 
-// Firestore Database Service
+/**
+ * FirestoreService is a class that provides methods to interact with Firebase Firestore.
+ * It includes methods to save, retrieve, update, and delete user data, settings, incomes,
+ * expenses, and tax records.
+ *
+ * @property db The Firebase Firestore instance.
+ */
+
 @SuppressLint("TimberArgCount")
 class FirestoreService @Inject constructor() {
     // Firebase Firestore Instance
