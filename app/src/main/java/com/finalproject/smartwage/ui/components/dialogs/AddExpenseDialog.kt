@@ -57,7 +57,17 @@ import java.util.Date
 import java.util.Locale
 import java.util.UUID
 
-// This Composable function displays a dialog for adding or editing an expense.
+/**
+ * AddExpenseDialog.kt
+ * This file contains the implementation of the AddExpenseDialog Composable function.
+ * It is used to display a dialog for adding or editing an expense.
+ *
+ * @param viewModel The ViewModel instance for managing expenses.
+ * @param expenseToEdit The expense to be edited, if any.
+ * @param onDismiss Callback function to be called when the dialog is dismissed.
+ * @param isEditMode Boolean flag indicating whether the dialog is in edit mode or not.
+ */
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddExpenseDialog(
