@@ -42,7 +42,14 @@ import com.finalproject.smartwage.ui.theme.DarkBlue
 import com.finalproject.smartwage.ui.theme.White
 import com.finalproject.smartwage.ui.tutorial.TutorialVideo
 
-// This Composable function displays a card with a video thumbnail and a play icon.
+/**
+ * TutorialCard is a Composable function that displays a card with a video thumbnail and title.
+ * It allows the user to click on the card to play the video.
+ *
+ * @param video The TutorialVideo object containing video details.
+ * @param onCardClick The callback function to be invoked when the card is clicked.
+ */
+
 @Composable
 fun TutorialCard(
     // Parameters
