@@ -60,7 +60,14 @@ import com.finalproject.smartwage.utils.isValidEmail
 import com.finalproject.smartwage.utils.validatePassword
 import com.finalproject.smartwage.viewModel.AuthViewModel
 
-// This is a SignUpScreen Composable function that allows users to create an account.
+/**
+ * SignUpScreen is a Composable function that displays the sign-up screen.
+ * It allows users to create a new account by entering their details.
+ *
+ * @param navController The NavController for navigation.
+ * @param viewModel The AuthViewModel for managing authentication data.
+ */
+
 @Composable
 fun SignUpScreen(
     // This function takes a NavController and an optional AuthViewModel as parameters.
