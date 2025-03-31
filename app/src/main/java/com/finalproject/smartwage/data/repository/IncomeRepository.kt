@@ -16,7 +16,16 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
-// Class to handle income data operations
+/**
+ * IncomeRepository is responsible for managing income data.
+ * It interacts with both local database (Room) and remote database (Firestore).
+ *
+ * @param incomeDao The DAO for accessing income data in the local database.
+ * @param firestoreService The service for accessing income data in Firestore.
+ * @param auth The FirebaseAuth instance for user authentication.
+ * @param context The application context.
+ */
+
 class IncomeRepository @Inject constructor(
     // Dependency injection for IncomeDao and FirestoreService
     private val incomeDao: IncomeDao,
