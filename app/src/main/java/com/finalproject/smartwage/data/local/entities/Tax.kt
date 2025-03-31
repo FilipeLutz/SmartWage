@@ -3,9 +3,32 @@ package com.finalproject.smartwage.data.local.entities
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.firebase.firestore.PropertyName
-import java.util.*
+import java.util.UUID
 
-// Tax Entity
+/**
+ * Tax is a data class that represents the tax information of a user.
+ * It includes various properties related to tax calculations.
+ *
+ * @property id The unique identifier for the tax record.
+ * @property userId The unique identifier for the user.
+ * @property totalTax The total tax amount.
+ * @property totalIncome The total income amount.
+ * @property totalPAYE The total Pay As You Earn (PAYE) tax.
+ * @property totalUSC The total Universal Social Charge (USC).
+ * @property totalPRSI The total Pay Related Social Insurance (PRSI).
+ * @property taxCredit The tax credit amount.
+ * @property tuitionFeeRelief The tuition fee relief amount.
+ * @property rentTaxCredit The rent tax credit amount.
+ * @property expectedPAYE The expected PAYE tax.
+ * @property expectedUSC The expected USC.
+ * @property expectedPRSI The expected PRSI.
+ * @property expectedTotalTax The expected total tax amount.
+ * @property currentWeek The current week number.
+ * @property overpaidTax The amount of tax overpaid.
+ * @property underpaidTax The amount of tax underpaid.
+ * @property lastCalculated The timestamp of the last tax calculation.
+ */
+
 @Entity(tableName = "tax")
 // Data class for Tax
 data class Tax(
