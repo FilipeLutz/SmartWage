@@ -33,7 +33,14 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-// This composable function creates an income item card that displays the details of an income.
+/**
+ * IncomeListCard is a Composable function that displays a card with income details.
+ *
+ * @param income The income object containing the details to be displayed.
+ * @param viewModel The IncomeViewModel for managing income data.
+ * @param onEdit A lambda function to handle the edit action.
+ */
+
 @Composable
 fun IncomeListCard(
     // Parameters:
