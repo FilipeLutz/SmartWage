@@ -1,18 +1,10 @@
 package com.finalproject.smartwage.ui.settings
 
-
-/** App Infomation Screen
- *  -----------------------------------
- *  This screen displays information about the app,
- *  including the developers,
- *  the project specifications,
- *  and what the app does.
- */
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Arrangement.Absolute.Center
+import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,13 +18,14 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -46,23 +39,32 @@ import com.finalproject.smartwage.R
 import com.finalproject.smartwage.ui.components.DashboardBottomBar
 import com.finalproject.smartwage.ui.components.DashboardTopBar
 
-// About App Screen
-@Composable
-fun AboutAppScreen(navController: NavController) {
+/**
+ * AboutAppScreen is a Composable function that displays information about the app,
+ * including the developers, project specifications, and what the app does.
+ *
+ * @param navController The NavController used for navigation within the app.
+ */
 
+@Composable
+fun AboutAppScreen(
+    navController: NavController
+) {
+    // Scaffold to provide a top bar and bottom bar
     Scaffold(
         topBar = { DashboardTopBar(navController) },
         bottomBar = { DashboardBottomBar(navController) }
     ) { paddingValues ->
+        // Surface to hold the content with a background color
         Surface(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .background(MaterialTheme.colorScheme.background)
+                .background(colorScheme.background)
         ) {
-            // Main Column
+            // Column to arrange the content vertically
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
+                horizontalAlignment = CenterHorizontally,
                 modifier = Modifier
                     .fillMaxSize()
             ) {
@@ -74,7 +76,7 @@ fun AboutAppScreen(navController: NavController) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically,
+                    verticalAlignment = CenterVertically,
                 ) {
                     // Back Button
                     Box(
@@ -86,11 +88,13 @@ fun AboutAppScreen(navController: NavController) {
                                 onClick = { navController.popBackStack() }
                             )
                     ) {
+                        // Back Icon
                         Icon(
                             painter = painterResource(id = R.drawable.back),
                             contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(28.dp)
+                            tint = colorScheme.primary,
+                            modifier = Modifier
+                                .size(28.dp)
                         )
                     }
 
@@ -99,28 +103,31 @@ fun AboutAppScreen(navController: NavController) {
                         text = "App Information",
                         fontSize = 35.sp,
                         fontWeight = Bold,
-                        color = MaterialTheme.colorScheme.primary,
+                        color = colorScheme.primary,
                         modifier = Modifier
                             .weight(1f)
                             .padding(end = 50.dp)
-                            .wrapContentWidth(Alignment.CenterHorizontally)
+                            .wrapContentWidth(CenterHorizontally)
                     )
                 }
 
                 Spacer(modifier = Modifier.height(15.dp))
 
-                // Main Content
+                // LazyColumn to display the content in a scrollable list
                 LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(20.dp),
+                    verticalArrangement = spacedBy(20.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 25.dp)
                 ) {
                     item {
+                        // Row to display the title and subtitle
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalArrangement = Center
                         ) {
+                            // App Title
                             Text(
                                 text = "Dorset College Dublin",
                                 fontSize = 28.sp,
@@ -131,11 +138,13 @@ fun AboutAppScreen(navController: NavController) {
 
                         Spacer(modifier = Modifier.height(10.dp))
 
+                        // Row to display the subtitle
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalArrangement = Center
                         ) {
-                            // Project Info
+                            // App Subtitle
                             Text(
                                 text = "Final Project - BSC30924",
                                 fontSize = 22.sp,
@@ -145,7 +154,7 @@ fun AboutAppScreen(navController: NavController) {
 
                         Spacer(modifier = Modifier.height(30.dp))
 
-                        // Developers
+                        // Developers Section
                         Text(
                             text = "Developed by:",
                             fontSize = 20.sp,
@@ -154,14 +163,18 @@ fun AboutAppScreen(navController: NavController) {
 
                         Spacer(modifier = Modifier.height(15.dp))
 
+                        // Developers List
                         Text(
                             text = "• Filipe Lutz Mariano (25956)\n• Vinicius de Morais Miranda (70973)",
                             fontSize = 18.sp,
-                            style = TextStyle(lineHeight = 25.sp)
+                            style = TextStyle(
+                                lineHeight = 25.sp
+                            )
                         )
 
                         Spacer(modifier = Modifier.height(20.dp))
 
+                        // Lecturer Section
                         Text(
                             text = "Supervised by:",
                             fontSize = 20.sp,
@@ -170,6 +183,7 @@ fun AboutAppScreen(navController: NavController) {
 
                         Spacer(modifier = Modifier.height(15.dp))
 
+                        // Lecturer Name
                         Text(
                             text = "• Wenhao Fu",
                             fontSize = 18.sp
@@ -181,9 +195,11 @@ fun AboutAppScreen(navController: NavController) {
 
                         Spacer(modifier = Modifier.height(25.dp))
 
+                        // Row to display the Project Specifications title
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalArrangement = Center
                         ) {
                             // Project Specifications
                             Text(
@@ -195,6 +211,7 @@ fun AboutAppScreen(navController: NavController) {
 
                         Spacer(modifier = Modifier.height(20.dp))
 
+                        // Project Specifications List
                         Text(
                             text = "• Developed using Kotlin\n" +
                                     "• Uses Firebase Authentication\n" +
@@ -202,7 +219,9 @@ fun AboutAppScreen(navController: NavController) {
                                     "• Uses Room as the local database for\n   offline storage\n" +
                                     "• Built with Jetpack Compose for UI",
                             fontSize = 20.sp,
-                            style = TextStyle(lineHeight = 28.sp)
+                            style = TextStyle(
+                                lineHeight = 28.sp
+                            )
                         )
 
                         Spacer(modifier = Modifier.height(25.dp))
@@ -211,11 +230,13 @@ fun AboutAppScreen(navController: NavController) {
 
                         Spacer(modifier = Modifier.height(25.dp))
 
+                        // Row to display the App Specifications title
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalArrangement = Center
                         ) {
-                            // What the App Does
+                            // App Specifications
                             Text(
                                 text = "App Specifications",
                                 fontSize = 24.sp,
@@ -226,13 +247,16 @@ fun AboutAppScreen(navController: NavController) {
 
                         Spacer(modifier = Modifier.height(20.dp))
 
+                        // App Specifications List
                         Text(
                             text = "The app calculates the user's tax based on their income and expenses.\n" +
                                     "It determines tax deductions based on the official revenue rules set by the Irish government, " +
                                     "including PAYE, USC, and PRSI. Users can input their financial details " +
                                     "to get an accurate overview of their tax obligations.",
                             fontSize = 20.sp,
-                            style = TextStyle(lineHeight = 28.sp)
+                            style = TextStyle(
+                                lineHeight = 28.sp
+                            )
                         )
 
                         Spacer(modifier = Modifier.height(25.dp))
