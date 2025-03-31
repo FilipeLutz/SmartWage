@@ -3,9 +3,26 @@ package com.finalproject.smartwage.data.local.entities
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.firebase.firestore.PropertyName
-import java.util.*
+import java.util.UUID
 
-// Income Entity
+/**
+ * Income data class representing the income entity in the database.
+ *
+ * @property id Unique identifier for the income entry.
+ * @property userId Identifier for the user associated with the income.
+ * @property source Source of the income.
+ * @property amount Amount of income.
+ * @property paye Pay As You Earn tax amount.
+ * @property usc Universal Social Charge amount.
+ * @property prsi Pay Related Social Insurance amount.
+ * @property date Date of the income entry.
+ * @property frequency Frequency of the income (e.g., weekly, fortnightly, monthly).
+ * @property payPeriod Number of pay periods.
+ * @property totalIncome Total income after deductions.
+ * @property overpaidTax Amount of tax overpaid.
+ * @property underpaidTax Amount of tax underpaid.
+ */
+
 @Entity(tableName = "income")
 // Data class for Income
 data class Income(
