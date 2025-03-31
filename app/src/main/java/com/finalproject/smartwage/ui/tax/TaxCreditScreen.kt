@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -24,7 +24,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
@@ -42,10 +43,20 @@ import com.finalproject.smartwage.ui.components.cards.TaxSummaryCard
 import com.finalproject.smartwage.viewModel.TaxViewModel
 import com.google.firebase.auth.FirebaseAuth
 
+/**
+ * TaxCreditScreen is a Composable function that displays the tax summary and related information.
+ * It uses a ViewModel to fetch and manage tax data, and it provides a user interface for the user
+ * to view their tax information.
+ *
+ * @param navController The NavController used for navigation within the app.
+ */
+
 @Composable
 fun TaxCreditScreen(
+    // Parameter to navigate between screens
     navController: NavController
 ) {
+    // ViewModel to manage tax data
     val viewModel: TaxViewModel = hiltViewModel()
     val totalIncome by viewModel.totalIncome.collectAsState()
     val totalExpenses by viewModel.totalExpenses.collectAsState()
@@ -61,35 +72,40 @@ fun TaxCreditScreen(
     val expectedUSC by viewModel.expectedUSC.collectAsState()
     val expectedPRSI by viewModel.expectedPRSI.collectAsState()
 
+    // Fetch tax data when the user ID changes
     LaunchedEffect(userId) {
         viewModel.fetchTaxData()
     }
 
+    // Scaffold to provide a basic layout structure
     Scaffold(
         topBar = { DashboardTopBar(navController) },
         bottomBar = { DashboardBottomBar(navController) }
     ) { paddingValues ->
+        // Surface to provide a background snd padding for the screen
         Surface(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .background(MaterialTheme.colorScheme.background)
+                .background(colorScheme.background)
         ) {
+            // Column to arrange UI elements vertically
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
+                horizontalAlignment = CenterHorizontally,
                 modifier = Modifier
                     .fillMaxSize()
             ) {
 
                 Spacer(modifier = Modifier.height(10.dp))
 
+                // Row to arrange the back button and title
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = CenterVertically
                 ) {
-                    // Back Button
+                    // Box to contain the back button
                     Box(
                         modifier = Modifier
                             .padding(start = 22.dp)
@@ -99,11 +115,13 @@ fun TaxCreditScreen(
                                 onClick = { navController.popBackStack() }
                             )
                     ) {
+                        // Back button icon
                         Icon(
                             painter = painterResource(id = R.drawable.back),
                             contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(28.dp)
+                            tint = colorScheme.primary,
+                            modifier = Modifier
+                                .size(28.dp)
                         )
                     }
 
@@ -114,24 +132,27 @@ fun TaxCreditScreen(
                         text = "Tax Summary",
                         fontSize = 35.sp,
                         fontWeight = Bold,
-                        color = MaterialTheme.colorScheme.primary,
+                        color = colorScheme.primary,
                         textAlign = TextAlign.Center
                     )
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
 
+                // LazyColumn to display the tax summary and explanation cards
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(horizontal = 20.dp),
                 ) {
                     item {
+                        // if the total income and expenses are 0, show a message
                         if (totalIncome == 0.0 && totalExpenses == 0.0) {
-
+                            // Text message indicating no tax data available
                             TaxDataMessage(navController)
-                        } else {
 
+                        } else {
+                            // Else show the tax summary card
                             TaxSummaryCard(
                                 totalIncome, paye, usc, prsi, taxPaid,
                                 expectedPAYE, expectedUSC, expectedPRSI, expectedTax,
@@ -142,6 +163,7 @@ fun TaxCreditScreen(
 
                     item {
                         Spacer(modifier = Modifier.height(24.dp))
+                        // Explanation card for tax credits
                         TaxExplanationCard()
                     }
 
