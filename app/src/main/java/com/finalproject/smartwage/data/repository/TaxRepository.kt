@@ -7,7 +7,14 @@ import kotlinx.coroutines.flow.flow
 import timber.log.Timber
 import javax.inject.Inject
 
-// Class to handle tax-related data operations
+/**
+ * TaxRepository is responsible for managing tax-related data.
+ * It interacts with both local (Room) and remote (Firestore) data sources.
+ *
+ * @param taxDao The DAO for accessing tax data in the local database.
+ * @param firestoreService The service for accessing tax data in Firestore.
+ */
+
 class TaxRepository @Inject constructor(
     // Dependency injection for TaxDao and FirestoreService
     private val taxDao: TaxDao,
