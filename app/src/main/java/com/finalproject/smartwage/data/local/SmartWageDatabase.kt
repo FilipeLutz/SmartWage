@@ -15,7 +15,18 @@ import com.finalproject.smartwage.data.local.entities.Settings
 import com.finalproject.smartwage.data.local.entities.Tax
 import com.finalproject.smartwage.data.local.entities.User
 
-// SmartWage Database
+/**
+ * SmartWageDatabase is the Room database for the SmartWage application.
+ * It contains the entities and DAOs for managing user data, income, expenses, tax, and settings.
+ *
+ * This database is a singleton, meaning only one instance of it can exist at a time.
+ * It uses the Room library to create and manage the database.
+ *
+ * @Database annotation specifies the entities, version, and export schema.
+ * The entities are the data classes that represent the tables in the database.
+ * The version is the database version number, and exportSchema indicates whether to export the schema.
+ */
+
 @Database(
     // Entities
     entities = [
