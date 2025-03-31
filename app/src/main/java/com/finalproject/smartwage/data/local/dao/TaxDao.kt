@@ -1,8 +1,18 @@
 package com.finalproject.smartwage.data.local.dao
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import com.finalproject.smartwage.data.local.entities.Tax
 import kotlinx.coroutines.flow.Flow
+
+/**
+ * TaxDao is an interface that defines the data access methods for the Tax entity.
+ * It provides methods to insert, retrieve, and delete tax records from the database.
+ *
+ * @Dao annotation indicates that this is a Data Access Object.
+ */
 
 @Dao
 // Data Access Object for Tax
