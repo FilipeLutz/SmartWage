@@ -55,7 +55,14 @@ import com.finalproject.smartwage.utils.isValidEmail
 import com.finalproject.smartwage.utils.validatePassword
 import com.finalproject.smartwage.viewModel.AuthViewModel
 
-// This is a login screen for the SmartWage app.
+/**
+ * LoginScreen is a Composable function that displays the login screen.
+ * It allows users to enter their email and password to log in.
+ *
+ * @param navController The NavController for navigation.
+ * @param viewModel The AuthViewModel for managing authentication data.
+ */
+
 @Composable
 fun LoginScreen(
     // This function is responsible for displaying the login screen UI and handling user interactions.
