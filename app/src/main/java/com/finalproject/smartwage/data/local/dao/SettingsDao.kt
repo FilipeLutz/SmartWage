@@ -6,6 +6,13 @@ import androidx.room.Query
 import androidx.room.Update
 import com.finalproject.smartwage.data.local.entities.Settings
 
+/**
+ * SettingsDao is an interface that defines the data access methods for the Settings entity.
+ * It provides methods to get, save, and update user settings in the local database.
+ *
+ * @Dao annotation indicates that this is a Data Access Object.
+ */
+
 @Dao
 // Data Access Object for Settings
 interface SettingsDao {
