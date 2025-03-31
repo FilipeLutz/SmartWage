@@ -6,7 +6,14 @@ import com.finalproject.smartwage.data.remote.FirestoreService
 import timber.log.Timber
 import javax.inject.Inject
 
-// Class responsible for managing user settings
+/**
+ * SettingsRepository is responsible for managing user settings.
+ * It interacts with Firestore and Room to fetch and save settings.
+ *
+ * @param firestoreService The Firestore service for remote data operations.
+ * @param settingsDao The Room DAO for local data operations.
+ */
+
 class SettingsRepository @Inject constructor(
     private val firestoreService: FirestoreService,
     private val settingsDao: SettingsDao
