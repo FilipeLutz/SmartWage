@@ -24,7 +24,13 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-// This file is responsible for providing dependencies using Hilt.
+/**
+ * AppModule is a Hilt module that provides dependencies for the application.
+ * It includes the Firebase Auth, Firestore, Room database, and various repositories.
+ * It is annotated with @Module and @InstallIn to indicate that it is a Hilt module
+ * and to specify the component in which it should be installed.
+ */
+
 @Module
 // This annotation tells Hilt that this is a module
 @InstallIn(SingletonComponent::class)
