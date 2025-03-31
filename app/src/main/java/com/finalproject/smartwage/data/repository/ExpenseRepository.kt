@@ -14,7 +14,15 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
-// Class to handle the repository for expenses
+/**
+ * ExpenseRepository is a class that handles the data operations related to expenses.
+ * It interacts with the local database and Firestore to save, update, delete, and retrieve expenses.
+ *
+ * @param incomeDao The DAO for accessing expense data in the local database.
+ * @param firestoreService The service for accessing Firestore.
+ * @param auth The FirebaseAuth instance for user authentication.
+ */
+
 class ExpenseRepository @Inject constructor(
     // Injecting the required dependencies
     private val incomeDao: ExpenseDao,
