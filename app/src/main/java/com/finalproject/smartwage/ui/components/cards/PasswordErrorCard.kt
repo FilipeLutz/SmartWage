@@ -32,7 +32,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.finalproject.smartwage.utils.PasswordValidationError
 
-// This composable function creates a card that displays password validation errors.
+/**
+ * PasswordErrorCard is a Composable function that displays a card with password validation errors.
+ *
+ * @param errors A list of password validation errors to be displayed.
+ * @param onDismiss A lambda function to be called when the card is dismissed.
+ */
+
 @Composable
 fun PasswordErrorCard(
     // Parameters:
