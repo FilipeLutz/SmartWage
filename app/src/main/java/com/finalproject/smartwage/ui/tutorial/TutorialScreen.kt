@@ -3,7 +3,7 @@ package com.finalproject.smartwage.ui.tutorial
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -18,13 +18,13 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.Icons.Default
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.OutlinedTextFieldDefaults.colors
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -33,7 +33,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -46,9 +47,19 @@ import com.finalproject.smartwage.ui.components.DashboardBottomBar
 import com.finalproject.smartwage.ui.components.DashboardTopBar
 import com.finalproject.smartwage.ui.components.cards.TutorialCard
 
-@Composable
-fun TutorialScreen(navController: NavController) {
+/**
+ * TutorialScreen is a Composable function that displays a list of tutorial videos.
+ * It includes a search bar to filter the videos based on user input.
+ *
+ * @param navController The NavController used for navigation between screens.
+ */
 
+@Composable
+fun TutorialScreen(
+    // NavController for navigation
+    navController: NavController
+) {
+    // List of tutorial videos
     val videoList = listOf(
         TutorialVideo("editprofile.mp4", "Edit Profile"),
         TutorialVideo("quicktax.mp4", "Quick Tax Calculator"),
@@ -63,40 +74,44 @@ fun TutorialScreen(navController: NavController) {
         TutorialVideo("logout.mp4", "Log Out"),
         TutorialVideo("deleteaccount.mp4", "Delete Account"),
     )
-
+    // State variable to hold the search query
     var searchQuery by remember { mutableStateOf("") }
 
     // Filter videos based on search
     val filteredVideos = videoList.filter { video ->
+        // Check if the video title or file name contains the search query
         video.title.contains(searchQuery, ignoreCase = true) ||
                 video.fileName.contains(searchQuery, ignoreCase = true)
     }
-
+    // Scaffold to provide a structure for the screen
     Scaffold(
         topBar = { DashboardTopBar(navController) },
         bottomBar = { DashboardBottomBar(navController) }
     ) { paddingValues ->
+        // Surface to provide a background for the screen
         Surface(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .background(MaterialTheme.colorScheme.background)
+                .background(colorScheme.background)
         ) {
+            // Column to arrange the UI elements vertically
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
+                horizontalAlignment = CenterHorizontally,
                 modifier = Modifier
                     .fillMaxSize()
             ) {
 
                 Spacer(modifier = Modifier.height(10.dp))
 
+                // Row to hold the back button and title
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = CenterVertically
                 ) {
-                    // Back Button
+                    // Box to hold the back button
                     Box(
                         modifier = Modifier
                             .padding(start = 22.dp)
@@ -106,11 +121,13 @@ fun TutorialScreen(navController: NavController) {
                                 onClick = { navController.popBackStack() }
                             )
                     ) {
+                        // Back button icon
                         Icon(
                             painter = painterResource(id = R.drawable.back),
                             contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(28.dp)
+                            tint = colorScheme.primary,
+                            modifier = Modifier
+                                .size(28.dp)
                         )
                     }
 
@@ -119,11 +136,11 @@ fun TutorialScreen(navController: NavController) {
                         text = "App Tutorial",
                         fontSize = 35.sp,
                         fontWeight = Bold,
-                        color = MaterialTheme.colorScheme.primary,
+                        color = colorScheme.primary,
                         modifier = Modifier
                             .weight(1f)
                             .padding(end = 50.dp)
-                            .wrapContentWidth(Alignment.CenterHorizontally)
+                            .wrapContentWidth(CenterHorizontally)
                     )
                 }
 
@@ -133,9 +150,12 @@ fun TutorialScreen(navController: NavController) {
                 OutlinedTextField(
                     value = searchQuery,
                     onValueChange = { searchQuery = it },
-                    modifier = Modifier
+                    Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 22.dp, vertical = 10.dp),
+                        .padding(
+                            horizontal = 22.dp,
+                            vertical = 10.dp
+                        ),
                     label = {
                         Text(
                             "Search Tutorial",
@@ -147,16 +167,16 @@ fun TutorialScreen(navController: NavController) {
                     ),
                     leadingIcon = {
                         Icon(
-                            imageVector = Icons.Default.Search,
+                            imageVector = Default.Search,
                             contentDescription = "Search",
                             Modifier.size(24.dp)
                         )
                     },
                     singleLine = true,
                     shape = RoundedCornerShape(12.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = MaterialTheme.colorScheme.primary,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                    colors = colors(
+                        focusedBorderColor = colorScheme.primary,
+                        unfocusedBorderColor = colorScheme.onSurface.copy(alpha = 0.5f)
                     )
                 )
 
@@ -166,17 +186,23 @@ fun TutorialScreen(navController: NavController) {
 
                 // Display video cards in a grid
                 LazyVerticalGrid(
+                    // Grid layout for video cards
                     columns = GridCells.Fixed(2),
                     contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp),
-                    horizontalArrangement = Arrangement.spacedBy(2.dp),
-                    modifier = Modifier.fillMaxSize()
+                    verticalArrangement = spacedBy(10.dp),
+                    horizontalArrangement = spacedBy(2.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
                 ) {
                     items(filteredVideos.size) { index ->
+                        // TutorialCard for each video
                         val video = filteredVideos[index]
+                        // Card to display video information
                         TutorialCard(
+                            // Video thumbnail
                             video = video,
                             onCardClick = {
+                                // Navigate to the video player screen
                                 navController.navigate("fullscreen/${video.fileName}")
                             }
                         )
@@ -189,6 +215,8 @@ fun TutorialScreen(navController: NavController) {
 
 // Data class for Tutorial Video
 data class TutorialVideo(
+    // File name of the video
     val fileName: String,
+    // Title of the video
     val title: String
 )
