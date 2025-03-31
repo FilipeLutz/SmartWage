@@ -17,7 +17,15 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-// This code defines a CalendarDialog Composable function that displays a date picker dialog.
+/**
+ * CalendarDialog is a Composable function that displays a date picker dialog.
+ * It allows the user to select a date and returns the selected date in "dd-MM-yyyy" format.
+ *
+ * @param showDialog Boolean flag to control the visibility of the dialog.
+ * @param onDismiss Callback function to be called when the dialog is dismissed.
+ * @param onDateSelected Callback function to be called with the selected date.
+ */
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalendarDialog(
