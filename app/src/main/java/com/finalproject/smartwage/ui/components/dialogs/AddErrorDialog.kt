@@ -33,7 +33,16 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.finalproject.smartwage.ui.theme.DarkBlue
 
-// This dialog is used to show an error message when the user tries to save a form with missing fields.
+/**
+ * AddErrorDialog is a Composable function that displays a dialog
+ * when there are missing fields in the form.
+ * It shows a list of missing fields
+ * and provides an OK button to dismiss the dialog.
+ *
+ * @param missingFields A list of strings representing the missing fields.
+ * @param onDismiss A lambda function to be called when the dialog is dismissed.
+ */
+
 @Composable
 fun AddErrorDialog(
     // Parameter to check if there are any missing fields
