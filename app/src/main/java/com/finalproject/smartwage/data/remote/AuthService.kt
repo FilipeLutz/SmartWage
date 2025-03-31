@@ -8,7 +8,13 @@ import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
-//  Class for handling user authentication
+/**
+ * AuthService is a singleton class that handles user authentication using Firebase.
+ * It provides methods for signing up and logging in users.
+ *
+ * @param firebaseAuth The FirebaseAuth instance for authentication operations.
+ */
+
 @Singleton
 class AuthService @Inject constructor(
     //  Firebase authentication instance
