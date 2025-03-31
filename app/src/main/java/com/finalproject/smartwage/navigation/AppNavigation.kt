@@ -18,9 +18,18 @@ import com.finalproject.smartwage.ui.tax.TaxCreditScreen
 import com.finalproject.smartwage.ui.tutorial.FullVideoScreen
 import com.finalproject.smartwage.ui.tutorial.TutorialScreen
 
-// This file contains the navigation setup for the app.
+/**
+ * AppNavigation is a Composable function that sets up the navigation for the app.
+ * It defines the navigation graph and handles the navigation between different screens.
+ *
+ * @param navController The NavHostController for managing navigation.
+ * @param isUserLoggedIn A boolean indicating whether the user is logged in or not.
+ * @param userId The user ID of the logged-in user.
+ */
+
 @Composable
 fun AppNavigation(
+    // Parameters
     navController: NavHostController,
     isUserLoggedIn: Boolean,
     userId: String?
