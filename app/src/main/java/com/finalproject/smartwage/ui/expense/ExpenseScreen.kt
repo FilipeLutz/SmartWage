@@ -1,7 +1,7 @@
 package com.finalproject.smartwage.ui.expense
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Arrangement.Center
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,11 +12,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.Icons.Default
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -27,9 +27,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.text.style.TextAlign
@@ -46,8 +46,19 @@ import com.finalproject.smartwage.ui.theme.DarkBlue
 import com.finalproject.smartwage.viewModel.ExpenseViewModel
 import com.google.firebase.auth.FirebaseAuth
 
+/**
+ * ExpenseScreen is a Composable function that displays the user's expenses.
+ * It includes a floating action button to add new expenses and a dialog for editing existing ones.
+ *
+ * @param navController The NavController used for navigation.
+ */
+
 @Composable
-fun ExpenseScreen(navController: NavController) {
+fun ExpenseScreen(
+    // NavController for navigation
+    navController: NavController
+) {
+    // Variables to manage the state of the screen
     val viewModel: ExpenseViewModel = hiltViewModel()
     var editingExpense by remember { mutableStateOf<Expenses?>(null) }
     var isEditMode by remember { mutableStateOf(false) }
@@ -61,11 +72,14 @@ fun ExpenseScreen(navController: NavController) {
         viewModel.loadExpenses()
     }
 
+    // Scaffold to provide the basic structure of the screen
     Scaffold(
         topBar = { DashboardTopBar(navController) },
         bottomBar = { DashboardBottomBar(navController) },
         floatingActionButton = {
+            // Floating action button (FAB) to add a new expense
             if (showFab) {
+                // Show the FAB when there are no expenses
                 FloatingActionButton(
                     onClick = {
                         showExpenseDialog = true
@@ -76,79 +90,91 @@ fun ExpenseScreen(navController: NavController) {
                         .padding(end = 4.dp)
                         .size(60.dp),
                     containerColor = DarkBlue,
-                    contentColor = Color.White,
+                    contentColor = White,
                 ) {
+                    // Icon for the FAB
                     Icon(
-                        Icons.Default.Add,
+                        Default.Add,
                         contentDescription = "Add Expense"
                     )
                 }
             }
         }
     ) { paddingValues ->
+        // Surface to provide a background color
         Surface(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .background(MaterialTheme.colorScheme.background)
+                .background(colorScheme.background)
         ) {
+            // Column to arrange the content vertically
             Column(
                 modifier = Modifier
                     .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = CenterHorizontally
             ) {
 
                 Spacer(modifier = Modifier.height(10.dp))
 
+                // Row to display the title
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Center
                 ) {
 
+                    // Title of the screen
                     Text(
                         text = "Expenses",
                         fontSize = 35.sp,
                         fontWeight = Bold,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.padding(16.dp)
+                        color = colorScheme.primary,
+                        modifier = Modifier
+                            .padding(16.dp)
                     )
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
 
                 if (userExpenses.value.isEmpty()) {
-                    // Show message when there are no expenses
+                    // Column to show when there are no expenses
                     Column(
                         modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        verticalArrangement = Center,
+                        horizontalAlignment = CenterHorizontally
                     ) {
+                        // Text to inform the user about adding expenses
                         Text(
                             text = "Click on the \"+\" button to start adding your expenses.",
                             fontSize = 25.sp,
                             fontWeight = SemiBold,
                             textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(16.dp)
+                            modifier = Modifier
+                                .padding(16.dp)
                         )
 
+                        // Text to inform the user about tax relief
                         Text(
                             text = "Some expenses are eligible to tax relief.",
                             fontSize = 20.sp,
                             fontWeight = SemiBold,
                             textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(16.dp)
+                            modifier = Modifier
+                                .padding(16.dp)
                         )
                     }
                 } else {
-                    // Show expenses
-                    LazyColumn (
+                    // LazyColumn to display the list of expenses
+                    LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(horizontal = 16.dp)
                     ) {
+                        // Item to show the total expenses
                         items(userExpenses.value.size) { index ->
                             val expenses = userExpenses.value[index]
+                            // Text to show the total expenses
                             ExpenseItem(
                                 expenses = expenses,
                                 viewModel = viewModel,
@@ -166,18 +192,22 @@ fun ExpenseScreen(navController: NavController) {
                     }
                 }
 
+                // Show the dialog for adding/editing expenses
                 if (showExpenseDialog) {
+                    // Box to overlay the dialog on top of the content
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
                     ) {
+                        // Column to arrange the dialog content
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(16.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
+                            horizontalAlignment = CenterHorizontally,
+                            verticalArrangement = Center
                         ) {
+                            // Dialog for adding/editing expenses
                             AddExpenseDialog(
                                 expenseToEdit = editingExpense,
                                 isEditMode = isEditMode,
