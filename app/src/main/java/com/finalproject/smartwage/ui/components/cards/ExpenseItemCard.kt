@@ -44,7 +44,15 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-// This composable function creates an expense item card that displays the details of an expense.
+/**
+ * ExpenseItem is a Composable function that displays an individual expense item.
+ * It shows the expense details and provides options to edit or delete the expense.
+ *
+ * @param expenses The expense data to be displayed.
+ * @param viewModel The ExpenseViewModel for managing expense data.
+ * @param onEdit Callback function to handle editing the expense.
+ */
+
 @Composable
 fun ExpenseItem(
     // Parameters:
