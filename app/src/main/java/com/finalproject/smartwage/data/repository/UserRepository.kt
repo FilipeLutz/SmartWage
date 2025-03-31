@@ -14,8 +14,16 @@ import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/**
+ * UserRepository is a singleton class that handles user data operations.
+ * It interacts with Firestore and Room to manage user information.
+ *
+ * @param userDao The DAO for accessing user data in the local database.
+ * @param firestoreService The service for accessing Firestore.
+ * @param auth The FirebaseAuth instance for authentication.
+ */
+
 @Singleton
-// Repository for user data
 class UserRepository @Inject constructor(
     // Dependency injection for UserDao, FirestoreService and FirebaseAuth
     private val userDao: UserDao,
