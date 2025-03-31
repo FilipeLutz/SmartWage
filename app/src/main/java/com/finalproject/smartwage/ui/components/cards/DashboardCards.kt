@@ -32,7 +32,17 @@ import com.finalproject.smartwage.ui.theme.PurpleGrey80
 import java.text.NumberFormat.getNumberInstance
 import java.util.Locale
 
-// DashboardCards is a composable function that creates a card with a label, value, and icon.
+/**
+ * DashboardCards is a Composable function that displays a card with a label, value, and icon.
+ * It is used in the dashboard to show various statistics.
+ *
+ * @param label The label for the card.
+ * @param value The value to be displayed on the card.
+ * @param iconRes The resource ID of the icon to be displayed on the card.
+ * @param navController The NavController for navigation.
+ * @param destination The destination to navigate to when the card is clicked.
+ */
+
 @Composable
 fun DashboardCards(
     // Parameters:
