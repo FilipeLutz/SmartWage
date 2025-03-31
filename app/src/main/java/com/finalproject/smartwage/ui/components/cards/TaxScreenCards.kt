@@ -34,7 +34,25 @@ import com.finalproject.smartwage.ui.theme.DarkBlue
 import com.finalproject.smartwage.ui.theme.Red
 import java.util.Locale
 
-// This composable function creates a card that displays the tax summary and breakdown.
+/**
+ * This composable function creates a card that displays the tax summary.
+ * It shows the total income, tax paid, expected tax, and tax credits.
+ * It also provides a breakdown of the tax paid and expected tax.
+ * Additionally, it displays a message indicating whether the user has overpaid or underpaid tax.
+ *
+ * @param totalIncome The total income of the user.
+ * @param paye The amount of PAYE tax paid.
+ * @param usc The amount of USC tax paid.
+ * @param prsi The amount of PRSI tax paid.
+ * @param taxPaid The total tax paid.
+ * @param expectedPAYE The expected amount of PAYE tax.
+ * @param expectedUSC The expected amount of USC tax.
+ * @param expectedPRSI The expected amount of PRSI tax.
+ * @param expectedTax The expected total tax.
+ * @param rentTaxCredit The amount of rent tax credit.
+ * @param tuitionFeeRelief The amount of tuition fee relief.
+ */
+
 @Composable
 fun TaxSummaryCard(
     // Parameters:
