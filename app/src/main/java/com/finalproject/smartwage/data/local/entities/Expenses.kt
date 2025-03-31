@@ -3,9 +3,21 @@ package com.finalproject.smartwage.data.local.entities
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.firebase.firestore.PropertyName
-import java.util.*
+import java.util.UUID
 
-// Expenses Entity
+/**
+ * This data class represents an Expense entity in the local and remote database.
+ * It contains properties such as id, userId, category, amount, date, and description.
+ * The id is generated using UUID to ensure uniqueness.
+ *
+ * @property id Unique identifier for the expense.
+ * @property userId Identifier for the user associated with the expense.
+ * @property category Category of the expense.
+ * @property amount Amount spent on the expense.
+ * @property date Date of the expense in milliseconds since epoch.
+ * @property description Description of the expense.
+ */
+
 @Entity(tableName = "expenses")
 // Data class for Expenses
 data class Expenses(
