@@ -4,7 +4,23 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.firebase.firestore.PropertyName
 
-// User Entity
+/**
+ * User data class representing a user in the application.
+ * It contains various properties related to the user,
+ *
+ * @property id The unique identifier for the user.
+ * @property name The name of the user.
+ * @property email The email address of the user.
+ * @property phoneNumber The phone number of the user.
+ * @property taxCredit The tax credit amount for the user.
+ * @property profilePicture The URL of the user's profile picture.
+ * @property taxPaid The total tax paid by the user.
+ * @property overpaidTax The total overpaid tax by the user.
+ * @property underpaidTax The total underpaid tax by the user.
+ * @property totalIncome The total income of the user.
+ * @property totalExpenses The total expenses of the user.
+ */
+
 @Entity(tableName = "users")
 // Data class for User
 data class User(
