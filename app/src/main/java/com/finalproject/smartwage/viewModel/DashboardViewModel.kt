@@ -104,8 +104,6 @@ class DashboardViewModel @Inject constructor(
                 // Calculate tax credits
                 val rentTaxCredit = TaxCalculator.calculateRentTaxCredit(rentPaid, totalIncome)
                 val tuitionRelief = TaxCalculator.calculateTuitionFeeRelief(tuitionFees)
-                val personalTaxCredit = 4000.0
-                val totalCredits = personalTaxCredit + rentTaxCredit + tuitionRelief
 
                 // Calculate expected taxes
                 var expectedPAYE = 0.0
@@ -133,13 +131,20 @@ class DashboardViewModel @Inject constructor(
                     expectedPRSI += prsi
                 }
 
-                // Get tax credits
-                val creditPerPayment = totalCredits / 52
-                val adjustedExpectedPAYE = maxOf(0.0, expectedPAYE - creditPerPayment)
-                val adjustedExpectedTax = adjustedExpectedPAYE + expectedUSC + expectedPRSI
-
                 // Calculate final tax position
-                val netTaxPosition = totalTaxPaid - adjustedExpectedTax
+                val prsiDifference = totalPRSI - expectedPRSI
+                val uscDifference = totalUSC - expectedUSC
+
+                // Calculate overpaid tax
+                val payeBack = totalPAYE
+                val prsiBack = if (prsiDifference > 0) prsiDifference else 0.0
+                val uscBack = if (uscDifference > 0) uscDifference else 0.0
+                val totalTaxBack = payeBack + prsiBack + uscBack
+
+                // Adjust totalTaxBack for underpaid USC and PRSI
+                val prsiOwed = if (prsiDifference < 0) -prsiDifference else 0.0
+                val uscOwed = if (uscDifference < 0) -uscDifference else 0.0
+                val adjustedTotalTaxBack = totalTaxBack - prsiOwed - uscOwed
 
                 // Update values
                 _totalIncome.value = totalIncome
@@ -149,13 +154,12 @@ class DashboardViewModel @Inject constructor(
                 _tuitionFeeRelief.value = tuitionRelief
 
                 // Set tax owed or tax back
-                if (netTaxPosition > 0) {
-                    _taxBack.value = netTaxPosition
+                if (adjustedTotalTaxBack > 0) {
+                    _taxBack.value = adjustedTotalTaxBack
                     _taxOwed.value = 0.0
                 } else {
-                    // If the user has paid more tax than owed, they are owed a refund
                     _taxBack.value = 0.0
-                    _taxOwed.value = -netTaxPosition
+                    _taxOwed.value = -adjustedTotalTaxBack
                 }
                 // Handle any exceptions that occur during data loading
             } catch (e: Exception) {
