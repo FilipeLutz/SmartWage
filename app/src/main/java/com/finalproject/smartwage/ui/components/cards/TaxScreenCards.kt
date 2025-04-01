@@ -16,8 +16,11 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -31,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.finalproject.smartwage.ui.theme.DarkBlue
-import com.finalproject.smartwage.ui.theme.Red
+import com.finalproject.smartwage.viewModel.TaxViewModel
 import java.util.Locale
 
 /**
@@ -67,7 +70,10 @@ fun TaxSummaryCard(
     expectedTax: Double,
     rentTaxCredit: Double,
     tuitionFeeRelief: Double,
+    viewModel: TaxViewModel
 ) {
+    val totalTaxBack by viewModel.totalTaxBack.collectAsState()
+
     // Card to display the tax summary
     Card(
         modifier = Modifier
@@ -340,38 +346,18 @@ fun TaxSummaryCard(
 
             Spacer(modifier = Modifier.height(2.dp))
 
-            // Calculate Overpaid/Underpaid Tax
-            val totalTaxCredits = 4000.0 + rentTaxCredit + tuitionFeeRelief
-            // Calculate the adjusted expected tax after applying tax credits
-            val adjustedExpectedTax = maxOf(0.0, expectedTax - totalTaxCredits)
-
-            // Calculate the overpaid tax
-            val prsiOverpaid = prsi - expectedPRSI
-            // Calculate the USC overpaid tax
-            val uscOverpaid = usc - expectedUSC
-
-            // Overpaid Tax Calculation
-            val overpaidTax = paye + maxOf(0.0, prsiOverpaid) + maxOf(0.0, uscOverpaid)
-
             // Overpaid or Underpaid Tax Message
             val taxMessage = when {
-                overpaidTax > 0 -> "You have overpaid tax : ${formatCurrency(overpaidTax)}. \nYou may be eligible for a tax refund."
-                adjustedExpectedTax > taxPaid -> "You have underpaid tax : ${
-                    formatCurrency(
-                        adjustedExpectedTax - taxPaid
-                    )
-                }. \nYou may owe additional tax."
-
+                totalTaxBack > 0 -> "You have overpaid tax: ${formatCurrency(totalTaxBack)}. \nYou may be eligible for a tax refund."
+                totalTaxBack < 0 -> "You have underpaid tax: ${formatCurrency(-totalTaxBack)}. \nYou may owe additional tax."
                 else -> "Your tax payments align with expected tax calculations."
             }
 
             // Display the tax message
             Text(
                 text = taxMessage,
-                color =
-                    if (overpaidTax > 0) DarkBlue
-                    else Red,
-                fontSize = 20.sp,
+                color = if (totalTaxBack > 0) DarkBlue else Red,
+                fontSize = 19.sp,
                 fontWeight = SemiBold,
                 style = TextStyle(
                     lineHeight = 30.sp
