@@ -82,6 +82,7 @@ class TaxViewModel @Inject constructor(
 
     // Function to get the total tax back
     private val _totalTaxBack = MutableStateFlow(0.0)
+    val totalTaxBack: StateFlow<Double> = _totalTaxBack.asStateFlow()
 
     // Function to get total tax owed
     private val _totalTaxOwed = MutableStateFlow(0.0)
@@ -177,23 +178,23 @@ class TaxViewModel @Inject constructor(
                     val prsiDifference = totalPRSI - expectedPRSI
                     val uscDifference = totalUSC - expectedUSC
 
-                    // Calculate tax credits
-                    val payeBack = totalPAYE
-
                     // Calculate prsi overpaid tax
                     val prsiBack = if (prsiDifference > 0) prsiDifference else 0.0
-
                     // Calculate usc overpaid tax
                     val uscBack = if (uscDifference > 0) uscDifference else 0.0
+                    // Calculate prsi underpaid tax
+                    val prsiOwed = if (prsiDifference < 0) -prsiDifference else 0.0
+                    // Calculate usc underpaid tax
+                    val uscOwed = if (uscDifference < 0) -uscDifference else 0.0
 
-                    // Total Overpaid Tax
-                    val totalTaxBack = payeBack + prsiBack + uscBack
-                    _totalTaxBack.value = totalTaxBack
+                    // Set tax back
+                    _totalTaxBack.value = when {
+                        prsiBack > 0 || uscBack > 0 -> totalPAYE + prsiBack + uscBack
+                        else -> totalPAYE - prsiOwed - uscOwed
+                    }
 
                     // Total Tax Owed
                     val payeOwed = if (payeDifference < 0) -payeDifference else 0.0
-                    val uscOwed = if (uscDifference < 0) -uscDifference else 0.0
-                    val prsiOwed = if (prsiDifference < 0) -prsiDifference else 0.0
                     val totalTaxOwed = payeOwed + uscOwed + prsiOwed
                     _totalTaxOwed.value = totalTaxOwed
 
@@ -210,3 +211,4 @@ class TaxViewModel @Inject constructor(
         }
     }
 }
+
