@@ -156,7 +156,7 @@ fun TaxCreditScreen(
                             TaxSummaryCard(
                                 totalIncome, paye, usc, prsi, taxPaid,
                                 expectedPAYE, expectedUSC, expectedPRSI, expectedTax,
-                                rentTaxCredit, tuitionFeeRelief
+                                rentTaxCredit, tuitionFeeRelief, viewModel,
                             )
                         }
                     }
