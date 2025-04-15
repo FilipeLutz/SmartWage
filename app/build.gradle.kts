@@ -100,4 +100,5 @@ dependencies {
 
     // Timber for Logging
     implementation (libs.timber)
+    testImplementation(kotlin("test"))
 }
