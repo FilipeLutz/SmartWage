@@ -1,4 +1,4 @@
-# SmartWage - Personal Tax Management App
+# SmartWage - Tax Management App
 
 
 <div align="center">
@@ -7,7 +7,7 @@
 
 ## Overview
 
-SmartWage is a  mobile application designed to simplify personal tax management, with specialized features for tax calculation, expense tracking, and income organization. Developed using cutting-edge Android technologies including Jetpack Compose, Room Database, and Firebase integration.
+SmartWage is a  mobile application designed to simplify Irish tax management, with specialized features for tax calculation, expense tracking, and income organization. Developed using cutting-edge Android technologies including Jetpack Compose, Room Database, and Firebase integration.
 
 
 ---
@@ -97,11 +97,13 @@ cd SmartWage
 
 ## Project Information
 
-**Project Supervisor**: Wenhao Fu  
+### Dorset College Dublin
 
 **Module**: Final Project  
 
 **Developers**: Filipe Lutz & Vinicius Miranda  
+
+**Project Supervisor**: Wenhao Fu  
 
 ---
 
